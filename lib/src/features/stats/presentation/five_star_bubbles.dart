@@ -117,6 +117,9 @@ void showFiveStarDetail(
   showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
+    // Without this a sheet is capped at about half the screen, which pushed
+    // the "Item info" button into the scroll area.
+    isScrollControlled: true,
     builder: (sheetContext) => SafeArea(
       child: SingleChildScrollView(
         child: Padding(
