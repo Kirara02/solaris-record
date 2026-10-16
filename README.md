@@ -4,6 +4,42 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 
 > Unofficial fan project. It is not affiliated with or endorsed by Kuro Games. Wuthering Waves and its assets belong to Kuro Games.
 
+## Screenshots
+
+### Desktop
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/desktop/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b>: totals, rarity and type charts, 5★ per pull type.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/2.png" alt="Featured Resonator pity, 50/50 and 5★ timeline"><br><sub><b>Featured Resonator</b>: pity, 50/50 record and the 5★ timeline.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/desktop/3.png" alt="Featured Weapon pity and 5★ timeline"><br><sub><b>Featured Weapon</b>: pity and timeline, colored by luck.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/4.png" alt="Item info dialog with the image gallery"><br><sub><b>Item info</b>: details and an icon, outfit and convene art gallery.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/desktop/5.png" alt="Settings"><br><sub><b>Settings</b>: import, accounts, appearance, data and about.</sub></td>
+    <td width="50%"></td>
+  </tr>
+</table>
+
+### Mobile
+
+<table>
+  <tr>
+    <td width="25%" align="center"><img src="docs/images/mobile/1.jpg" alt="Overview of every pull type"><br><sub><b>Overview</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/2.jpg" alt="Type distribution and 5★ per pull type"><br><sub><b>5★ per pull type</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/3.jpg" alt="Featured Resonator pity, stats and 50/50"><br><sub><b>Pity</b> and 50/50</sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/4.jpg" alt="5★ timeline, 5★ pulls and history"><br><sub><b>Timeline</b> and history</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><img src="docs/images/mobile/5.jpg" alt="Featured Weapon pity and stats"><br><sub><b>Featured Weapon</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/6.jpg" alt="Featured Weapon timeline and history"><br><sub><b>Weapon timeline</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/7.jpg" alt="Item info with the image gallery"><br><sub><b>Item info</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/8.jpg" alt="Settings"><br><sub><b>Settings</b></sub></td>
+  </tr>
+</table>
+
 ## Features
 
 - **Multiple accounts** by UID, with aliases (default "Account N") and an option to mask UIDs everywhere.
@@ -14,6 +50,7 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 - **History** with search, rarity and type filters, multi-column sort, pull numbers and per-pull pity.
 - **Item info** for Resonators and Weapons (skills, effects, base stats by level) with an image gallery (icon, outfit, convene art).
 - **Data language**: show item names in another language without touching your stored records.
+- **Updates**: the app tells you when a new release is out and, on Android, installs it from inside the app.
 - **Backup**: export and import everything as JSON, and import a [WuWa Tracker](https://wuwatracker.com/) export.
 - **Quick updates**: the last working link is remembered per account.
 - **Material 3** with dynamic color, accent colors and an AMOLED dark mode. English and Indonesian.
