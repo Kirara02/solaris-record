@@ -9,9 +9,6 @@ on:
 permissions:
   contents: read
 
-env:
-  FLUTTER_VERSION: 3.47.x
-
 jobs:
   version:
     runs-on: ubuntu-latest
@@ -34,6 +31,11 @@ jobs:
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
           case "$name" in *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;; *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;; esac
+      # Fail now, before any build, if CHANGELOG.md has no section for this tag.
+      - name: CHANGELOG has notes for this version
+        env:
+          NAME: ${{ steps.v.outputs.name }}
+        run: bash tool/release_notes.sh "$NAME" > /dev/null
 
   android:
     needs: version
@@ -53,11 +55,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
+      - uses: ./.github/actions/flutter-setup
 
       # Never publish an APK signed with the debug key.
       - name: Require the signing secrets
@@ -79,7 +77,6 @@ jobs:
             echo "keyPassword=$ANDROID_KEY_PASSWORD"
           } > android/key.properties
 
-      - run: flutter pub get
       - run: >
           flutter build apk --release --split-per-abi
           --build-name=${{ needs.version.outputs.base }}
@@ -103,12 +100,7 @@ jobs:
       NAME: ${{ needs.version.outputs.name }}
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-      - run: flutter pub get
+      - uses: ./.github/actions/flutter-setup
       - run: >
           flutter build windows --release
           --build-name=${{ needs.version.outputs.base }}
@@ -130,14 +122,9 @@ jobs:
       NAME: ${{ needs.version.outputs.name }}
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
+      - uses: ./.github/actions/flutter-setup
       - name: Install build dependencies
         run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsqlite3-dev
-      - run: flutter pub get
       - run: >
           flutter build linux --release
           --build-name=${{ needs.version.outputs.base }}
@@ -158,12 +145,7 @@ jobs:
       NAME: ${{ needs.version.outputs.name }}
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-      - run: flutter pub get
+      - uses: ./.github/actions/flutter-setup
       - run: >
           flutter build macos --release
           --build-name=${{ needs.version.outputs.base }}
@@ -186,6 +168,16 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+      - name: Compose the release notes
+        env:
+          NAME: ${{ needs.version.outputs.name }}
+        run: |
+          {
+            bash tool/release_notes.sh "$NAME"
+            echo
+            cat .github/release-footer.md
+          } > "$RUNNER_TEMP/notes.md"
       - uses: actions/download-artifact@v4
         with:
           path: dist
@@ -198,11 +190,4 @@ jobs:
           files: dist/*
           generate_release_notes: true
           prerelease: ${{ needs.version.outputs.prerelease }}
-          body: |
-            Unofficial fan project, not affiliated with Kuro Games.
-
-            **Install notes**
-            - **Android**: pick the APK for your device (most phones: `arm64-v8a`).
-            - **Windows / macOS**: the builds are not code-signed. Windows SmartScreen: *More info → Run anyway*. macOS: right-click the app and choose *Open*, or run `xattr -dr com.apple.quarantine "Solaris Record.app"`.
-            - **Linux**: extract the archive and run `solaris_record_app`.
-            - Verify downloads with `SHA256SUMS.txt`.
+          body_path: ${{ runner.temp }}/notes.md

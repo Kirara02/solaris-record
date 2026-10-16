@@ -18,27 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: 3.47.x
-          cache: true
-
       - name: Install SQLite (for the database tests)
         run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
 
-      - run: flutter pub get
-
-      # Generated code (providers, database, translations) is committed, so it
-      # must match what build_runner produces from the sources.
-      - name: Generated code is up to date
-        run: |
-          dart run build_runner build -d
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "::error::Generated files are out of date. Run 'dart run build_runner build -d' and commit the result."
-            git status --short
-            exit 1
-          fi
+      - uses: ./.github/actions/flutter-setup
 
       - run: flutter analyze
 

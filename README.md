@@ -41,9 +41,12 @@ You need a recent stable [Flutter](https://docs.flutter.dev/get-started/install)
 
 ```bash
 flutter pub get
-dart run build_runner build -d   # generated code: providers, database, translations
+dart run slang                   # translations
+dart run build_runner build      # providers, database, assets
 flutter run
 ```
+
+Generated code (`*.g.dart`, `*.gen.dart`) is not committed, so run the two generators after cloning and again after changing providers, database tables, assets or translation files. Run `slang` first.
 
 Useful commands:
 

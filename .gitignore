@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Generated code (riverpod, drift, flutter_gen, slang). Recreate it with
+# `dart run slang` and `dart run build_runner build`.
+*.g.dart
+*.gen.dart
+/lib/src/shared/i18n/gen/

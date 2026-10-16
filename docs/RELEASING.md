@@ -37,7 +37,7 @@ Without that file, release builds fall back to the debug key, so `flutter run --
 
 ## Making a release
 
-1. Set the new version in `pubspec.yaml`, for example `version: 1.0.1+2`. Only the `1.0.1` part is used; CI sets the build number.
+1. Add a `## <version>` section to `CHANGELOG.md` listing what is new (the workflow shows it on the release page and refuses to run without it). Then set the new version in `pubspec.yaml`, for example `version: 1.0.1+2`. Only the `1.0.1` part is used; CI sets the build number.
 2. Commit and push to `main`, and wait for the CI check to pass.
 3. Tag and push:
 

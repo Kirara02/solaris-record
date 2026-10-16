@@ -9,3 +9,6 @@ string_interpolation: braces
 # asynchronously first; useDeviceLocaleSync() on an Indonesian device crashed in
 # release builds with "Deferred library l_id was not loaded".
 lazy: false
+# No "Built on <time>" line in the generated files, so regenerating gives
+# identical output.
+timestamp: false

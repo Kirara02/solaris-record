@@ -1,0 +1,24 @@
+name: Set up Flutter and generate code
+description: >
+  Installs Flutter, fetches packages and generates the git-ignored code
+  (translations, providers, database). The Flutter version is pinned here, in
+  one place, for CI and releases.
+
+runs:
+  using: composite
+  steps:
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: 3.47.x
+        cache: true
+
+    - run: flutter pub get
+      shell: bash
+
+    # slang first: the other generators read the files it writes.
+    - run: dart run slang
+      shell: bash
+
+    - run: dart run build_runner build
+      shell: bash
