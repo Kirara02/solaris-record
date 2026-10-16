@@ -15,7 +15,8 @@ Solaris Record: a cross-platform Flutter tracker for Wuthering Waves convene (ga
 
 ```bash
 flutter pub get
-dart run build_runner build -d      # regenerate *.g.dart (riverpod, drift, slang, flutter_gen); run after changing providers, tables, i18n JSON, or assets
+dart run slang                      # regenerate translations; run after changing i18n JSON, and after cloning
+dart run build_runner build         # regenerate riverpod, drift and flutter_gen code; run after changing providers, tables or assets, and after cloning (run slang first)
 flutter analyze                     # the verification step for changes
 flutter test                        # all tests in test/
 flutter test test/features/stats/pity_calculator_test.dart               # one file
@@ -27,6 +28,16 @@ python3 tool/generate_app_icon.py   # regenerates icon art (needs Pillow); then 
 Tests mirror `lib/src/` (`test/data/`, `test/features/<feature>/`, `test/shared/`), with shared helpers in `test/support/` and JSON in `test/fixtures/`. The suite is deliberately small: core logic (pity, history sort and filter, URL parsing, repository merge, item info parsing, overview stats) plus a few key flows (import, delete data, navigation, i18n loading). Brittle layout and pixel tests were removed on purpose.
 
 Project preferences from the maintainer: verify with `flutter analyze`, not `flutter build`; do not add new tests or throwaway render scripts unless asked (the maintainer mostly tests manually with `flutter run`).
+
+## Commit messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) in English: `type(scope): summary`, with the summary in the imperative and lower case, under about 72 characters, and a body that explains why when it is not obvious.
+
+- Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore` (`chore(deps)` for dependency bumps).
+- Scope is optional and usually a feature or area: `stats`, `import`, `backup`, `accounts`, `info`, `settings`, `i18n`, `theme`, `ci`, `release`.
+- Examples: `feat(stats): add vertical 5★ timeline`, `fix(import): keep the saved link when the network drops`, `ci: generate code before building`.
+- Run `flutter analyze` before committing. CI runs the tests.
+- Pull requests are grouped on the release page by label (`enhancement`, `bug`, `documentation`, `dependencies`), and each release also needs its own section in `CHANGELOG.md` (see `docs/RELEASING.md`).
 
 Lints that bite: `prefer_relative_imports` and `directives_ordering` (imports must be relative and sorted alphabetically within their sections).
 
@@ -47,4 +58,4 @@ Things that need more than one file to understand:
 - **Item icons and info**: resolved at runtime from encore.moe (`features/stats/data/item_image_service.dart`, `features/info/`), cached on disk by `CachedNetworkImage` and in shared preferences. `ItemIcon` takes a resource id and type and looks the URL up through `itemImageUrlProvider`.
 - **UI stack**: `material_ui` and `material_3_expressive` instead of plain Material (so routing uses widgets-level `NoTransitionPage`/`CustomTransitionPage`, see `shared/routing/app_router.dart`). Dynamic color with a seed fallback; shared scale in `shared/theme/app_tokens.dart` (read via `context.tokens`) and rarity colors in `app_colors.dart`.
 - **Adaptive layout**: `shared/layout/window_size.dart` defines compact/medium/expanded. Compact uses a bottom nav, wider windows a rail (`features/shell/`). Screens are `CustomScrollView`s of slivers; wrap content slivers in `SliverAdaptivePadding` so side margins follow the window class. On wide layouts the pool selector lives in the rail, on phones it is a chip row in `StatsScreen`.
-- **i18n**: slang with `en` (base) and `id`, sources in `lib/src/shared/i18n/*.i18n.json`, generated into `i18n/gen/`. Locales are eagerly loaded (`lazy: false`, see `slang.yaml`) because deferred loading crashed release builds on Indonesian devices. Add every new string to both JSON files, then run build_runner. Config is duplicated in `slang.yaml` and `build.yaml`; keep them in sync.
+- **i18n**: slang with `en` (base) and `id`, sources in `lib/src/shared/i18n/*.i18n.json`, generated into `i18n/gen/`. Locales are eagerly loaded (`lazy: false`, see `slang.yaml`) because deferred loading crashed release builds on Indonesian devices. Add every new string to both JSON files, then run `dart run slang`. Translations use the slang CLI configured in `slang.yaml`, not `slang_build_runner`. Generated code (`*.g.dart`, `*.gen.dart`, `i18n/gen/`) is git-ignored and never committed; CI and the release workflow generate it in `.github/actions/flutter-setup`, which also pins the Flutter version.

@@ -1,0 +1,25 @@
+# How GitHub groups the auto-generated "What's Changed" list on a release.
+# It lists merged pull requests and groups them by label; commits pushed
+# straight to main are not listed (the curated notes in CHANGELOG.md cover
+# those). The labels are GitHub's defaults, plus "dependencies" from Dependabot.
+changelog:
+  exclude:
+    authors:
+      - dependabot
+      - github-actions
+  categories:
+    - title: New features
+      labels:
+        - enhancement
+    - title: Bug fixes
+      labels:
+        - bug
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other changes
+      labels:
+        - '*'
