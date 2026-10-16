@@ -26,7 +26,10 @@
     "noPulls": "No pulls in this pool yet.",
     "fiveStarPity": "5★ pity",
     "fourStarPity": "4★ pity",
-    "pullsUntilHard": "{n} pulls until guaranteed",
+    "pullsUntilHard(plural)": {
+      "one": "{n} pull until guaranteed",
+      "other": "{n} pulls until guaranteed"
+    },
     "total": "Total pulls",
     "fiveStars": "5★",
     "fourStars": "4★",
@@ -38,7 +41,10 @@
     "nextGuaranteed": "Next 5★ is guaranteed featured",
     "fiveStarTimeline": "5★ pulls",
     "history": "History",
-    "pullsUsed": "{n} pulls",
+    "pullsUsed(plural)": {
+      "one": "{n} pull",
+      "other": "{n} pulls"
+    },
     "won": "Won 50/50",
     "lost": "Lost 50/50",
     "guaranteed": "Guaranteed",
@@ -90,7 +96,10 @@
     "rarityDistribution": "Rarity distribution",
     "typeDistribution": "Type distribution",
     "pityPerType": "Pity per pull type",
-    "sinceLastFive": "{n} pulls since last 5★",
+    "sinceLastFive(plural)": {
+      "one": "{n} pull since last 5★",
+      "other": "{n} pulls since last 5★"
+    },
     "noFiveYet": "No 5★ yet",
     "noPullsAnywhere": "No pulls yet. Import your records to see the overview.",
     "updateShort": "Update",
@@ -105,7 +114,10 @@
     "pityShort": "Pity {n}",
     "topRarityTitle": "5★ per pull type",
     "timelineAllTitle": "5★ timeline · all pull types",
-    "timelineNowAll": "{n} pulls since last 5★ across pull types",
+    "timelineNowAll(plural)": {
+      "one": "{n} pull since last 5★ across pull types",
+      "other": "{n} pulls since last 5★ across pull types"
+    },
     "timelineLoadMore": "Show more ({n} left)",
     "timelineVertical": "Vertical view",
     "timelineHorizontal": "Horizontal view"
@@ -291,5 +303,32 @@
     "imageSaved": "Image saved",
     "imageSaveFailed": "Couldn't save the image",
     "imageLoadFailed": "Couldn't load the image"
+  },
+  "update": {
+    "title": "Update available",
+    "subtitle": "A new version is ready",
+    "current": "Current",
+    "latest": "New",
+    "whatsNew": "What's new",
+    "noNotes": "See the release page for the details.",
+    "downloadInstall": "Download and install",
+    "download": "Download",
+    "openRelease": "Open release page",
+    "releasePage": "Release page",
+    "downloading": "Downloading…",
+    "cancel": "Cancel",
+    "skip": "Skip this version",
+    "later": "Later",
+    "downloadFailed": "Couldn't download the update. Check your connection and try again.",
+    "checksumFailed": "The downloaded file didn't match its checksum, so it was discarded.",
+    "installFailed": "Couldn't start the installer.",
+    "sectionUpdates": "Updates",
+    "checkTitle": "Check for updates",
+    "checkSubtitle": "You have version {version}",
+    "autoTitle": "Check automatically",
+    "autoSubtitle": "Look for a new version when the app starts, at most twice a day",
+    "checking": "Checking…",
+    "upToDate": "You're on the latest version",
+    "checkFailed": "Couldn't check for updates. Check your connection and try again."
   }
 }

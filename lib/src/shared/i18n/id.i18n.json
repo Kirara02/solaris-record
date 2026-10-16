@@ -26,7 +26,9 @@
     "noPulls": "Belum ada pull di pool ini.",
     "fiveStarPity": "Pity 5★",
     "fourStarPity": "Pity 4★",
-    "pullsUntilHard": "{n} pull lagi hingga dijamin",
+    "pullsUntilHard(plural)": {
+      "other": "{n} pull lagi hingga dijamin"
+    },
     "total": "Total pull",
     "fiveStars": "5★",
     "fourStars": "4★",
@@ -38,7 +40,9 @@
     "nextGuaranteed": "5★ berikutnya dijamin unggulan",
     "fiveStarTimeline": "Pull 5★",
     "history": "Riwayat",
-    "pullsUsed": "{n} pull",
+    "pullsUsed(plural)": {
+      "other": "{n} pull"
+    },
     "won": "Menang 50/50",
     "lost": "Kalah 50/50",
     "guaranteed": "Dijamin",
@@ -90,7 +94,9 @@
     "rarityDistribution": "Distribusi rarity",
     "typeDistribution": "Distribusi jenis",
     "pityPerType": "Pity per jenis pull",
-    "sinceLastFive": "{n} pull sejak 5★ terakhir",
+    "sinceLastFive(plural)": {
+      "other": "{n} pull sejak 5★ terakhir"
+    },
     "noFiveYet": "Belum ada 5★",
     "noPullsAnywhere": "Belum ada pull. Impor record untuk melihat ringkasan.",
     "updateShort": "Perbarui",
@@ -105,7 +111,9 @@
     "pityShort": "Pity {n}",
     "topRarityTitle": "5★ per tipe pull",
     "timelineAllTitle": "Timeline 5★ · semua tipe pull",
-    "timelineNowAll": "{n} pull sejak 5★ terakhir di semua tipe pull",
+    "timelineNowAll(plural)": {
+      "other": "{n} pull sejak 5★ terakhir di semua tipe pull"
+    },
     "timelineLoadMore": "Tampilkan lagi ({n} lagi)",
     "timelineVertical": "Tampilan vertikal",
     "timelineHorizontal": "Tampilan horizontal"
@@ -291,5 +299,32 @@
     "imageSaved": "Gambar disimpan",
     "imageSaveFailed": "Gagal menyimpan gambar",
     "imageLoadFailed": "Gagal memuat gambar"
+  },
+  "update": {
+    "title": "Pembaruan tersedia",
+    "subtitle": "Versi baru sudah siap",
+    "current": "Saat ini",
+    "latest": "Baru",
+    "whatsNew": "Yang baru",
+    "noNotes": "Lihat halaman rilis untuk detailnya.",
+    "downloadInstall": "Unduh dan pasang",
+    "download": "Unduh",
+    "openRelease": "Buka halaman rilis",
+    "releasePage": "Halaman rilis",
+    "downloading": "Mengunduh…",
+    "cancel": "Batal",
+    "skip": "Lewati versi ini",
+    "later": "Nanti",
+    "downloadFailed": "Gagal mengunduh pembaruan. Periksa koneksi Anda dan coba lagi.",
+    "checksumFailed": "Berkas yang diunduh tidak cocok dengan checksum-nya, jadi dibuang.",
+    "installFailed": "Gagal membuka pemasang.",
+    "sectionUpdates": "Pembaruan",
+    "checkTitle": "Periksa pembaruan",
+    "checkSubtitle": "Anda memakai versi {version}",
+    "autoTitle": "Periksa otomatis",
+    "autoSubtitle": "Cari versi baru saat app dibuka, paling banyak dua kali sehari",
+    "checking": "Memeriksa…",
+    "upToDate": "Anda sudah memakai versi terbaru",
+    "checkFailed": "Gagal memeriksa pembaruan. Periksa koneksi Anda dan coba lagi."
   }
 }

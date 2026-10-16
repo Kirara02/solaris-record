@@ -49,6 +49,15 @@ Without that file, release builds fall back to the debug key, so `flutter run --
    The workflow fails early if the tag does not match the version in `pubspec.yaml`. A tag with a suffix (`v1.1.0-beta.1`) is published as a pre-release.
 4. When the run finishes, the release page has the Android APKs (per ABI), a Windows zip, a Linux tarball, a macOS zip and `SHA256SUMS.txt`.
 
+## What the app does with a release
+
+Installed apps look at the latest GitHub release and offer it in an update dialog (Android installs it in the app; other platforms open the download). Two things from the release matter to that:
+
+- **File names.** The app picks its file by name: `…-android-arm64-v8a.apk`, `…-android-armeabi-v7a.apk`, `…-android-x86_64.apk`, `…-windows-x64.zip`, `…-macos.zip` and `…-linux-x64.tar.gz`. Keep that naming if you change the workflow, and update `assetSuffixFor` in `lib/src/features/update/domain/update_info.dart` with it.
+- **The description.** The dialog shows the release notes up to the first `---` line, which is where the standard download footer starts, so the `CHANGELOG.md` section is what users read in the app.
+
+Pre-releases and drafts are not offered: only the latest stable release counts.
+
 ## Known limits
 
 - **Windows and macOS builds are not code-signed.** Windows shows a SmartScreen warning and macOS asks the user to right-click → Open. Signing needs a paid certificate (a Windows code-signing certificate, or an Apple Developer ID with notarization).

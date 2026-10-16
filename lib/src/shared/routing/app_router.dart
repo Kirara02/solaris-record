@@ -9,6 +9,7 @@ import '../../features/settings/presentation/data_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/stats/presentation/stats_screen.dart';
+import '../../features/update/presentation/update_startup_check.dart';
 import 'app_routes.dart';
 
 export 'app_routes.dart';
@@ -54,7 +55,9 @@ GoRouter appRouter(Ref ref) {
       StatefulShellRoute.indexedStack(
         pageBuilder: (context, state, shell) => _page(
           state,
-          AppShell(navigationShell: shell, location: state.uri.path),
+          UpdateStartupCheck(
+            child: AppShell(navigationShell: shell, location: state.uri.path),
+          ),
         ),
         branches: [
           StatefulShellBranch(

@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -6,9 +8,39 @@ import '../../../shared/layout/window_size.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/settings_group.dart';
+import '../../update/domain/update_platform.dart';
+import '../../update/presentation/update_actions.dart';
+import '../../update/presentation/update_dialog.dart';
+import '../../update/update_providers.dart';
 
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends ConsumerStatefulWidget {
   const AboutScreen({super.key});
+
+  @override
+  ConsumerState<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends ConsumerState<AboutScreen> {
+  bool _checking = false;
+
+  /// Asks GitHub for a newer release and says what it found. Unlike the
+  /// automatic check it also offers a version the user skipped.
+  Future<void> _checkNow() async {
+    final t = context.t;
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _checking = true);
+    final result = await checkForUpdate(ref, manual: true);
+    if (!mounted) return;
+    setState(() => _checking = false);
+    switch (result) {
+      case UpdateAvailable():
+        await showUpdateDialog(context, result);
+      case UpdateUpToDate():
+        messenger.showSnackBar(SnackBar(content: Text(t.update.upToDate)));
+      case UpdateCheckFailed():
+        messenger.showSnackBar(SnackBar(content: Text(t.update.checkFailed)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +94,47 @@ class AboutScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (updatesSupported) ...[
+                  SettingsSectionHeader(title: t.update.sectionUpdates),
+                  SettingsGroup(
+                    children: [
+                      SettingsSwitchItem(
+                        icon: Icons.autorenew,
+                        title: t.update.autoTitle,
+                        subtitle: t.update.autoSubtitle,
+                        value: ref.watch(autoUpdateCheckProvider),
+                        onChanged: ref
+                            .read(autoUpdateCheckProvider.notifier)
+                            .set,
+                      ),
+                      FutureBuilder<PackageInfo>(
+                        future: PackageInfo.fromPlatform(),
+                        builder: (context, snapshot) => SettingsItem(
+                          icon: Icons.system_update_outlined,
+                          title: t.update.checkTitle,
+                          subtitle: _checking
+                              ? t.update.checking
+                              : snapshot.hasData
+                              ? t.update.checkSubtitle(
+                                  version: snapshot.data!.version,
+                                )
+                              : null,
+                          showDivider: false,
+                          trailing: _checking
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: M3EProgressIndicator.circular(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : null,
+                          onTap: _checking ? null : _checkNow,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 SettingsSectionHeader(title: t.about.sectionInfo),
                 SettingsGroup(
                   children: [
