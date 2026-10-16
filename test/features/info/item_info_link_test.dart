@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:solaris_record_app/src/data/preferences.dart';
 import 'package:solaris_record_app/src/data/providers.dart';
 import 'package:solaris_record_app/src/features/info/data/url_opener.dart';
 import 'package:solaris_record_app/src/features/info/domain/encore_links.dart';
@@ -78,9 +80,13 @@ void main() {
     Future<ItemInfo?> Function()? info,
   }) async {
     final opener = _RecordingOpener(succeeds: openSucceeds);
+    // The dialog reads the data language setting.
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
           urlOpenerProvider.overrideWithValue(opener),
           itemInfoProvider(
             resourceId,

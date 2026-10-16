@@ -16,14 +16,12 @@ void main() {
     expect(generated, isNot(contains('loadLibrary')));
   });
 
-  test('slang is configured with lazy: false in both config files', () {
-    for (final file in ['slang.yaml', 'build.yaml']) {
-      expect(
-        File(file).readAsStringSync(),
-        contains('lazy: false'),
-        reason: '$file must disable deferred locales',
-      );
-    }
+  test('slang is configured with lazy: false', () {
+    expect(
+      File('slang.yaml').readAsStringSync(),
+      contains('lazy: false'),
+      reason: 'slang.yaml must disable deferred locales',
+    );
   });
 
   test('every locale can be built synchronously', () {

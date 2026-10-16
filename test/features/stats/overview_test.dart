@@ -163,10 +163,10 @@ void main() {
     expect(find.text('Rarity distribution'), findsOneWidget);
     expect(find.text('Type distribution'), findsOneWidget);
     expect(find.text('Pity per pull type'), findsOneWidget);
-    // Per-pool pity rows.
+    // Per-pool pity rows: shown in the 5★-per-pull-type card and the pity card.
     expect(
       find.text('20 pulls since last 5★', skipOffstage: false),
-      findsOneWidget,
+      findsNWidgets(2),
     );
     expect(
       find.text('No 5★ yet', skipOffstage: false),

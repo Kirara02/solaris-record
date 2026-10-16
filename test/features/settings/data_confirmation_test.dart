@@ -103,7 +103,9 @@ void main() {
     Future<int> accounts() =>
         real(() async => (await repo.watchAccounts().first).length);
 
-    tester.view.physicalSize = const Size(412, 915);
+    // A phone-width screen tall enough for every row, now that the screen
+    // also lists backup and logs.
+    tester.view.physicalSize = const Size(412, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
