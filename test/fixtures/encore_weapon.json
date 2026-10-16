@@ -1,0 +1,23 @@
+{
+ "ItemId": 21010011,
+ "WeaponName": "Training Broadblade",
+ "QualityId": 1,
+ "WeaponTypeName": "Broadblade",
+ "IconBig": "/Game/Aki/UI/UIResources/Common/Image/IconWeapon732/T_IconWeapon732_21010011_UI.T_IconWeapon732_21010011_UI",
+ "IconMiddle": "/Game/Aki/UI/UIResources/Common/Image/IconWeapon160/T_IconWeapon160_21010011_UI.T_IconWeapon160_21010011_UI",
+ "Desc": "Increases ATK by <span style=\"color:#ffd12f;\" class=\"font-bold\">4%/5%/6%/7%/8%</span>.",
+ "BgDescription": "This broadblade is designed specifically for training and teaching, offering only the basic features.",
+ "ResonName": "Persevere",
+ "Properties": [
+  {
+   "Name": "ATK",
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertyredattack_UI.T_Iconpropertyredattack_UI",
+   "BaseValue": 20
+  },
+  {
+   "Name": "ATK",
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertyredattack_UI.T_Iconpropertyredattack_UI",
+   "BaseValue": 0.025499999523162842
+  }
+ ]
+}

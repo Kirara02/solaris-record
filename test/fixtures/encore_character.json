@@ -1,0 +1,88 @@
+{
+ "Id": 1105,
+ "QualityId": 5,
+ "Name": {
+  "Title": "No Description Available",
+  "Content": "Zhezhi"
+ },
+ "NickName": {
+  "Title": "No Description Available",
+  "Content": "Zhezhi"
+ },
+ "Introduction": {
+  "Title": "No Description Available",
+  "Content": "An artist for hire trying to make a living. Reserved and timid, she is not good with words but speaks volumes through her art, where her creations come to life with impossible authenticity."
+ },
+ "ElementName": "Glacio",
+ "WeaponTypeName": "Rectifier",
+ "FormationRoleCard": "https://api.encore.moe/resource/Data/Game/Aki/UI/UIResources/Common/Image/IconRolePile/T_IconRole_Pile_zhezhi_UI.webp",
+ "Card": "https://api.encore.moe/resource/Data/Game/Aki/UI/UIResources/Common/Image/IconRoleHead175/T_IconRoleHead175_27_UI.webp",
+ "Tags": [
+  {
+   "TagName": "Concerto Efficiency",
+   "TagDesc": "Quick concerto energy regeneration",
+   "TagNameColor": "ff4040",
+   "TagIcon": "/Game/Aki/UI/UIResources/Common/Atlas/RoleLabel/SP_RoleLabelA3.webp"
+  },
+  {
+   "TagName": "Basic Attack DMG",
+   "TagDesc": "Deals higher Basic Attack DMG",
+   "TagNameColor": "ffde73",
+   "TagIcon": "/Game/Aki/UI/UIResources/Common/Atlas/RoleLabel/SP_RoleLabelB1.webp"
+  }
+ ],
+ "Skills": [
+  {
+   "SkillType": "Normal Attack",
+   "SkillName": "Dimming Brush",
+   "SkillDescribe": "<span>x</span>"
+  },
+  {
+   "SkillType": "Resonance Skill",
+   "SkillName": "Manifestation",
+   "SkillDescribe": "<span>x</span>"
+  },
+  {
+   "SkillType": "Resonance Liberation",
+   "SkillName": "Living Canvas",
+   "SkillDescribe": "<span>x</span>"
+  },
+  {
+   "SkillType": "Inherent Skill",
+   "SkillName": "Calligrapher's Touch",
+   "SkillDescribe": "<span>x</span>"
+  }
+ ],
+ "Properties": [
+  {
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertygreenlife_UI.T_Iconpropertygreenlife_UI",
+   "Name": "HP",
+   "BaseValue": 980
+  },
+  {
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertyredattack_UI.T_Iconpropertyredattack_UI",
+   "Name": "ATK",
+   "BaseValue": 30
+  },
+  {
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertygreendefense_UI.T_Iconpropertygreendefense_UI",
+   "Name": "DEF",
+   "BaseValue": 98
+  },
+  {
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertyredbaoji_UI.T_Iconpropertyredbaoji_UI",
+   "Name": "Crit. Rate",
+   "BaseValue": 500
+  },
+  {
+   "Icon": "/Game/Aki/UI/UIResources/Common/Image/IconAttribute/T_Iconpropertyredcrit_UI.T_Iconpropertyredcrit_UI",
+   "Name": "Crit. DMG",
+   "BaseValue": 15000
+  },
+  {
+   "Icon": "/Game/Aki/UI/UiResources/Common/Image/IconAttribute/T_IconpropertywpMastery_UI.T_IconpropertywpMastery_UI",
+   "Name": "Tune Break Boost",
+   "BaseValue": 0
+  }
+ ]
+}

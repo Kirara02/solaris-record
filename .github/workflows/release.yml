@@ -1,0 +1,208 @@
+name: Release
+
+# Pushing a tag like v1.2.3 builds every platform and publishes a GitHub
+# Release with the downloads. See docs/RELEASING.md.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: 3.47.x
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.v.outputs.name }}
+      base: ${{ steps.v.outputs.base }}
+      prerelease: ${{ steps.v.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        name: Tag must match the version in pubspec.yaml
+        run: |
+          name="${GITHUB_REF_NAME#v}"
+          base="${name%%-*}"
+          pubspec=$(sed -nE 's/^version: *([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' pubspec.yaml)
+          if [ "$base" != "$pubspec" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec.yaml version $pubspec"
+            exit 1
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          case "$name" in *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;; *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;; esac
+
+  android:
+    needs: version
+    runs-on: ubuntu-latest
+    # Holds the signing secrets, and can require a manual approval (Settings →
+    # Environments → release) before anything is signed.
+    environment: release
+    env:
+      NAME: ${{ needs.version.outputs.name }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      # Never publish an APK signed with the debug key.
+      - name: Require the signing secrets
+        run: |
+          for v in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Missing repository secret $v (see docs/RELEASING.md)"
+              exit 1
+            fi
+          done
+
+      - name: Write the keystore
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/release.jks"
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/key.properties
+
+      - run: flutter pub get
+      - run: >
+          flutter build apk --release --split-per-abi
+          --build-name=${{ needs.version.outputs.base }}
+          --build-number=${{ github.run_number }}
+
+      - name: Name the files
+        run: |
+          mkdir out
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            cp "build/app/outputs/flutter-apk/app-$abi-release.apk" "out/solaris-record-v$NAME-android-$abi.apk"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: out/*
+
+  windows:
+    needs: version
+    runs-on: windows-latest
+    env:
+      NAME: ${{ needs.version.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - run: >
+          flutter build windows --release
+          --build-name=${{ needs.version.outputs.base }}
+          --build-number=${{ github.run_number }}
+      - name: Zip
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory out | Out-Null
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "out/solaris-record-v$env:NAME-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: out/*
+
+  linux:
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      NAME: ${{ needs.version.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsqlite3-dev
+      - run: flutter pub get
+      - run: >
+          flutter build linux --release
+          --build-name=${{ needs.version.outputs.base }}
+          --build-number=${{ github.run_number }}
+      - name: Archive
+        run: |
+          mkdir out
+          tar -C build/linux/x64/release/bundle -czf "out/solaris-record-v$NAME-linux-x64.tar.gz" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: out/*
+
+  macos:
+    needs: version
+    runs-on: macos-latest
+    env:
+      NAME: ${{ needs.version.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - run: >
+          flutter build macos --release
+          --build-name=${{ needs.version.outputs.base }}
+          --build-number=${{ github.run_number }}
+      # The bundle file is still named after the Xcode product; the app's
+      # display name is already "Solaris Record", so rename it for the download.
+      - name: Zip
+        run: |
+          mkdir out stage
+          cp -R build/macos/Build/Products/Release/solaris_record_app.app "stage/Solaris Record.app"
+          ditto -c -k --sequesterRsrc --keepParent "stage/Solaris Record.app" "out/solaris-record-v$NAME-macos.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: out/*
+
+  publish:
+    needs: [version, android, windows, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum * > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          prerelease: ${{ needs.version.outputs.prerelease }}
+          body: |
+            Unofficial fan project, not affiliated with Kuro Games.
+
+            **Install notes**
+            - **Android**: pick the APK for your device (most phones: `arm64-v8a`).
+            - **Windows / macOS**: the builds are not code-signed. Windows SmartScreen: *More info → Run anyway*. macOS: right-click the app and choose *Open*, or run `xattr -dr com.apple.quarantine "Solaris Record.app"`.
+            - **Linux**: extract the archive and run `solaris_record_app`.
+            - Verify downloads with `SHA256SUMS.txt`.
