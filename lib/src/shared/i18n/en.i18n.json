@@ -135,7 +135,8 @@
     "retry": "Try again",
     "close": "Close",
     "savedHint": "Using the link saved from your last update. If it has expired, you'll be asked for a new one.",
-    "fromFile": "Import from JSON file"
+    "fromFile": "Import from JSON file",
+    "fromFileHint": "Supports Solaris Record backups and WuWa Tracker exports (wuwatracker-pulls.json). New records are added; existing ones are never overwritten."
   },
   "accounts": {
     "title": "Accounts",

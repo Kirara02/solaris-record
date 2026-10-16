@@ -227,6 +227,15 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         label: Text(t.import.fromFile),
                         onPressed: loading || _fileBusy ? null : _importFile,
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+                        child: Text(
+                          t.import.fromFileHint,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
                       if (_fileOutcome case final outcome?) ...[
                         const SizedBox(height: 16),
                         if (outcome.ok)

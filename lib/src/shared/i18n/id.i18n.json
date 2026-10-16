@@ -135,7 +135,8 @@
     "retry": "Coba lagi",
     "close": "Tutup",
     "savedHint": "Memakai tautan yang tersimpan dari update terakhir. Jika sudah kedaluwarsa, Anda akan diminta tautan baru.",
-    "fromFile": "Impor dari file JSON"
+    "fromFile": "Impor dari file JSON",
+    "fromFileHint": "Mendukung cadangan Solaris Record dan ekspor WuWa Tracker (wuwatracker-pulls.json). Record baru ditambahkan, yang sudah ada tidak pernah ditimpa."
   },
   "accounts": {
     "title": "Akun",
