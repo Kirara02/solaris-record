@@ -4,6 +4,22 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.3.0
+
+You can share your pulls as an image, drag your accounts into the order you like, see 5★ pulls as artwork cards, and use the app in Japanese and Chinese.
+
+### What's new
+- **Share as an image.** The share button in the stats header makes a picture of the overview or of one pull type, with the totals, rarity and item type charts, a 5★ timeline and the list of your 5★. Pick a dark or light look, and choose whether the full UID is shown (it follows *Mask UID* until you change it). Phones open the share sheet; on desktop a save dialog opens in your Downloads folder.
+- **Reorder accounts.** Drag the handle on an account in *Accounts* to change the order, also in the account switcher. Accounts without an alias keep their "Account N" name.
+- **5★ cards.** The 5★ overview can show each pull as a card with the item's convene artwork and outfit behind its pull count, name and time. It is the default; switch back to bubbles with the button above the list.
+- **More languages.** Japanese, Simplified Chinese and Traditional Chinese join English and Indonesian. Pick one under *Appearance → Language*.
+
+### Fixes
+- The language pickers and the account menus are now centered over the content on desktop, like the pull detail, instead of covering the whole window with an off-center list.
+
+### Notes
+- The new translations were machine-made and have not been reviewed by native speakers; the pull type names in particular may differ from the game's. Corrections are welcome as issues.
+
 ## 1.2.1
 
 Dialogs on desktop now sit in the middle of the content, and the update dialog buttons have their labels back.
