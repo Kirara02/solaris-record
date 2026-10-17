@@ -13,6 +13,7 @@ import '../../../shared/widgets/settings_group.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/presentation/account_widgets.dart';
 import '../../import/presentation/import_dialog.dart';
+import '../../share/presentation/share_dialog.dart';
 import '../domain/pool_type.dart';
 import '../pool_selection.dart';
 import 'overview_view.dart';
@@ -59,6 +60,16 @@ class StatsScreen extends ConsumerWidget {
             actions: wide
                 ? [
                     // Wide top bar: "Update" button and the account pill.
+                    IconButton(
+                      tooltip: t.share.tooltip,
+                      icon: const Icon(Icons.ios_share),
+                      onPressed: () => showShareDialog(
+                        context,
+                        account: account,
+                        pool: pool,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
                     M3EButton(
                       size: M3EButtonSize.sm,
                       icon: const Icon(Icons.sync),
@@ -69,6 +80,15 @@ class StatsScreen extends ConsumerWidget {
                     AccountPill(account: account),
                   ]
                 : [
+                    IconButton(
+                      tooltip: t.share.tooltip,
+                      icon: const Icon(Icons.ios_share),
+                      onPressed: () => showShareDialog(
+                        context,
+                        account: account,
+                        pool: pool,
+                      ),
+                    ),
                     IconButton(
                       tooltip: t.settings.import,
                       icon: const Icon(Icons.download_outlined),

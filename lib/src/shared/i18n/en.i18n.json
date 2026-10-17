@@ -208,6 +208,17 @@
     "prefilledClipboard": "Filled from your clipboard.",
     "prefilledShared": "Received from another app."
   },
+  "share": {
+    "title": "Share image",
+    "generated": "Generated {date}",
+    "tooltip": "Share as image",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "showFullUid": "Show full UID",
+    "share": "Share",
+    "saved": "Image saved: {name}",
+    "failed": "Couldn't create the image."
+  },
   "accounts": {
     "title": "Accounts",
     "empty": "No accounts yet. Import a convene URL to add one.",

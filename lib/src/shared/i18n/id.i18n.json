@@ -204,6 +204,17 @@
     "prefilledClipboard": "Diisi dari clipboard Anda.",
     "prefilledShared": "Diterima dari aplikasi lain."
   },
+  "share": {
+    "title": "Bagikan gambar",
+    "generated": "Dibuat {date}",
+    "tooltip": "Bagikan sebagai gambar",
+    "themeDark": "Gelap",
+    "themeLight": "Terang",
+    "showFullUid": "Tampilkan UID lengkap",
+    "share": "Bagikan",
+    "saved": "Gambar disimpan: {name}",
+    "failed": "Gagal membuat gambar."
+  },
   "accounts": {
     "title": "Akun",
     "empty": "Belum ada akun. Impor URL convene untuk menambahkan.",
