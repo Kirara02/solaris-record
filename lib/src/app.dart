@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
@@ -15,58 +16,76 @@ class SolarisApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(themeSettingsControllerProvider);
 
-    // M3EMaterialApp has no router constructor, so this mirrors what it does:
-    // a MaterialApp whose builder installs M3ETheme, which resolves brightness
-    // and the device's dynamic palette (seeded fallback otherwise).
-    final data = M3EThemeData.light(seedColor: settings.seedColor).copyWith(
-      fontFamily: 'Inter',
-      // Rail items span the whole rail like the hand-drawn Settings item
-      // (pill = rail width minus a 16px inset on each side, the same inset the
-      // rail gives its trailing slot), instead of shrinking to their label.
-      navigationRailTheme: M3ENavigationRailTheme.defaults.copyWith(
-        indicatorFillsWidth: true,
-        expandedItemInset: 16,
-        // Modern sidebar look: slim rounded-rectangle indicators (not full
-        // pills) with a tight vertical rhythm. Colours stay theme-derived so
-        // dynamic color still applies.
-        expandedIndicatorHeight: RailMetrics.itemHeight,
-        expandedIndicatorRadius: RailMetrics.indicatorRadius,
-        itemExpandedHeight: RailMetrics.itemHeight,
-        shortItemHeight: RailMetrics.shortItemHeight,
-        noLabelIndicatorSize: RailMetrics.collapsedIndicator,
-        itemVerticalGap: 2,
-        topSpace: 20,
-      ),
-    );
+    // The device palette comes from DynamicColorBuilder as the real system
+    // scheme (Android's Material You roles), not re-derived from its primary
+    // colour: M3ETheme's own dynamic host seeds a new scheme from the primary
+    // only, which gives different surfaces and containers than the wallpaper
+    // palette. Desktop platforms only expose an accent colour, so there the
+    // scheme is seeded from it either way.
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        M3EThemeData dataFor(Brightness brightness) {
+          final dark = brightness == Brightness.dark;
+          final base = dark
+              ? M3EThemeData.dark(seedColor: settings.seedColor)
+              : M3EThemeData.light(seedColor: settings.seedColor);
+          final device = dark ? darkDynamic : lightDynamic;
+          return base.copyWith(
+            fontFamily: 'Inter',
+            colorScheme: settings.useDynamicColor && device != null
+                ? M3EColorScheme.fromColorScheme(device).harmonized()
+                : base.colorScheme,
+            // Rail items span the whole rail like the hand-drawn Settings
+            // item (pill = rail width minus a 16px inset on each side, the
+            // same inset the rail gives its trailing slot), instead of
+            // shrinking to their label.
+            navigationRailTheme: M3ENavigationRailTheme.defaults.copyWith(
+              indicatorFillsWidth: true,
+              expandedItemInset: 16,
+              // Modern sidebar look: slim rounded-rectangle indicators (not
+              // full pills) with a tight vertical rhythm. Colours stay
+              // theme-derived so dynamic color still applies.
+              expandedIndicatorHeight: RailMetrics.itemHeight,
+              expandedIndicatorRadius: RailMetrics.indicatorRadius,
+              itemExpandedHeight: RailMetrics.itemHeight,
+              shortItemHeight: RailMetrics.shortItemHeight,
+              noLabelIndicatorSize: RailMetrics.collapsedIndicator,
+              itemVerticalGap: 2,
+              topSpace: 20,
+            ),
+          );
+        }
 
-    return MaterialApp.router(
-      routerConfig: ref.watch(appRouterProvider),
-      onGenerateTitle: (context) => context.t.appName,
-      debugShowCheckedModeBanner: false,
-      theme: applyAppTheme(data.toThemeData()),
-      darkTheme: applyAppTheme(data.deriveDarkTemplate().toThemeData()),
-      themeMode: settings.mode,
-      // M3ETheme reads the parent Theme once per rebuild. With the default
-      // animated transition it can capture a half-interpolated (or stale)
-      // theme, so switch instantly.
-      themeAnimationDuration: Duration.zero,
-      locale: TranslationProvider.of(context).flutterLocale,
-      supportedLocales: AppLocaleUtils.supportedLocales,
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => M3ETheme(
-        data: data,
-        autoTheming: settings.mode == ThemeMode.system,
-        initialTheme: switch (settings.mode) {
-          ThemeMode.light => Brightness.light,
-          ThemeMode.dark => Brightness.dark,
-          ThemeMode.system => null,
-        },
-        dynamicColoring: settings.useDynamicColor,
-        child: _ResolvedThemeScope(
-          amoled: settings.useAmoled,
-          child: child ?? const SizedBox.shrink(),
-        ),
-      ),
+        return MaterialApp.router(
+          routerConfig: ref.watch(appRouterProvider),
+          onGenerateTitle: (context) => context.t.appName,
+          debugShowCheckedModeBanner: false,
+          theme: applyAppTheme(dataFor(Brightness.light).toThemeData()),
+          darkTheme: applyAppTheme(dataFor(Brightness.dark).toThemeData()),
+          themeMode: settings.mode,
+          // M3ETheme reads the parent Theme once per rebuild. With the default
+          // animated transition it can capture a half-interpolated (or stale)
+          // theme, so switch instantly.
+          themeAnimationDuration: Duration.zero,
+          locale: TranslationProvider.of(context).flutterLocale,
+          supportedLocales: AppLocaleUtils.supportedLocales,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          // M3EThemeScope can't take a ready-made dark scheme (it re-derives
+          // dark from the light primary), so the matching data is picked here
+          // from the same brightness MaterialApp resolves.
+          builder: (context, child) => M3ETheme(
+            data: dataFor(switch (settings.mode) {
+              ThemeMode.light => Brightness.light,
+              ThemeMode.dark => Brightness.dark,
+              ThemeMode.system => MediaQuery.platformBrightnessOf(context),
+            }),
+            child: _ResolvedThemeScope(
+              amoled: settings.useAmoled,
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
     );
   }
 }
