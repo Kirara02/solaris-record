@@ -2,6 +2,8 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/content_dialog.dart';
+import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/item_icon.dart';
@@ -105,115 +107,158 @@ class FiveStarBubbles extends StatelessWidget {
   }
 }
 
-/// Bottom sheet with a 5★'s pulls used, time and 50/50 result.
+/// Details of a 5★ (pulls used, time, 50/50 result): a bottom sheet on compact
+/// windows, a dialog centered over the content pane on wider ones.
 void showFiveStarDetail(
   BuildContext context,
   FiveStarEntry e, {
   int threshold = hardPity5,
 }) {
-  final t = context.t;
-  final scheme = Theme.of(context).colorScheme;
-  final (bg, fg) = luckColors(scheme, e.pullsUsed, threshold: threshold);
+  Widget body(BuildContext inner) => ArtworkAccent(
+    resourceId: e.resourceId,
+    resourceType: e.resourceType,
+    child: _FiveStarDetailBody(
+      entry: e,
+      threshold: threshold,
+      onItemInfo: () {
+        Navigator.pop(inner);
+        showItemInfo(
+          context,
+          resourceId: e.resourceId,
+          resourceType: e.resourceType,
+          name: e.name,
+          rarity: 5,
+        );
+      },
+    ),
+  );
 
-  showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    // Without this a sheet is capped at about half the screen, which pushed
-    // the "Item info" button into the scroll area.
-    isScrollControlled: true,
-    builder: (sheetContext) => ArtworkAccent(
-      resourceId: e.resourceId,
-      resourceType: e.resourceType,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ItemIcon(
-                  resourceId: e.resourceId,
-                  resourceType: e.resourceType,
-                  rarity: 5,
-                  size: 96,
-                  circular: true,
-                  ringColor: ringFor(scheme, e.result),
-                ),
-                const SizedBox(height: 12),
-                ItemName(
-                  resourceId: e.resourceId,
-                  fallback: e.name,
-                  style: Theme.of(sheetContext).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: rarityColor(scheme, 5),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SettingsGroup(
-                  children: [
-                    SettingsItem(
-                      icon: Icons.layers_outlined,
-                      title: t.stats.detailPity,
-                      trailing: StatusBadge(
-                        label: '${e.pullsUsed} / $threshold',
-                        background: bg,
-                        foreground: fg,
-                      ),
-                      footer: M3EProgressIndicator.linear(
-                        value: (e.pullsUsed / threshold).clamp(0.0, 1.0),
-                        color: fg,
-                        trackColor: scheme.surfaceContainerHighest,
-                      ),
-                    ),
-                    SettingsItem(
-                      icon: Icons.schedule,
-                      title: t.stats.detailTime,
-                      trailing: Text(e.time),
-                      showDivider: e.result != FiftyFiftyResult.notApplicable,
-                    ),
-                    if (e.result != FiftyFiftyResult.notApplicable)
-                      SettingsItem(
-                        icon: Icons.casino_outlined,
-                        title: t.stats.detailResult,
-                        trailing: StatusBadge(
-                          label: switch (e.result) {
-                            FiftyFiftyResult.won => t.stats.won,
-                            FiftyFiftyResult.lost => t.stats.lost,
-                            _ => t.stats.guaranteed,
-                          },
-                          background: ringFor(scheme, e.result),
-                          foreground: scheme.surface,
-                        ),
-                        showDivider: false,
-                      ),
-                  ],
-                ),
-                if (e.resourceId > 0) ...[
-                  const SizedBox(height: 12),
-                  M3EButton(
-                    style: M3EButtonStyle.tonal,
-                    size: M3EButtonSize.md,
-                    icon: const Icon(Icons.info_outline),
-                    label: Text(t.info.button),
-                    onPressed: () {
-                      Navigator.pop(sheetContext);
-                      showItemInfo(
-                        context,
-                        resourceId: e.resourceId,
-                        resourceType: e.resourceType,
-                        name: e.name,
-                        rarity: 5,
-                      );
-                    },
-                  ),
-                ],
-              ],
-            ),
+  if (context.windowSize == WindowSize.compact) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      // Without this a sheet is capped at about half the screen, which pushed
+      // the "Item info" button into the scroll area.
+      isScrollControlled: true,
+      builder: (sheetContext) =>
+          SafeArea(child: SingleChildScrollView(child: body(sheetContext))),
+    );
+  } else {
+    showContentDialog<void>(
+      context,
+      (dialogContext) => Dialog(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: SingleChildScrollView(
+            // Adds to the body's own 16 so the dialog gets 24 on every side
+            // (the sheet needs no top padding, its drag handle provides it).
+            padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+            child: body(dialogContext),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+class _FiveStarDetailBody extends StatelessWidget {
+  const _FiveStarDetailBody({
+    required this.entry,
+    required this.threshold,
+    required this.onItemInfo,
+  });
+
+  final FiveStarEntry entry;
+  final int threshold;
+  final VoidCallback onItemInfo;
+
+  @override
+  Widget build(BuildContext context) {
+    final e = entry;
+    final t = context.t;
+    final scheme = Theme.of(context).colorScheme;
+    final (bg, fg) = luckColors(scheme, e.pullsUsed, threshold: threshold);
+
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ItemIcon(
+              resourceId: e.resourceId,
+              resourceType: e.resourceType,
+              rarity: 5,
+              size: 96,
+              circular: true,
+              ringColor: ringFor(scheme, e.result),
+            ),
+            const SizedBox(height: 12),
+            ItemName(
+              resourceId: e.resourceId,
+              fallback: e.name,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: rarityColor(scheme, 5),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SettingsGroup(
+              children: [
+                SettingsItem(
+                  icon: Icons.layers_outlined,
+                  title: t.stats.detailPity,
+                  trailing: StatusBadge(
+                    label: '${e.pullsUsed} / $threshold',
+                    background: bg,
+                    foreground: fg,
+                  ),
+                  footer: M3EProgressIndicator.linear(
+                    value: (e.pullsUsed / threshold).clamp(0.0, 1.0),
+                    color: fg,
+                    trackColor: scheme.surfaceContainerHighest,
+                  ),
+                ),
+                SettingsItem(
+                  icon: Icons.schedule,
+                  title: t.stats.detailTime,
+                  trailing: Text(e.time),
+                  showDivider: e.result != FiftyFiftyResult.notApplicable,
+                ),
+                if (e.result != FiftyFiftyResult.notApplicable)
+                  SettingsItem(
+                    icon: Icons.casino_outlined,
+                    title: t.stats.detailResult,
+                    trailing: StatusBadge(
+                      label: switch (e.result) {
+                        FiftyFiftyResult.won => t.stats.won,
+                        FiftyFiftyResult.lost => t.stats.lost,
+                        _ => t.stats.guaranteed,
+                      },
+                      background: ringFor(scheme, e.result),
+                      foreground: scheme.surface,
+                    ),
+                    showDivider: false,
+                  ),
+              ],
+            ),
+            if (e.resourceId > 0) ...[
+              const SizedBox(height: 12),
+              M3EButton(
+                style: M3EButtonStyle.tonal,
+                size: M3EButtonSize.md,
+                icon: const Icon(Icons.info_outline),
+                label: Text(t.info.button),
+                onPressed: onItemInfo,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _Bubble extends StatelessWidget {

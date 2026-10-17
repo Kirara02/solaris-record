@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/error_card.dart';
@@ -24,9 +25,9 @@ Future<void> showItemInfo(
   required String resourceType,
   required String name,
   required int rarity,
-}) => showDialog<void>(
-  context: context,
-  builder: (context) => ItemInfoDialog(
+}) => showContentDialog<void>(
+  context,
+  (context) => ItemInfoDialog(
     resourceId: resourceId,
     resourceType: resourceType,
     fallbackName: name,
