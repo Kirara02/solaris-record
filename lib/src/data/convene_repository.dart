@@ -12,9 +12,10 @@ class ConveneRepository {
 
   final AppDatabase _db;
 
-  /// Accounts in the order they were added.
+  /// Accounts in the order the user arranged them (new ones go last).
   Stream<List<Account>> watchAccounts() =>
       (_db.select(_db.accounts)..orderBy([
+            (a) => OrderingTerm.asc(a.sortOrder),
             (a) => OrderingTerm.asc(a.number),
             (a) => OrderingTerm.asc(a.uid),
           ]))
@@ -41,6 +42,24 @@ class ConveneRepository {
     return (row.read(highest) ?? 0) + 1;
   }
 
+  /// The list position the next new account gets (after every existing one).
+  Future<int> _nextSortOrder() async {
+    final highest = _db.accounts.sortOrder.max();
+    final row = await (_db.selectOnly(
+      _db.accounts,
+    )..addColumns([highest])).getSingle();
+    return (row.read(highest) ?? 0) + 1;
+  }
+
+  /// Saves the account list order: [uidsInOrder] becomes positions 1..n.
+  Future<void> reorderAccounts(List<String> uidsInOrder) =>
+      _db.transaction(() async {
+        for (final (i, uid) in uidsInOrder.indexed) {
+          await (_db.update(_db.accounts)..where((a) => a.uid.equals(uid)))
+              .write(AccountsCompanion(sortOrder: Value(i + 1)));
+        }
+      });
+
   Future<void> upsertAccount({required String uid, required String serverId}) =>
       _db.transaction(() async {
         final existing = await (_db.select(
@@ -54,6 +73,7 @@ class ConveneRepository {
                   uid: uid,
                   serverId: serverId,
                   number: Value(await _nextAccountNumber()),
+                  sortOrder: Value(await _nextSortOrder()),
                 ),
               );
         } else if (existing.serverId != serverId) {
@@ -173,6 +193,7 @@ class ConveneRepository {
                 serverId: account.serverId,
                 alias: Value(account.alias),
                 number: Value(await _nextAccountNumber()),
+                sortOrder: Value(await _nextSortOrder()),
               ),
             );
       } else {

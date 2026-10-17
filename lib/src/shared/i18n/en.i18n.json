@@ -220,6 +220,8 @@
     "cancel": "Cancel",
     "emptyTitle": "No accounts yet",
     "addAccount": "Import records",
+    "reorderHint": "Drag the handle to reorder your accounts.",
+    "dragHandle": "Drag handle",
     "sectionAll": "Your accounts",
     "switchTitle": "Switch account",
     "actions": "Actions",

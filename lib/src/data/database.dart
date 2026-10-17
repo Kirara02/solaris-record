@@ -16,6 +16,10 @@ class Accounts extends Table {
   /// it has no alias. 0 only for rows inserted without one.
   IntColumn get number => integer().withDefault(const Constant(0))();
 
+  /// Position in the account list, set by dragging (schema v4). Separate from
+  /// [number] so reordering never renames an alias-less account.
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
   @override
   Set<Column> get primaryKey => {uid};
 }
@@ -51,7 +55,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: databaseName));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -73,6 +77,11 @@ class AppDatabase extends _$AppDatabase {
             [i + 1, row.read<String>('uid')],
           );
         }
+      }
+      if (from < 4) {
+        await m.addColumn(accounts, accounts.sortOrder);
+        // The list starts in the order accounts were added.
+        await customStatement('UPDATE accounts SET sort_order = number');
       }
     },
   );

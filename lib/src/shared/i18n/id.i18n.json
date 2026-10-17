@@ -216,6 +216,8 @@
     "cancel": "Batal",
     "emptyTitle": "Belum ada akun",
     "addAccount": "Impor record",
+    "reorderHint": "Seret gagang untuk mengatur urutan akun Anda.",
+    "dragHandle": "Gagang seret",
     "sectionAll": "Akun Anda",
     "switchTitle": "Ganti akun",
     "actions": "Aksi",

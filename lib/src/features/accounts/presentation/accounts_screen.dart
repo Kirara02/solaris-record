@@ -70,16 +70,16 @@ class AccountsScreen extends ConsumerWidget {
                   ],
                 ),
                 SettingsSectionHeader(title: t.accounts.sectionAll),
-                SettingsGroup(
-                  children: [
-                    for (final (i, a) in accounts.indexed)
-                      _AccountTile(
-                        account: a,
-                        selected: a.uid == active?.uid,
-                        showDivider: i != accounts.length - 1,
-                      ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                  child: Text(
+                    t.accounts.reorderHint,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
+                _AccountList(accounts: accounts, activeUid: active?.uid),
               ],
             ),
           ),
@@ -89,13 +89,73 @@ class AccountsScreen extends ConsumerWidget {
   }
 }
 
+/// The reorderable list of accounts. Shows the dragged order right away and
+/// drops it once the database stream delivers the saved one.
+class _AccountList extends ConsumerStatefulWidget {
+  const _AccountList({required this.accounts, required this.activeUid});
+
+  final List<Account> accounts;
+  final String? activeUid;
+
+  @override
+  ConsumerState<_AccountList> createState() => _AccountListState();
+}
+
+class _AccountListState extends ConsumerState<_AccountList> {
+  List<Account>? _pending;
+
+  @override
+  void didUpdateWidget(_AccountList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.accounts != widget.accounts) _pending = null;
+  }
+
+  Future<void> _onReorder(int oldIndex, int newIndex) async {
+    final list = [...(_pending ?? widget.accounts)];
+    if (newIndex == oldIndex) return;
+    list.insert(newIndex, list.removeAt(oldIndex));
+    setState(() => _pending = list);
+    await ref.read(conveneRepositoryProvider).reorderAccounts([
+      for (final a in list) a.uid,
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accounts = _pending ?? widget.accounts;
+    return SettingsGroup(
+      children: [
+        ReorderableListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          buildDefaultDragHandles: false,
+          onReorderItem: _onReorder,
+          children: [
+            for (final (i, a) in accounts.indexed)
+              _AccountTile(
+                key: ValueKey(a.uid),
+                index: i,
+                account: a,
+                selected: a.uid == widget.activeUid,
+                showDivider: i != accounts.length - 1,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _AccountTile extends ConsumerWidget {
   const _AccountTile({
+    super.key,
+    required this.index,
     required this.account,
     required this.selected,
     required this.showDivider,
   });
 
+  final int index;
   final Account account;
   final bool selected;
   final bool showDivider;
@@ -123,6 +183,16 @@ class _AccountTile extends ConsumerWidget {
             tooltip: t.accounts.actions,
             icon: const Icon(Icons.more_vert),
             onPressed: () => _showActions(context, ref),
+          ),
+          ReorderableDragStartListener(
+            index: index,
+            child: Tooltip(
+              message: t.accounts.dragHandle,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(Icons.drag_handle, color: scheme.onSurfaceVariant),
+              ),
+            ),
           ),
         ],
       ),
