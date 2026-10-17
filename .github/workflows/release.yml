@@ -152,11 +152,24 @@ jobs:
           --build-number=${{ github.run_number }}
       # The bundle file is still named after the Xcode product; the app's
       # display name is already "Solaris Record", so rename it for the download.
-      - name: Zip
+      - name: Package
         run: |
           mkdir out stage
           cp -R build/macos/Build/Products/Release/solaris_record_app.app "stage/Solaris Record.app"
+          # The zip stays for older app versions, whose updater looks for it.
           ditto -c -k --sequesterRsrc --keepParent "stage/Solaris Record.app" "out/solaris-record-v$NAME-macos.zip"
+          # A disk image with an Applications shortcut to drag the app onto.
+          brew install create-dmg
+          create-dmg \
+            --volname "Solaris Record" \
+            --window-pos 200 120 \
+            --window-size 600 380 \
+            --icon-size 110 \
+            --icon "Solaris Record.app" 160 180 \
+            --hide-extension "Solaris Record.app" \
+            --app-drop-link 440 180 \
+            "out/solaris-record-v$NAME-macos.dmg" \
+            stage/
       - uses: actions/upload-artifact@v4
         with:
           name: macos

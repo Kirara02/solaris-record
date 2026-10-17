@@ -83,7 +83,7 @@ String? assetSuffixFor(String platform) => switch (platform) {
   'android_arm' => 'android-armeabi-v7a.apk',
   'android_x64' => 'android-x86_64.apk',
   'windows_x64' => 'windows-x64.zip',
-  'macos_arm64' || 'macos_x64' => 'macos.zip',
+  'macos_arm64' || 'macos_x64' => 'macos.dmg',
   'linux_x64' => 'linux-x64.tar.gz',
   _ => null,
 };

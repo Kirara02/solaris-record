@@ -53,7 +53,7 @@ Without that file, release builds fall back to the debug key, so `flutter run --
 
 Installed apps look at the latest GitHub release and offer it in an update dialog (Android installs it in the app; other platforms open the download). Two things from the release matter to that:
 
-- **File names.** The app picks its file by name: `…-android-arm64-v8a.apk`, `…-android-armeabi-v7a.apk`, `…-android-x86_64.apk`, `…-windows-x64.zip`, `…-macos.zip` and `…-linux-x64.tar.gz`. Keep that naming if you change the workflow, and update `assetSuffixFor` in `lib/src/features/update/domain/update_info.dart` with it.
+- **File names.** The app picks its file by name: `…-android-arm64-v8a.apk`, `…-android-armeabi-v7a.apk`, `…-android-x86_64.apk`, `…-windows-x64.zip`, `…-macos.dmg` (plus `…-macos.zip`, still published for older app versions) and `…-linux-x64.tar.gz`. Keep that naming if you change the workflow, and update `assetSuffixFor` in `lib/src/features/update/domain/update_info.dart` with it.
 - **The description.** The dialog shows the release notes up to the first `---` line, which is where the standard download footer starts, so the `CHANGELOG.md` section is what users read in the app.
 
 Pre-releases and drafts are not offered: only the latest stable release counts.
