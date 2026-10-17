@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -199,78 +200,73 @@ class _AccountTile extends ConsumerWidget {
     );
   }
 
-  /// Bottom sheet with the account's actions (edit alias / delete).
+  /// Sheet (dialog on wide windows) with the account's actions (edit alias / delete).
   Future<void> _showActions(BuildContext context, WidgetRef ref) {
     final t = context.t;
     final scheme = Theme.of(context).colorScheme;
-    return showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-              child: Text(
-                accountName(t, account),
-                style: Theme.of(sheetContext).textTheme.titleLarge,
-              ),
+    return showAdaptiveSheet(
+      context,
+      (sheetContext) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Text(
+              accountName(t, account),
+              style: Theme.of(sheetContext).textTheme.titleLarge,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SettingsGroup(
-                children: [
-                  SettingsItem(
-                    icon: Icons.edit_outlined,
-                    title: t.accounts.editAlias,
-                    onTap: () async {
-                      Navigator.pop(sheetContext);
-                      final alias = await _askAlias(context, account.alias);
-                      if (alias != null) {
-                        await ref
-                            .read(conveneRepositoryProvider)
-                            .setAlias(account.uid, alias);
-                      }
-                    },
-                  ),
-                  SettingsItem(
-                    icon: Icons.delete_outline,
-                    iconColor: scheme.error,
-                    title: t.accounts.delete,
-                    titleStyle: Theme.of(sheetContext).textTheme.bodyLarge
-                        ?.copyWith(color: scheme.error),
-                    showDivider: false,
-                    onTap: () async {
-                      Navigator.pop(sheetContext);
-                      final ok = await showConfirmDialog(
-                        context,
-                        title: t.accounts.deleteTitle,
-                        body: t.accounts.deleteBody(
-                          uid: displayUid(ref, account.uid),
-                        ),
-                        confirmLabel: t.accounts.delete,
-                        cancelLabel: t.accounts.cancel,
-                      );
-                      if (!ok) return;
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SettingsGroup(
+              children: [
+                SettingsItem(
+                  icon: Icons.edit_outlined,
+                  title: t.accounts.editAlias,
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final alias = await _askAlias(context, account.alias);
+                    if (alias != null) {
                       await ref
                           .read(conveneRepositoryProvider)
-                          .deleteAccount(account.uid);
-                      await ref
-                          .read(savedImportUrlsProvider)
-                          .remove(account.uid);
-                      if (selected) {
-                        await ref.read(activeUidProvider.notifier).select(null);
-                      }
-                    },
-                  ),
-                ],
-              ),
+                          .setAlias(account.uid, alias);
+                    }
+                  },
+                ),
+                SettingsItem(
+                  icon: Icons.delete_outline,
+                  iconColor: scheme.error,
+                  title: t.accounts.delete,
+                  titleStyle: Theme.of(sheetContext).textTheme.bodyLarge
+                      ?.copyWith(color: scheme.error),
+                  showDivider: false,
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final ok = await showConfirmDialog(
+                      context,
+                      title: t.accounts.deleteTitle,
+                      body: t.accounts.deleteBody(
+                        uid: displayUid(ref, account.uid),
+                      ),
+                      confirmLabel: t.accounts.delete,
+                      cancelLabel: t.accounts.cancel,
+                    );
+                    if (!ok) return;
+                    await ref
+                        .read(conveneRepositoryProvider)
+                        .deleteAccount(account.uid);
+                    await ref.read(savedImportUrlsProvider).remove(account.uid);
+                    if (selected) {
+                      await ref.read(activeUidProvider.notifier).select(null);
+                    }
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }

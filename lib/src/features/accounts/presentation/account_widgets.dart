@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -31,55 +32,50 @@ class AccountAvatar extends StatelessWidget {
   }
 }
 
-/// Bottom sheet listing accounts; selecting one makes it active.
+/// Sheet (dialog on wide windows) listing accounts; selecting one makes it active.
 Future<void> showAccountSwitcher(BuildContext context, WidgetRef ref) {
   final accounts = ref.read(accountsProvider).value ?? const <Account>[];
   final activeUid = ref.read(activeAccountProvider)?.uid;
   final t = context.t;
-  return showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    builder: (sheetContext) => SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-              child: Text(
-                t.accounts.switchTitle,
-                style: Theme.of(sheetContext).textTheme.titleLarge,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SettingsGroup(
-                children: [
-                  for (final (i, a) in accounts.indexed)
-                    SettingsItem(
-                      leading: AccountAvatar(account: a, radius: 16),
-                      title: accountName(t, a),
-                      subtitle: t.accounts.uid(uid: displayUid(ref, a.uid)),
-                      showDivider: i != accounts.length - 1,
-                      trailing: a.uid == activeUid
-                          ? Icon(
-                              Icons.check_circle,
-                              color: Theme.of(sheetContext).colorScheme.primary,
-                            )
-                          : const SizedBox.shrink(),
-                      onTap: () {
-                        ref.read(activeUidProvider.notifier).select(a.uid);
-                        Navigator.pop(sheetContext);
-                      },
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+  return showAdaptiveSheet(
+    context,
+    (sheetContext) => Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Text(
+            t.accounts.switchTitle,
+            style: Theme.of(sheetContext).textTheme.titleLarge,
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SettingsGroup(
+            children: [
+              for (final (i, a) in accounts.indexed)
+                SettingsItem(
+                  leading: AccountAvatar(account: a, radius: 16),
+                  title: accountName(t, a),
+                  subtitle: t.accounts.uid(uid: displayUid(ref, a.uid)),
+                  showDivider: i != accounts.length - 1,
+                  trailing: a.uid == activeUid
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Theme.of(sheetContext).colorScheme.primary,
+                        )
+                      : const SizedBox.shrink(),
+                  onTap: () {
+                    ref.read(activeUidProvider.notifier).select(a.uid);
+                    Navigator.pop(sheetContext);
+                  },
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     ),
   );
 }

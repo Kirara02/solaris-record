@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
-import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/item_icon.dart';
@@ -156,51 +155,27 @@ void showFiveStarDetail(
   FiveStarEntry e, {
   int threshold = hardPity5,
 }) {
-  Widget body(BuildContext inner) => ArtworkAccent(
-    resourceId: e.resourceId,
-    resourceType: e.resourceType,
-    child: _FiveStarDetailBody(
-      entry: e,
-      threshold: threshold,
-      onItemInfo: () {
-        Navigator.pop(inner);
-        showItemInfo(
-          context,
-          resourceId: e.resourceId,
-          resourceType: e.resourceType,
-          name: e.name,
-          rarity: 5,
-        );
-      },
+  showAdaptiveSheet(
+    context,
+    (inner) => ArtworkAccent(
+      resourceId: e.resourceId,
+      resourceType: e.resourceType,
+      child: _FiveStarDetailBody(
+        entry: e,
+        threshold: threshold,
+        onItemInfo: () {
+          Navigator.pop(inner);
+          showItemInfo(
+            context,
+            resourceId: e.resourceId,
+            resourceType: e.resourceType,
+            name: e.name,
+            rarity: 5,
+          );
+        },
+      ),
     ),
   );
-
-  if (context.windowSize == WindowSize.compact) {
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      // Without this a sheet is capped at about half the screen, which pushed
-      // the "Item info" button into the scroll area.
-      isScrollControlled: true,
-      builder: (sheetContext) =>
-          SafeArea(child: SingleChildScrollView(child: body(sheetContext))),
-    );
-  } else {
-    showContentDialog<void>(
-      context,
-      (dialogContext) => Dialog(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: SingleChildScrollView(
-            // Adds to the body's own 16 so the dialog gets 24 on every side
-            // (the sheet needs no top padding, its drag handle provides it).
-            padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-            child: body(dialogContext),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _FiveStarDetailBody extends StatelessWidget {
@@ -416,7 +391,7 @@ class _FiveStarCard extends ConsumerWidget {
     // outfit art, then the icon.
     final lang =
         ref.watch(dataLanguageProvider) ??
-        LocaleSettings.currentLocale.languageCode;
+        LocaleSettings.currentLocale.languageTag;
     final info = entry.resourceId > 0
         ? ref
               .watch(

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
@@ -144,63 +145,57 @@ class AppearanceScreen extends ConsumerWidget {
         ? Icon(Icons.check_circle, color: scheme.primary)
         : const SizedBox(width: 24);
 
-    return showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (sheetContext) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 4),
-                child: Text(
-                  t.appearance.dataLanguage,
-                  style: Theme.of(sheetContext).textTheme.titleLarge,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-                child: Text(
-                  t.appearance.dataLanguageDesc,
-                  style: Theme.of(sheetContext).textTheme.bodyMedium
-                      ?.copyWith(color: scheme.onSurfaceVariant),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SettingsGroup(
-                  children: [
-                    SettingsItem(
-                      icon: Icons.language,
-                      title: t.appearance.dataLanguageDefault,
-                      subtitle: t.appearance.dataLanguageDefaultSubtitle,
-                      trailing: check(current == null),
-                      onTap: () {
-                        notifier.set(null);
-                        Navigator.pop(sheetContext);
-                      },
-                    ),
-                    for (final (i, code) in dataLanguageNames.keys.indexed)
-                      SettingsItem(
-                        icon: Icons.language,
-                        title: dataLanguageNames[code]!,
-                        showDivider: i != dataLanguageNames.length - 1,
-                        trailing: check(current == code),
-                        onTap: () {
-                          notifier.set(code);
-                          Navigator.pop(sheetContext);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+    return showAdaptiveSheet(
+      context,
+      (sheetContext) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+            child: Text(
+              t.appearance.dataLanguage,
+              style: Theme.of(sheetContext).textTheme.titleLarge,
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Text(
+              t.appearance.dataLanguageDesc,
+              style: Theme.of(sheetContext).textTheme.bodyMedium
+                  ?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SettingsGroup(
+              children: [
+                SettingsItem(
+                  icon: Icons.language,
+                  title: t.appearance.dataLanguageDefault,
+                  subtitle: t.appearance.dataLanguageDefaultSubtitle,
+                  trailing: check(current == null),
+                  onTap: () {
+                    notifier.set(null);
+                    Navigator.pop(sheetContext);
+                  },
+                ),
+                for (final (i, code) in dataLanguageNames.keys.indexed)
+                  SettingsItem(
+                    icon: Icons.language,
+                    title: dataLanguageNames[code]!,
+                    showDivider: i != dataLanguageNames.length - 1,
+                    trailing: check(current == code),
+                    onTap: () {
+                      notifier.set(code);
+                      Navigator.pop(sheetContext);
+                    },
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
@@ -215,54 +210,49 @@ class AppearanceScreen extends ConsumerWidget {
         ? Icon(Icons.check_circle, color: scheme.primary)
         : const SizedBox(width: 24);
 
-    return showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (sheetContext) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-                child: Text(
-                  t.language.title,
-                  style: Theme.of(sheetContext).textTheme.titleLarge,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SettingsGroup(
-                  children: [
-                    SettingsItem(
-                      icon: Icons.phone_android,
-                      title: t.language.system,
-                      subtitle: t.language.systemSubtitle,
-                      trailing: check(current == null),
-                      onTap: () {
-                        notifier.set(null);
-                        Navigator.pop(sheetContext);
-                      },
-                    ),
-                    for (final (i, code) in languageNames.keys.indexed)
-                      SettingsItem(
-                        icon: Icons.language,
-                        title: languageNames[code]!,
-                        showDivider: i != languageNames.length - 1,
-                        trailing: check(current == code),
-                        onTap: () {
-                          notifier.set(code);
-                          Navigator.pop(sheetContext);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+    return showAdaptiveSheet(
+      context,
+      (sheetContext) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Text(
+              t.language.title,
+              style: Theme.of(sheetContext).textTheme.titleLarge,
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SettingsGroup(
+              children: [
+                SettingsItem(
+                  icon: Icons.phone_android,
+                  title: t.language.system,
+                  subtitle: t.language.systemSubtitle,
+                  trailing: check(current == null),
+                  onTap: () {
+                    notifier.set(null);
+                    Navigator.pop(sheetContext);
+                  },
+                ),
+                for (final (i, code) in languageNames.keys.indexed)
+                  SettingsItem(
+                    icon: Icons.language,
+                    title: languageNames[code]!,
+                    showDivider: i != languageNames.length - 1,
+                    trailing: check(current == code),
+                    onTap: () {
+                      notifier.set(code);
+                      Navigator.pop(sheetContext);
+                    },
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
