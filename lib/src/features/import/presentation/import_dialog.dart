@@ -48,6 +48,9 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   BackupImportOutcome? _fileOutcome;
   bool _fileBusy = false;
 
+  /// Which app's export the file guide explains.
+  _FileSource _fileSource = _FileSource.solaris;
+
   /// Index into the selected platform's methods.
   int _method = 0;
 
@@ -305,6 +308,40 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                           ),
                         ),
                       ),
+                      SettingsSectionHeader(title: t.import.fileGuideTitle),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          for (final source in _FileSource.values)
+                            ChoiceChip(
+                              label: Text(source.label),
+                              selected: source == _fileSource,
+                              onSelected: (_) =>
+                                  setState(() => _fileSource = source),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SettingsGroup(
+                        children: [
+                          for (final (i, step) in _fileSource.steps(t).indexed)
+                            _Step(
+                              i + 1,
+                              step.text,
+                              onOpenLink: step.url == null
+                                  ? null
+                                  : () => ref
+                                        .read(urlOpenerProvider)
+                                        .open(Uri.parse(step.url!)),
+                            ),
+                          _Step(
+                            _fileSource.steps(t).length + 1,
+                            t.import.fileGuide.last,
+                            last: true,
+                          ),
+                        ],
+                      ),
                       if (_fileOutcome case final outcome?) ...[
                         const SizedBox(height: 16),
                         if (outcome.ok)
@@ -346,6 +383,27 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
         ),
       ),
     );
+  }
+}
+
+/// The apps whose exported file can be imported here.
+enum _FileSource {
+  solaris('Solaris Record'),
+  tracker('WuWa Tracker');
+
+  const _FileSource(this.label);
+
+  final String label;
+
+  List<_GuideStep> steps(Translations t) {
+    final g = t.import.fileGuide;
+    return switch (this) {
+      solaris => [_GuideStep(g.solaris.step1), _GuideStep(g.solaris.step2)],
+      tracker => [
+        _GuideStep(g.tracker.step1, url: _trackerDataUrl),
+        _GuideStep(g.tracker.step2),
+      ],
+    };
   }
 }
 
@@ -449,6 +507,7 @@ const _macosCommand =
 const _ascentUrl = 'https://github.com/4o3F/Ascent/releases/tag/2.1.6';
 const _ascentGuideUrl =
     'https://gist.github.com/Mirai0009/8615e52e09083de9c0ea2dc00dc62ea8';
+const _trackerDataUrl = 'https://wuwatracker.com/settings/data';
 const _trackerImportUrl = 'https://wuwatracker.com/import';
 const _airplaneVideoUrl = 'https://www.youtube.com/watch?v=EP6ib3POGKE';
 const _androidLogVideoUrl = 'https://www.youtube.com/watch?v=G4CPyU0t-pA';

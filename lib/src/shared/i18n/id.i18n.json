@@ -136,7 +136,7 @@
     "guide": {
       "openGame": "Jalankan Wuthering Waves dan buka Riwayat Convene sampai halaman termuat.",
       "logUpload": "Unggah Client.log Anda di halaman import WuWa Tracker. Situs itu yang menemukan riwayat convene Anda.",
-      "logExport": "Ekspor data Anda dari WuWa Tracker, lalu impor file itu di sini dengan Impor dari file JSON.",
+      "logExport": "Buka Data Settings di WuWa Tracker, pilih Export Pull History, lalu impor file itu di sini dengan Impor dari file JSON.",
       "finalFile": "Impor file itu dengan tombol Impor dari file JSON di bawah.",
       "windows": {
         "auto": {
@@ -186,7 +186,19 @@
     "close": "Tutup",
     "savedHint": "Memakai tautan yang tersimpan dari update terakhir. Jika sudah kedaluwarsa, Anda akan diminta tautan baru.",
     "fromFile": "Impor dari file JSON",
-    "fromFileHint": "Mendukung cadangan Solaris Record dan ekspor WuWa Tracker (wuwatracker-pulls.json). Record baru ditambahkan, yang sudah ada tidak pernah ditimpa."
+    "fromFileHint": "Mendukung cadangan Solaris Record dan ekspor WuWa Tracker (wuwatracker-pulls.json). Record baru ditambahkan, yang sudah ada tidak pernah ditimpa.",
+    "fileGuideTitle": "Dari mana file-nya",
+    "fileGuide": {
+      "solaris": {
+        "step1": "Di perangkat yang menyimpan data Anda, buka Pengaturan > Data & penyimpanan lalu ketuk Ekspor cadangan.",
+        "step2": "Pindahkan file .json yang tersimpan ke perangkat ini jika berbeda."
+      },
+      "tracker": {
+        "step1": "Buka Data Settings di WuWa Tracker, lalu masuk atau buka profil yang memuat pull Anda.",
+        "step2": "Pilih Export Pull History dan simpan file JSON-nya (wuwatracker-pulls.json)."
+      },
+      "last": "Ketuk Impor dari file JSON di atas lalu pilih filenya."
+    }
   },
   "accounts": {
     "title": "Akun",

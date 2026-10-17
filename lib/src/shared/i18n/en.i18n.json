@@ -140,7 +140,7 @@
     "guide": {
       "openGame": "Launch Wuthering Waves and open your Convene History so the page loads.",
       "logUpload": "Upload your Client.log on WuWa Tracker's import page. It finds your convene history for you.",
-      "logExport": "Export your data from WuWa Tracker, then import that file here with Import from JSON file.",
+      "logExport": "Open WuWa Tracker's Data Settings, choose Export Pull History, then import that file here with Import from JSON file.",
       "finalFile": "Import the file with the Import from JSON file button below.",
       "windows": {
         "auto": {
@@ -190,7 +190,19 @@
     "close": "Close",
     "savedHint": "Using the link saved from your last update. If it has expired, you'll be asked for a new one.",
     "fromFile": "Import from JSON file",
-    "fromFileHint": "Supports Solaris Record backups and WuWa Tracker exports (wuwatracker-pulls.json). New records are added; existing ones are never overwritten."
+    "fromFileHint": "Supports Solaris Record backups and WuWa Tracker exports (wuwatracker-pulls.json). New records are added; existing ones are never overwritten.",
+    "fileGuideTitle": "Where to get the file",
+    "fileGuide": {
+      "solaris": {
+        "step1": "On the device that has your data, open Settings > Data & storage and tap Export backup.",
+        "step2": "Move the saved .json file to this device if it is another one."
+      },
+      "tracker": {
+        "step1": "Open WuWa Tracker's Data Settings and sign in or open the profile that has your pulls.",
+        "step2": "Choose Export Pull History and save the JSON file (wuwatracker-pulls.json)."
+      },
+      "last": "Tap Import from JSON file above and pick the file."
+    }
   },
   "accounts": {
     "title": "Accounts",
