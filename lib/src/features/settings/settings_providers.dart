@@ -143,3 +143,23 @@ String dataLanguageLabel(String? code, Translations t) => code == null
 /// Size of the stored debug logs in bytes. Invalidate after clearing them.
 @riverpod
 Future<int> logSize(Ref ref) => AppLog.size();
+
+const detailedLoggingPrefKey = 'detailed_logging';
+
+/// Whether fine-grained logging is on, for bug reports. Applied to the logger
+/// at startup (see `main`) and whenever it changes.
+@Riverpod(keepAlive: true)
+class DetailedLogging extends _$DetailedLogging {
+  @override
+  bool build() =>
+      ref.watch(sharedPreferencesProvider).getBool(detailedLoggingPrefKey) ??
+      false;
+
+  Future<void> set(bool value) async {
+    AppLog.setDetailed(value);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setBool(detailedLoggingPrefKey, value);
+    state = value;
+  }
+}

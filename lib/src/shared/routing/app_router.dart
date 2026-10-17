@@ -6,6 +6,7 @@ import '../../features/accounts/presentation/accounts_screen.dart';
 import '../../features/settings/presentation/about_screen.dart';
 import '../../features/settings/presentation/appearance_screen.dart';
 import '../../features/settings/presentation/data_screen.dart';
+import '../../features/settings/presentation/logs_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/stats/presentation/stats_screen.dart';
@@ -86,6 +87,12 @@ GoRouter appRouter(Ref ref) {
                   GoRoute(
                     path: 'data',
                     pageBuilder: (c, s) => _subPage(s, const DataScreen()),
+                    routes: [
+                      GoRoute(
+                        path: 'logs',
+                        pageBuilder: (c, s) => _subPage(s, const LogsScreen()),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'about',

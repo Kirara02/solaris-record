@@ -4,6 +4,7 @@ abstract final class AppRoutes {
   static const appearance = '/settings/appearance';
   static const accounts = '/settings/accounts';
   static const data = '/settings/data';
+  static const logs = '/settings/data/logs';
   static const about = '/settings/about';
 }
 

@@ -19,6 +19,7 @@ Future<void> main() async {
   _logUncaughtErrors();
   final prefs = await SharedPreferences.getInstance();
   applySavedLanguage(prefs.getString(languagePrefKey));
+  AppLog.setDetailed(prefs.getBool(detailedLoggingPrefKey) ?? false);
   final version = (await PackageInfo.fromPlatform()).version;
   Logger('app').info(
     'Started version=$version platform=${defaultTargetPlatform.name} '

@@ -3,6 +3,7 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/widgets/app_logo.dart';
@@ -12,6 +13,8 @@ import '../../update/domain/update_platform.dart';
 import '../../update/presentation/update_actions.dart';
 import '../../update/presentation/update_dialog.dart';
 import '../../update/update_providers.dart';
+
+const _repoUrl = 'https://github.com/Kirara02/solaris-record';
 
 class AboutScreen extends ConsumerStatefulWidget {
   const AboutScreen({super.key});
@@ -40,6 +43,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       case UpdateCheckFailed():
         messenger.showSnackBar(SnackBar(content: Text(t.update.checkFailed)));
     }
+  }
+
+  /// Opens [url] in the browser; says so when that isn't possible.
+  Future<void> _open(String url) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final failed = context.t.info.openFailed;
+    final opened = await ref.read(urlOpenerProvider).open(Uri.parse(url));
+    if (!opened) messenger.showSnackBar(SnackBar(content: Text(failed)));
   }
 
   @override
@@ -135,6 +146,26 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     ],
                   ),
                 ],
+                SettingsSectionHeader(title: t.about.sectionLinks),
+                SettingsGroup(
+                  children: [
+                    SettingsItem(
+                      icon: Icons.bug_report_outlined,
+                      title: t.about.reportTitle,
+                      subtitle: t.about.reportBody,
+                      trailing: const Icon(Icons.open_in_new, size: 20),
+                      onTap: () => _open('$_repoUrl/issues/new'),
+                    ),
+                    SettingsItem(
+                      icon: Icons.code,
+                      title: t.about.repoTitle,
+                      subtitle: t.about.repoBody,
+                      trailing: const Icon(Icons.open_in_new, size: 20),
+                      showDivider: false,
+                      onTap: () => _open(_repoUrl),
+                    ),
+                  ],
+                ),
                 SettingsSectionHeader(title: t.about.sectionInfo),
                 SettingsGroup(
                   children: [

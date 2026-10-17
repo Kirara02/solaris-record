@@ -1,10 +1,12 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/routing/app_routes.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -144,6 +146,20 @@ class DataScreen extends ConsumerWidget {
                 SettingsSectionHeader(title: t.data.sectionLogs),
                 SettingsGroup(
                   children: [
+                    SettingsItem(
+                      icon: Icons.article_outlined,
+                      title: t.data.viewLogs,
+                      subtitle: t.data.viewLogsSubtitle,
+                      onTap: () => context.go(AppRoutes.logs),
+                    ),
+                    SettingsSwitchItem(
+                      icon: Icons.tune,
+                      title: t.data.detailedLogging,
+                      subtitle: t.data.detailedLoggingSubtitle,
+                      value: ref.watch(detailedLoggingProvider),
+                      onChanged: (v) =>
+                          ref.read(detailedLoggingProvider.notifier).set(v),
+                    ),
                     SettingsItem(
                       icon: Icons.bug_report_outlined,
                       title: t.data.exportLogs,

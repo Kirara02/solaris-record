@@ -6,6 +6,35 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+/// One logged record, kept for the in-app log viewer.
+class LogEntry {
+  const LogEntry({
+    required this.time,
+    required this.level,
+    required this.logger,
+    required this.message,
+    this.error,
+    this.stackTrace,
+  });
+
+  final DateTime time;
+  final Level level;
+  final String logger;
+  final String message;
+  final String? error;
+  final String? stackTrace;
+
+  /// The line(s) written to the log file.
+  String get text {
+    final out = StringBuffer(
+      '${time.toIso8601String()} ${level.name.padRight(7)} [$logger] $message',
+    );
+    if (error != null) out.write('\n  error: $error');
+    if (stackTrace != null) out.write('\n$stackTrace');
+    return out.toString();
+  }
+}
+
 /// App-wide debug log: every `Logger` record goes to a daily file under the
 /// app support directory (kept for a week) and to a short in-memory buffer,
 /// which is all there is on the web. Users export it from Data & storage.
@@ -20,12 +49,12 @@ class AppLog {
   static const _bufferLines = 500;
 
   static Directory? _dir;
-  static final _buffer = ListQueue<String>();
+  static final _buffer = ListQueue<LogEntry>();
   static final _full = <String>{};
 
   /// Starts listening to all loggers. Call once before `runApp`.
   static Future<void> init() async {
-    Logger.root.level = kDebugMode ? Level.ALL : Level.INFO;
+    setDetailed(false);
     Logger.root.onRecord.listen(_onRecord);
     if (kIsWeb) return;
     try {
@@ -40,6 +69,14 @@ class AppLog {
     }
   }
 
+  /// Turns on fine-grained logging (on by default in debug builds), for bug
+  /// reports. Release builds log at INFO otherwise.
+  static void setDetailed(bool on) =>
+      Logger.root.level = on || kDebugMode ? Level.ALL : Level.INFO;
+
+  /// The records kept in memory (this session, newest last).
+  static List<LogEntry> get entries => List.unmodifiable(_buffer);
+
   static String _fileName(DateTime t) {
     String two(int v) => v.toString().padLeft(2, '0');
     return 'solaris-${t.year}-${two(t.month)}-${two(t.day)}.log';
@@ -53,15 +90,17 @@ class AppLog {
   }
 
   static void _onRecord(LogRecord r) {
-    final out = StringBuffer(
-      '${r.time.toIso8601String()} ${r.level.name.padRight(7)} '
-      '[${r.loggerName}] ${r.message}',
+    final entry = LogEntry(
+      time: r.time,
+      level: r.level,
+      logger: r.loggerName,
+      message: r.message,
+      error: r.error?.toString(),
+      stackTrace: r.stackTrace?.toString(),
     );
-    if (r.error != null) out.write('\n  error: ${r.error}');
-    if (r.stackTrace != null) out.write('\n${r.stackTrace}');
-    final line = out.toString();
+    final line = entry.text;
 
-    _buffer.add(line);
+    _buffer.add(entry);
     if (_buffer.length > _bufferLines) _buffer.removeFirst();
     if (kDebugMode) debugPrint(line);
     _append(r.time, line);
@@ -110,7 +149,7 @@ class AppLog {
     final out = StringBuffer('$info\n\n');
     final files = _files();
     if (files.isEmpty) {
-      out.writeAll(_buffer, '\n');
+      out.writeAll(_buffer.map((e) => e.text), '\n');
     } else {
       for (final f in files) {
         out.writeln('--- ${p.basename(f.path)} ---');
