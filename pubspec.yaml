@@ -48,6 +48,11 @@ dev_dependencies:
   flutter_gen_runner: ^5.15.0
   flutter_launcher_icons: ^0.14.4
 
+# 2.5.0 crashes release builds (R8 breaks its suspend Pigeon API); 2.4.28 is the
+# last version known good. Drop once a fixed plugin version ships.
+dependency_overrides:
+  shared_preferences_android: 2.4.28
+
 flutter:
   generate: true
   uses-material-design: true
