@@ -4,6 +4,15 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.2.1
+
+Dialogs on desktop now sit in the middle of the content, and the update dialog buttons have their labels back.
+
+### Fixes
+- On desktop, the pull detail and item info dialogs are centered over the content area instead of the whole window. The pull detail is a dialog on wider windows and stays a bottom sheet on phones.
+- The horizontal 5★ timeline no longer starts with a wide empty gap on desktop.
+- The Skip, Later and Cancel buttons in the update dialog showed no text.
+
 ## 1.2.0
 
 Importing is easier to get into, the navigation is translucent, dynamic color follows your wallpaper more faithfully, and there is a log viewer for bug reports.
