@@ -42,4 +42,41 @@ void main() {
   test('rejects non-URLs', () {
     expect(() => parseConveneUrl('hello'), throwsA(isA<ConveneUrlException>()));
   });
+
+  group('extractConveneUrl', () {
+    const link =
+        'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html'
+        '#/record?svr_id=s&player_id=p&record_id=r&lang=en';
+
+    test(
+      'finds the link inside shared text and drops trailing punctuation',
+      () {
+        expect(extractConveneUrl('My convene history: $link.'), link);
+        expect(extractConveneUrl('<$link>'), link);
+      },
+    );
+
+    test('skips links that are not convene records', () {
+      expect(
+        extractConveneUrl('see https://example.com/a and then $link'),
+        link,
+      );
+      expect(extractConveneUrl('https://example.com/a'), isNull);
+    });
+
+    test('ignores a record link that misses parameters', () {
+      expect(
+        extractConveneUrl(
+          'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/'
+          'index.html#/record?svr_id=s',
+        ),
+        isNull,
+      );
+    });
+
+    test('returns null for text without links', () {
+      expect(extractConveneUrl(''), isNull);
+      expect(extractConveneUrl('no link here'), isNull);
+    });
+  });
 }
