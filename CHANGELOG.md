@@ -4,6 +4,13 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.3.1
+
+Fixes the Android release build crashing at startup.
+
+### Fixes
+- On Android, version 1.3.0 could crash right after launch and never show the app. Saved settings are read again as in 1.2.1.
+
 ## 1.3.0
 
 You can share your pulls as an image, drag your accounts into the order you like, see 5★ pulls as artwork cards, and use the app in Japanese and Chinese.
