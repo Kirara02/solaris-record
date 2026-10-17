@@ -181,10 +181,10 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                           runSpacing: 4,
                           children: [
                             for (final g in _Guide.values)
-                              ChoiceChip(
-                                label: Text(g.label),
-                                selected: g == _guide,
-                                onSelected: (_) => setState(() {
+                              SettingsChoiceChip(
+                                label: g.label,
+                                isSelected: g == _guide,
+                                onTap: () => setState(() {
                                   _guide = g;
                                   _method = 0;
                                 }),
@@ -198,11 +198,10 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                             runSpacing: 4,
                             children: [
                               for (final (i, m) in methods.indexed)
-                                ChoiceChip(
-                                  label: Text(m.label),
-                                  selected: i == _method,
-                                  onSelected: (_) =>
-                                      setState(() => _method = i),
+                                SettingsChoiceChip(
+                                  label: m.label,
+                                  isSelected: i == _method,
+                                  onTap: () => setState(() => _method = i),
                                 ),
                             ],
                           ),
@@ -314,11 +313,10 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         runSpacing: 4,
                         children: [
                           for (final source in _FileSource.values)
-                            ChoiceChip(
-                              label: Text(source.label),
-                              selected: source == _fileSource,
-                              onSelected: (_) =>
-                                  setState(() => _fileSource = source),
+                            SettingsChoiceChip(
+                              label: source.label,
+                              isSelected: source == _fileSource,
+                              onTap: () => setState(() => _fileSource = source),
                             ),
                         ],
                       ),

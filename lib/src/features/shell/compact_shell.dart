@@ -49,6 +49,7 @@ class CompactShell extends ConsumerWidget {
       }
       navigationShell.goBranch(0, initialLocation: branch == 0 && index == i);
     }
+
     final showTabBar = isTabRoot(location);
 
     return Scaffold(

@@ -118,7 +118,12 @@ class WideShell extends ConsumerWidget {
     );
 
     return Scaffold(
-      body: Row(children: [rail, Expanded(child: shell)]),
+      body: Row(
+        children: [
+          rail,
+          Expanded(child: shell),
+        ],
+      ),
     );
   }
 }

@@ -42,5 +42,35 @@ ThemeData applyAppTheme(ThemeData base) {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     ),
     dividerTheme: const DividerThemeData(thickness: 1, space: 1),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: tokens.borderRadiusControl),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      shape: RoundedRectangleBorder(borderRadius: tokens.borderRadiusControl),
+    ),
+    // The check icon takes its colour from the switch itself, so it follows
+    // the resolved palette like everything else here.
+    switchTheme: SwitchThemeData(
+      thumbIcon: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? const Icon(Icons.check)
+            : null,
+      ),
+    ),
   );
 }

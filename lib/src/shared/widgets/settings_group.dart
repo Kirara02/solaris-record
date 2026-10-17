@@ -24,6 +24,29 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final border = BorderSide(
+      color: scheme.outlineVariant.withValues(alpha: 0.5),
+    );
+    final content = Material(
+      type: MaterialType.transparency,
+      child: Column(mainAxisSize: MainAxisSize.min, children: children),
+    );
+    // With reduced motion the group is a plain surface: no M3ECard behaviour.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          width: double.infinity,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: color ?? groupColor(context),
+            borderRadius: context.tokens.borderRadiusCard,
+            border: Border.fromBorderSide(border),
+          ),
+          child: content,
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: SizedBox(
@@ -33,14 +56,9 @@ class SettingsGroup extends StatelessWidget {
           color: color ?? groupColor(context),
           padding: EdgeInsets.zero,
           elevation: 0,
-          border: BorderSide(
-            color: scheme.outlineVariant.withValues(alpha: 0.5),
-          ),
+          border: border,
           borderRadius: context.tokens.borderRadiusCard,
-          child: Material(
-            type: MaterialType.transparency,
-            child: Column(mainAxisSize: MainAxisSize.min, children: children),
-          ),
+          child: content,
         ),
       ),
     );
@@ -187,11 +205,9 @@ class SettingsSwitchItem extends StatelessWidget {
     subtitle: subtitle,
     showDivider: showDivider,
     onTap: onChanged == null ? null : () => onChanged!(!value),
-    trailing: M3ESwitch(
-      value: value,
-      onChanged: onChanged,
-      semanticLabel: title,
-    ),
+    trailing: MediaQuery.disableAnimationsOf(context)
+        ? Switch(value: value, onChanged: onChanged)
+        : M3ESwitch(value: value, onChanged: onChanged, semanticLabel: title),
   );
 }
 
