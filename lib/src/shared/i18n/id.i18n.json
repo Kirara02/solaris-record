@@ -133,9 +133,51 @@
     "errorNetwork": "Kesalahan jaringan. Periksa koneksi lalu coba lagi.",
     "errorUnexpected": "Respons server tidak terduga.",
     "stepsTitle": "Cara mendapatkan URL",
-    "step1": "Buka Riwayat Convene di Wuthering Waves dan tunggu halaman termuat.",
-    "step2": "Salin URL riwayat convene. Isinya memuat svr_id, player_id, dan record_id.",
-    "step3": "Tempel di bawah lalu ketuk Perbarui record.",
+    "guide": {
+      "openGame": "Jalankan Wuthering Waves dan buka Riwayat Convene sampai halaman termuat.",
+      "logUpload": "Unggah Client.log Anda di halaman import WuWa Tracker. Situs itu yang menemukan riwayat convene Anda.",
+      "logExport": "Ekspor data Anda dari WuWa Tracker, lalu impor file itu di sini dengan Impor dari file JSON.",
+      "finalFile": "Impor file itu dengan tombol Impor dari file JSON di bawah.",
+      "windows": {
+        "auto": {
+          "step2": "Buka Windows PowerShell lalu jalankan perintah di bawah. Perintah ini hanya membaca log game untuk menemukan tautannya.",
+          "step3": "Setelah ketemu, tautan disalin ke clipboard."
+        },
+        "manual": {
+          "step1": "Tonton video tutorial dari Firu untuk menemukan Client.log di folder game."
+        }
+      },
+      "macos": {
+        "auto": {
+          "step2": "Buka terminal lalu jalankan perintah di bawah. Perintah ini hanya membaca log game untuk menemukan tautannya.",
+          "step3": "Setelah ketemu, tautan disalin ke clipboard dengan pbcopy."
+        },
+        "manual": {
+          "step1": "Cari Client.log di folder ini (di Finder, pilih Go > Go to Folder lalu tempel path-nya)."
+        }
+      },
+      "linux": {
+        "step2": "Buka terminal lalu jalankan perintah di bawah. Perintah ini hanya membaca log game untuk menemukan tautannya.",
+        "step3": "Setelah ketemu, tautan disalin ke clipboard (butuh xclip, xsel, atau wl-copy)."
+      },
+      "android": {
+        "airplane": "Ikuti video tutorial dari yukio36. Video ini memandu Anda mengambil tautannya.",
+        "log": "Tonton video tutorial dari Firu untuk mengambil Client.log dari perangkat Anda.",
+        "ascent1": "Unduh Ascent v2.1.6. Cara ini butuh Android 11 atau lebih baru.",
+        "ascent2": "Ikuti panduan dari Mirai0009 untuk mengambil tautan convene dengan Ascent."
+      },
+      "ios": {
+        "step1": "Tonton video tutorial dari Chario untuk mengambil data Anda. Unduh sertifikat dengan Safari; browser lain seperti Chrome mungkin tidak bisa."
+      }
+    },
+    "copyCommand": "Salin perintah",
+    "openLink": "Buka tautan",
+    "methodAutomatic": "Otomatis",
+    "methodManual": "Manual",
+    "methodAirplane": "Mode pesawat",
+    "methodClientLog": "Client.log",
+    "guideFull": "Panduan lengkap di WuWa Tracker",
+    "finalStep": "Tempel di bawah lalu ketuk Perbarui record.",
     "clear": "Hapus",
     "progressTitle": "Progres",
     "resultTitle": "Hasil",

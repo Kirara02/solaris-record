@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/routing/app_routes.dart';
@@ -45,6 +47,15 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   /// being read.
   BackupImportOutcome? _fileOutcome;
   bool _fileBusy = false;
+
+  /// Index into the selected platform's methods.
+  int _method = 0;
+
+  late _Guide _guide = _Guide.forPlatform(defaultTargetPlatform);
+
+  Future<void> _openFullGuide() => ref
+      .read(urlOpenerProvider)
+      .open(Uri.parse('https://wuwatracker.com/import'));
 
   @override
   void initState() {
@@ -107,6 +118,9 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
     final done = state.value;
     // Hide the paste steps while the saved URL is untouched; an error brings
     // them back (the saved URL was just dropped as expired).
+    final methods = _guide.methods(t);
+    final method = methods[_method.clamp(0, methods.length - 1)];
+    final steps = method.steps;
     final usingSaved =
         _saved != null && _controller.text.trim() == _saved && !state.hasError;
 
@@ -159,14 +173,69 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         )
                       else ...[
                         SettingsSectionHeader(title: t.import.stepsTitle),
-                        SettingsGroup(
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
-                            _Step(1, t.import.step1),
-                            _Step(2, t.import.step2),
-                            _Step(3, t.import.step3, last: true),
+                            for (final g in _Guide.values)
+                              ChoiceChip(
+                                label: Text(g.label),
+                                selected: g == _guide,
+                                onSelected: (_) => setState(() {
+                                  _guide = g;
+                                  _method = 0;
+                                }),
+                              ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        if (methods.length > 1) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              for (final (i, m) in methods.indexed)
+                                ChoiceChip(
+                                  label: Text(m.label),
+                                  selected: i == _method,
+                                  onSelected: (_) =>
+                                      setState(() => _method = i),
+                                ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        SettingsGroup(
+                          children: [
+                            for (final (i, step) in steps.indexed)
+                              _Step(
+                                i + 1,
+                                step.text,
+                                command: step.command,
+                                onOpenLink: step.url == null
+                                    ? null
+                                    : () => ref
+                                          .read(urlOpenerProvider)
+                                          .open(Uri.parse(step.url!)),
+                              ),
+                            _Step(
+                              steps.length + 1,
+                              method.fileFinal
+                                  ? t.import.guide.finalFile
+                                  : t.import.finalStep,
+                              last: true,
+                            ),
+                          ],
+                        ),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.open_in_new, size: 18),
+                            label: Text(t.import.guideFull),
+                            onPressed: _openFullGuide,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                       ],
                       AppTextField(
                         controller: _controller,
@@ -280,6 +349,132 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   }
 }
 
+/// Platforms with their own way of finding the convene URL.
+enum _Guide {
+  windows('Windows'),
+  android('Android'),
+  ios('iOS'),
+  macos('macOS'),
+  linux('Linux');
+
+  const _Guide(this.label);
+
+  final String label;
+
+  static _Guide forPlatform(TargetPlatform p) => switch (p) {
+    TargetPlatform.windows => windows,
+    TargetPlatform.android => android,
+    TargetPlatform.iOS => ios,
+    TargetPlatform.macOS => macos,
+    _ => linux,
+  };
+
+  /// The ways to get the link on this platform; one means no choice to show.
+  List<_Method> methods(Translations t) {
+    final g = t.import.guide;
+    final i = t.import;
+    // Methods that end in WuWa Tracker's own import (a Client.log upload) give
+    // a file to import here instead of a link to paste.
+    final logSteps = [
+      _GuideStep(g.logUpload, url: _trackerImportUrl),
+      _GuideStep(g.logExport),
+    ];
+    return switch (this) {
+      windows => [
+        _Method(i.methodAutomatic, [
+          _GuideStep(g.openGame),
+          _GuideStep(g.windows.auto.step2, command: _windowsCommand),
+          _GuideStep(g.windows.auto.step3),
+        ]),
+        _Method(i.methodManual, [
+          _GuideStep(g.windows.manual.step1, url: _windowsLogVideoUrl),
+          ...logSteps,
+        ], fileFinal: true),
+      ],
+      android => [
+        _Method(i.methodAirplane, [
+          _GuideStep(g.android.airplane, url: _airplaneVideoUrl),
+        ]),
+        _Method(i.methodClientLog, [
+          _GuideStep(g.android.log, url: _androidLogVideoUrl),
+          ...logSteps,
+        ], fileFinal: true),
+        _Method('Ascent', [
+          _GuideStep(g.android.ascent1, url: _ascentUrl),
+          _GuideStep(g.android.ascent2, url: _ascentGuideUrl),
+        ]),
+      ],
+      ios => [
+        _Method(i.methodAutomatic, [
+          _GuideStep(g.ios.step1, url: _iosVideoUrl),
+        ], fileFinal: true),
+      ],
+      macos => [
+        _Method(i.methodAutomatic, [
+          _GuideStep(g.openGame),
+          _GuideStep(g.macos.auto.step2, command: _macosCommand),
+          _GuideStep(g.macos.auto.step3),
+        ]),
+        _Method(i.methodManual, [
+          _GuideStep(g.macos.manual.step1, command: _macLogDir),
+          ...logSteps,
+        ], fileFinal: true),
+      ],
+      linux => [
+        _Method(i.methodAutomatic, [
+          _GuideStep(g.openGame),
+          _GuideStep(g.linux.step2, command: _desktopCommand),
+          _GuideStep(g.linux.step3),
+        ]),
+      ],
+    };
+  }
+}
+
+// The scripts are pinned to the commit WuWa Tracker itself links to, so what
+// runs is the code that was reviewed, not whatever master holds later.
+const _trackerRaw =
+    'https://raw.githubusercontent.com/wuwatracker/wuwatracker/'
+    '747a48b1b994baa9c372a4fb933ea7588428bd4b';
+const _windowsCommand =
+    'iwr -UseBasicParsing -Headers @{"User-Agent"="Mozilla/5.0"} '
+    '$_trackerRaw/import.ps1 | iex';
+const _desktopCommand = 'curl -sSL "$_trackerRaw/import.sh" | bash';
+// macOS keeps the log in the game's sandbox container, so it has its own
+// command (it decodes the obfuscated Client.log before searching it).
+const _macLogDir =
+    '~/Library/Containers/com.kurogame.wutheringwaves.global/Data/Library/Logs/Client';
+const _macosCommand =
+    r'''log="$HOME/Library/Containers/com.kurogame.wutheringwaves.global/Data/Library/Logs/Client/Client.log"; pattern='https://aki-gm-resources(-oversea)?\.aki-game\.(net|com)/aki/gacha/index\.html#/record[^"[:space:]]*'; decode_client_log() { if command -v python3 >/dev/null 2>&1; then python3 -c 'import sys; data = sys.stdin.buffer.read(); sys.stdout.buffer.write(bytes(byte ^ (0xA5 if (byte & 0x0F) % 2 == 1 else 0xEF) for byte in data))'; elif command -v perl >/dev/null 2>&1; then perl -0777 -pe 's/(.)/chr((ord($1) & 0x0f) % 2 == 1 ? ord($1) ^ 0xa5 : ord($1) ^ 0xef)/gse'; else return 1; fi; }; url=$(decode_client_log < "$log" | grep -aEo "$pattern" | tail -n 1); [ -z "$url" ] && url=$(grep -aEo "$pattern" "$log" | tail -n 1); [ -n "$url" ] && echo "$url" | pbcopy && echo "Link copied to clipboard, paste it in wuwatracker.com and click the Import Data button." || echo "Cannot find the convene history URL in your Client.log! Please try another import method."''';
+const _ascentUrl = 'https://github.com/4o3F/Ascent/releases/tag/2.1.6';
+const _ascentGuideUrl =
+    'https://gist.github.com/Mirai0009/8615e52e09083de9c0ea2dc00dc62ea8';
+const _trackerImportUrl = 'https://wuwatracker.com/import';
+const _airplaneVideoUrl = 'https://www.youtube.com/watch?v=EP6ib3POGKE';
+const _androidLogVideoUrl = 'https://www.youtube.com/watch?v=G4CPyU0t-pA';
+const _windowsLogVideoUrl = 'https://www.youtube.com/watch?v=yESLWS5dDdw';
+const _iosVideoUrl = 'https://www.youtube.com/watch?v=w--3SkszE60';
+
+/// One way to get the data in, with its own steps.
+class _Method {
+  const _Method(this.label, this.steps, {this.fileFinal = false});
+
+  final String label;
+  final List<_GuideStep> steps;
+
+  /// Ends with importing a file instead of pasting a link.
+  final bool fileFinal;
+}
+
+/// One guide step, optionally with a shell command or a link under it.
+class _GuideStep {
+  const _GuideStep(this.text, {this.command, this.url});
+
+  final String text;
+  final String? command;
+  final String? url;
+}
+
 /// Success banner with a shortcut to the Convene screen.
 class _ResultCard extends StatelessWidget {
   const _ResultCard({required this.message, required this.viewLabel});
@@ -333,10 +528,22 @@ class _ResultCard extends StatelessWidget {
 }
 
 class _Step extends StatelessWidget {
-  const _Step(this.number, this.text, {this.last = false});
+  const _Step(
+    this.number,
+    this.text, {
+    this.command,
+    this.onOpenLink,
+    this.last = false,
+  });
 
   final int number;
   final String text;
+
+  /// A shell command shown under the text, selectable and copyable.
+  final String? command;
+
+  /// Shows an "Open link" button under the text when set.
+  final VoidCallback? onOpenLink;
   final bool last;
 
   @override
@@ -363,6 +570,57 @@ class _Step extends StatelessWidget {
       ),
       title: text,
       titleStyle: Theme.of(context).textTheme.bodyMedium,
+      footer: command != null
+          ? _CommandBox(command!)
+          : onOpenLink == null
+          ? null
+          : Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton.icon(
+                icon: const Icon(Icons.open_in_new, size: 18),
+                label: Text(context.t.import.openLink),
+                onPressed: onOpenLink,
+              ),
+            ),
+    );
+  }
+}
+
+/// A selectable monospace command with a copy button.
+class _CommandBox extends StatelessWidget {
+  const _CommandBox(this.command);
+
+  final String command;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsetsDirectional.only(start: 12),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: SelectableText(
+              command,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 12,
+                color: scheme.onSurface,
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: context.t.import.copyCommand,
+            icon: const Icon(Icons.copy, size: 18),
+            onPressed: () => Clipboard.setData(ClipboardData(text: command)),
+          ),
+        ],
+      ),
     );
   }
 }
