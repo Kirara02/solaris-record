@@ -30,11 +30,23 @@ class SolarisApp extends ConsumerWidget {
               ? M3EThemeData.dark(seedColor: settings.seedColor)
               : M3EThemeData.light(seedColor: settings.seedColor);
           final device = dark ? darkDynamic : lightDynamic;
+          final scheme = settings.useDynamicColor && device != null
+              ? M3EColorScheme.fromColorScheme(device).harmonized()
+              : base.colorScheme;
           return base.copyWith(
             fontFamily: 'Inter',
-            colorScheme: settings.useDynamicColor && device != null
-                ? M3EColorScheme.fromColorScheme(device).harmonized()
-                : base.colorScheme,
+            // AMOLED is applied to the scheme itself so ThemeData and M3E
+            // widgets agree on the black surfaces.
+            colorScheme: dark && settings.useAmoled
+                ? scheme.copyWith(
+                    surface: Colors.black,
+                    surfaceContainerLowest: Colors.black,
+                    surfaceContainerLow: const Color(0xFF0A0A0A),
+                    surfaceContainer: const Color(0xFF121212),
+                    surfaceContainerHigh: const Color(0xFF1A1A1A),
+                    surfaceContainerHighest: const Color(0xFF222222),
+                  )
+                : scheme,
             // Rail items span the whole rail like the hand-drawn Settings
             // item (pill = rail width minus a 16px inset on each side, the
             // same inset the rail gives its trailing slot), instead of
@@ -79,10 +91,7 @@ class SolarisApp extends ConsumerWidget {
               ThemeMode.dark => Brightness.dark,
               ThemeMode.system => MediaQuery.platformBrightnessOf(context),
             }),
-            child: _ResolvedThemeScope(
-              amoled: settings.useAmoled,
-              child: child ?? const SizedBox.shrink(),
-            ),
+            child: _ResolvedThemeScope(child: child ?? const SizedBox.shrink()),
           ),
         );
       },
@@ -90,37 +99,22 @@ class SolarisApp extends ConsumerWidget {
   }
 }
 
-/// Pins the page background to the resolved scheme and applies AMOLED.
+/// Pins the page background to the resolved scheme.
 ///
 /// Sits inside M3ETheme. The Scaffold background comes from
 /// `ThemeData.scaffoldBackgroundColor`, which M3ETheme doesn't recompute from
-/// the scheme it resolves (dynamic palette, brightness), so it could disagree
-/// with the rest of the UI (e.g. a black page behind light content).
+/// the scheme it resolves (dynamic palette, brightness, AMOLED), so it could
+/// disagree with the rest of the UI (e.g. a black page behind light content).
 class _ResolvedThemeScope extends StatelessWidget {
-  const _ResolvedThemeScope({required this.amoled, required this.child});
+  const _ResolvedThemeScope({required this.child});
 
-  final bool amoled;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final black = amoled && scheme.brightness == Brightness.dark;
     return Theme(
-      data: theme.copyWith(
-        scaffoldBackgroundColor: black ? Colors.black : scheme.surface,
-        colorScheme: black
-            ? scheme.copyWith(
-                surface: Colors.black,
-                surfaceContainerLowest: Colors.black,
-                surfaceContainerLow: const Color(0xFF0A0A0A),
-                surfaceContainer: const Color(0xFF121212),
-                surfaceContainerHigh: const Color(0xFF1A1A1A),
-                surfaceContainerHighest: const Color(0xFF222222),
-              )
-            : scheme,
-      ),
+      data: theme.copyWith(scaffoldBackgroundColor: theme.colorScheme.surface),
       child: child,
     );
   }

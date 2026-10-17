@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -120,90 +121,94 @@ void showFiveStarDetail(
     // Without this a sheet is capped at about half the screen, which pushed
     // the "Item info" button into the scroll area.
     isScrollControlled: true,
-    builder: (sheetContext) => SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ItemIcon(
-                resourceId: e.resourceId,
-                resourceType: e.resourceType,
-                rarity: 5,
-                size: 96,
-                circular: true,
-                ringColor: ringFor(scheme, e.result),
-              ),
-              const SizedBox(height: 12),
-              ItemName(
-                resourceId: e.resourceId,
-                fallback: e.name,
-                style: Theme.of(sheetContext).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: rarityColor(scheme, 5),
+    builder: (sheetContext) => ArtworkAccent(
+      resourceId: e.resourceId,
+      resourceType: e.resourceType,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ItemIcon(
+                  resourceId: e.resourceId,
+                  resourceType: e.resourceType,
+                  rarity: 5,
+                  size: 96,
+                  circular: true,
+                  ringColor: ringFor(scheme, e.result),
                 ),
-              ),
-              const SizedBox(height: 16),
-              SettingsGroup(
-                children: [
-                  SettingsItem(
-                    icon: Icons.layers_outlined,
-                    title: t.stats.detailPity,
-                    trailing: StatusBadge(
-                      label: '${e.pullsUsed} / $threshold',
-                      background: bg,
-                      foreground: fg,
-                    ),
-                    footer: M3EProgressIndicator.linear(
-                      value: (e.pullsUsed / threshold).clamp(0.0, 1.0),
-                      color: fg,
-                      trackColor: scheme.surfaceContainerHighest,
-                    ),
-                  ),
-                  SettingsItem(
-                    icon: Icons.schedule,
-                    title: t.stats.detailTime,
-                    trailing: Text(e.time),
-                    showDivider: e.result != FiftyFiftyResult.notApplicable,
-                  ),
-                  if (e.result != FiftyFiftyResult.notApplicable)
-                    SettingsItem(
-                      icon: Icons.casino_outlined,
-                      title: t.stats.detailResult,
-                      trailing: StatusBadge(
-                        label: switch (e.result) {
-                          FiftyFiftyResult.won => t.stats.won,
-                          FiftyFiftyResult.lost => t.stats.lost,
-                          _ => t.stats.guaranteed,
-                        },
-                        background: ringFor(scheme, e.result),
-                        foreground: scheme.surface,
-                      ),
-                      showDivider: false,
-                    ),
-                ],
-              ),
-              if (e.resourceId > 0) ...[
                 const SizedBox(height: 12),
-                M3EButton(
-                  style: M3EButtonStyle.tonal,
-                  size: M3EButtonSize.md,
-                  icon: const Icon(Icons.info_outline),
-                  label: Text(t.info.button),
-                  onPressed: () {
-                    Navigator.pop(sheetContext);
-                    showItemInfo(
-                      context,
-                      resourceId: e.resourceId,
-                      resourceType: e.resourceType,
-                      name: e.name,
-                      rarity: 5,
-                    );
-                  },
+                ItemName(
+                  resourceId: e.resourceId,
+                  fallback: e.name,
+                  style: Theme.of(sheetContext).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: rarityColor(scheme, 5),
+                  ),
                 ),
+                const SizedBox(height: 16),
+                SettingsGroup(
+                  children: [
+                    SettingsItem(
+                      icon: Icons.layers_outlined,
+                      title: t.stats.detailPity,
+                      trailing: StatusBadge(
+                        label: '${e.pullsUsed} / $threshold',
+                        background: bg,
+                        foreground: fg,
+                      ),
+                      footer: M3EProgressIndicator.linear(
+                        value: (e.pullsUsed / threshold).clamp(0.0, 1.0),
+                        color: fg,
+                        trackColor: scheme.surfaceContainerHighest,
+                      ),
+                    ),
+                    SettingsItem(
+                      icon: Icons.schedule,
+                      title: t.stats.detailTime,
+                      trailing: Text(e.time),
+                      showDivider: e.result != FiftyFiftyResult.notApplicable,
+                    ),
+                    if (e.result != FiftyFiftyResult.notApplicable)
+                      SettingsItem(
+                        icon: Icons.casino_outlined,
+                        title: t.stats.detailResult,
+                        trailing: StatusBadge(
+                          label: switch (e.result) {
+                            FiftyFiftyResult.won => t.stats.won,
+                            FiftyFiftyResult.lost => t.stats.lost,
+                            _ => t.stats.guaranteed,
+                          },
+                          background: ringFor(scheme, e.result),
+                          foreground: scheme.surface,
+                        ),
+                        showDivider: false,
+                      ),
+                  ],
+                ),
+                if (e.resourceId > 0) ...[
+                  const SizedBox(height: 12),
+                  M3EButton(
+                    style: M3EButtonStyle.tonal,
+                    size: M3EButtonSize.md,
+                    icon: const Icon(Icons.info_outline),
+                    label: Text(t.info.button),
+                    onPressed: () {
+                      Navigator.pop(sheetContext);
+                      showItemInfo(
+                        context,
+                        resourceId: e.resourceId,
+                        resourceType: e.resourceType,
+                        name: e.name,
+                        rarity: 5,
+                      );
+                    },
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
