@@ -66,3 +66,18 @@ ConveneUrl parseConveneUrl(String input) {
     gachaType: params['gacha_type'],
   );
 }
+
+/// The first convene record URL in [text], or null. Shared text often has a
+/// title or a few words around the link, and may end in punctuation.
+String? extractConveneUrl(String text) {
+  for (final match in RegExp(r'https?://[^\s<>"]+').allMatches(text)) {
+    final url = match.group(0)!.replaceFirst(RegExp(r'[.,;:!?)\]}]+$'), '');
+    try {
+      parseConveneUrl(url);
+      return url;
+    } on ConveneUrlException {
+      continue;
+    }
+  }
+  return null;
+}

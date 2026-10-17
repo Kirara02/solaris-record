@@ -9,6 +9,7 @@ import '../../../shared/layout/window_size.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/settings_group.dart';
+import '../../announcements/announcements_providers.dart';
 import '../../update/domain/update_platform.dart';
 import '../../update/presentation/update_actions.dart';
 import '../../update/presentation/update_dialog.dart';
@@ -149,6 +150,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 SettingsSectionHeader(title: t.about.sectionLinks),
                 SettingsGroup(
                   children: [
+                    SettingsSwitchItem(
+                      icon: Icons.campaign_outlined,
+                      title: t.announcements.title,
+                      subtitle: t.announcements.subtitle,
+                      value: ref.watch(announcementsEnabledProvider),
+                      onChanged: ref
+                          .read(announcementsEnabledProvider.notifier)
+                          .set,
+                    ),
                     SettingsItem(
                       icon: Icons.bug_report_outlined,
                       title: t.about.reportTitle,

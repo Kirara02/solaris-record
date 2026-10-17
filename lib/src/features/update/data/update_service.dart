@@ -36,11 +36,19 @@ class UpdateService {
   /// The latest stable release (GitHub leaves out drafts and pre-releases), or
   /// null when the repository has none yet. [platform] picks which file is
   /// offered (see `updatePlatform`).
-  Future<UpdateInfo?> fetchLatest(String platform) async {
+  Future<UpdateInfo?> fetchLatest(String platform) =>
+      _fetchRelease('latest', platform);
+
+  /// The release published for [version], or null when there is none (for
+  /// example a build that was never tagged).
+  Future<UpdateInfo?> fetchVersion(String version, String platform) =>
+      _fetchRelease('tags/v$version', platform);
+
+  Future<UpdateInfo?> _fetchRelease(String path, String platform) async {
     final Response<dynamic> response;
     try {
       response = await _dio.get<dynamic>(
-        'https://api.github.com/repos/$githubRepo/releases/latest',
+        'https://api.github.com/repos/$githubRepo/releases/$path',
         options: Options(
           headers: {'Accept': 'application/vnd.github+json'},
           validateStatus: (s) => s != null && s < 500,

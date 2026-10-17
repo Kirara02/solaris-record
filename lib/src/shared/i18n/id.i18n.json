@@ -198,7 +198,9 @@
         "step2": "Pilih Export Pull History dan simpan file JSON-nya (wuwatracker-pulls.json)."
       },
       "last": "Ketuk Impor dari file JSON di atas lalu pilih filenya."
-    }
+    },
+    "prefilledClipboard": "Diisi dari clipboard Anda.",
+    "prefilledShared": "Diterima dari aplikasi lain."
   },
   "accounts": {
     "title": "Akun",
@@ -405,5 +407,15 @@
     "checking": "Memeriksa…",
     "upToDate": "Anda sudah memakai versi terbaru",
     "checkFailed": "Gagal memeriksa pembaruan. Periksa koneksi Anda dan coba lagi."
+  },
+  "whatsNewDialog": {
+    "title": "Yang baru di {version}",
+    "fullChangelog": "Changelog lengkap",
+    "gotIt": "Mengerti"
+  },
+  "announcements": {
+    "title": "Pengumuman",
+    "subtitle": "Tampilkan pemberitahuan dari pengembang, misalnya perubahan API game. Dicek paling banyak dua kali sehari.",
+    "dismiss": "Mengerti"
   }
 }

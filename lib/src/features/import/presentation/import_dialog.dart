@@ -24,13 +24,17 @@ import '../saved_import_urls.dart';
 
 /// Opens the import dialog. Reachable from the Convene screen and Settings, so
 /// importing doesn't need a tab of its own.
-Future<void> showImportDialog(BuildContext context) => showDialog<void>(
-  context: context,
-  builder: (context) => const ImportDialog(),
-);
+Future<void> showImportDialog(BuildContext context, {String? initialUrl}) =>
+    showDialog<void>(
+      context: context,
+      builder: (context) => ImportDialog(initialUrl: initialUrl),
+    );
 
 class ImportDialog extends ConsumerStatefulWidget {
-  const ImportDialog({super.key});
+  const ImportDialog({super.key, this.initialUrl});
+
+  /// A link to start with, e.g. one shared from another app.
+  final String? initialUrl;
 
   @override
   ConsumerState<ImportDialog> createState() => _ImportDialogState();
@@ -47,6 +51,9 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   /// being read.
   BackupImportOutcome? _fileOutcome;
   bool _fileBusy = false;
+
+  /// Where the field's starting text came from, to say so under it.
+  _Prefill? _prefill;
 
   /// Which app's export the file guide explains.
   _FileSource _fileSource = _FileSource.solaris;
@@ -65,7 +72,14 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
     super.initState();
     final uid = ref.read(activeAccountProvider)?.uid;
     _saved = uid == null ? null : ref.read(savedImportUrlsProvider).get(uid);
-    if (_saved != null) _controller.text = _saved!;
+    if (widget.initialUrl != null) {
+      _controller.text = widget.initialUrl!;
+      _prefill = _Prefill.shared;
+    } else if (_saved != null) {
+      _controller.text = _saved!;
+    } else {
+      _prefillFromClipboard();
+    }
     _controller.addListener(() => setState(() {}));
   }
 
@@ -73,6 +87,18 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  /// Fills the field with a convene link that is already on the clipboard, so
+  /// copying it in the game and opening this dialog is all it takes.
+  Future<void> _prefillFromClipboard() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final url = extractConveneUrl(data?.text ?? '');
+    if (url == null || !mounted || _controller.text.isNotEmpty) return;
+    setState(() {
+      _controller.text = url;
+      _prefill = _Prefill.clipboard;
+    });
   }
 
   Future<void> _paste() async {
@@ -254,6 +280,21 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                               )
                             : null,
                       ),
+                      if (_prefill != null &&
+                          _controller.text.trim().isNotEmpty &&
+                          !usingSaved)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+                          child: Text(
+                            switch (_prefill!) {
+                              _Prefill.clipboard => t.import.prefilledClipboard,
+                              _Prefill.shared => t.import.prefilledShared,
+                            },
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.primary,
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 12),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -383,6 +424,9 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
     );
   }
 }
+
+/// Where the link in the field came from before the user typed anything.
+enum _Prefill { clipboard, shared }
 
 /// The apps whose exported file can be imported here.
 enum _FileSource {

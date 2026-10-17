@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/accounts/presentation/accounts_screen.dart';
+import '../../features/import/share_intent.dart';
 import '../../features/settings/presentation/about_screen.dart';
 import '../../features/settings/presentation/appearance_screen.dart';
 import '../../features/settings/presentation/data_screen.dart';
@@ -56,8 +57,10 @@ GoRouter appRouter(Ref ref) {
       StatefulShellRoute.indexedStack(
         pageBuilder: (context, state, shell) => _page(
           state,
-          UpdateStartupCheck(
-            child: AppShell(navigationShell: shell, location: state.uri.path),
+          ShareIntentListener(
+            child: UpdateStartupCheck(
+              child: AppShell(navigationShell: shell, location: state.uri.path),
+            ),
           ),
         ),
         branches: [

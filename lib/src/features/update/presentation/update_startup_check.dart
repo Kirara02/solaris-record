@@ -1,18 +1,24 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../data/preferences.dart';
+import '../../announcements/announcements_providers.dart';
+import '../../announcements/presentation/announcement_dialog.dart';
 import '../domain/update_platform.dart';
 import '../update_providers.dart';
 import 'update_actions.dart';
 import 'update_dialog.dart';
+import 'whats_new.dart';
 
-/// Looks for a new version once when the app opens and offers it in a dialog.
-/// It only asks GitHub at most twice a day, can be switched off in About, and
-/// does nothing on platforms without a download or while tests run.
+/// Runs the checks that belong to opening the app, one dialog at a time: a
+/// new version (at most twice a day, can be switched off in About, only where
+/// there is a download), the notes of the version that was just installed, and
+/// a developer announcement (also at most twice a day and switchable). Does
+/// nothing on the web or while tests run.
 class UpdateStartupCheck extends ConsumerStatefulWidget {
   const UpdateStartupCheck({super.key, required this.child});
 
@@ -25,6 +31,7 @@ class UpdateStartupCheck extends ConsumerStatefulWidget {
 class _UpdateStartupCheckState extends ConsumerState<UpdateStartupCheck> {
   static const _interval = Duration(hours: 12);
   static const _lastCheckKey = 'last_update_check';
+  static const _lastAnnouncementKey = 'last_announcement_check';
 
   /// The shell can be rebuilt (window resized across a layout breakpoint);
   /// the app should still check only once per launch.
@@ -36,25 +43,41 @@ class _UpdateStartupCheckState extends ConsumerState<UpdateStartupCheck> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _run());
   }
 
+  /// Whether [key] was last stamped more than [_interval] ago; stamps it now
+  /// when so.
+  Future<bool> _due(String key) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final last = prefs.getInt(key);
+    if (last != null && now - last < _interval.inMilliseconds) return false;
+    await prefs.setInt(key, now);
+    return true;
+  }
+
   Future<void> _run() async {
-    if (_ranThisLaunch || !updatesSupported) return;
+    if (_ranThisLaunch || kIsWeb) return;
     if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     _ranThisLaunch = true;
 
-    // An update downloaded last time is either installed now or no longer
-    // wanted; either way the file is dead weight.
-    unawaited(ref.read(updateServiceProvider).clearDownloads());
+    if (updatesSupported) {
+      // An update downloaded last time is either installed now or no longer
+      // wanted; either way the file is dead weight.
+      unawaited(ref.read(updateServiceProvider).clearDownloads());
 
-    if (!ref.read(autoUpdateCheckProvider)) return;
-    final prefs = ref.read(sharedPreferencesProvider);
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final last = prefs.getInt(_lastCheckKey);
-    if (last != null && now - last < _interval.inMilliseconds) return;
-    await prefs.setInt(_lastCheckKey, now);
+      if (ref.read(autoUpdateCheckProvider) && await _due(_lastCheckKey)) {
+        final result = await checkForUpdate(ref, manual: false);
+        if (!mounted) return;
+        if (result is UpdateAvailable) await showUpdateDialog(context, result);
+      }
+    }
 
-    final result = await checkForUpdate(ref, manual: false);
-    if (!mounted || result is! UpdateAvailable) return;
-    await showUpdateDialog(context, result);
+    if (!mounted) return;
+    await showWhatsNewIfNeeded(context, ref);
+
+    if (!mounted || !ref.read(announcementsEnabledProvider)) return;
+    if (await _due(_lastAnnouncementKey) && mounted) {
+      await showAnnouncementIfAny(context, ref);
+    }
   }
 
   @override

@@ -202,7 +202,9 @@
         "step2": "Choose Export Pull History and save the JSON file (wuwatracker-pulls.json)."
       },
       "last": "Tap Import from JSON file above and pick the file."
-    }
+    },
+    "prefilledClipboard": "Filled from your clipboard.",
+    "prefilledShared": "Received from another app."
   },
   "accounts": {
     "title": "Accounts",
@@ -409,5 +411,15 @@
     "checking": "Checking…",
     "upToDate": "You're on the latest version",
     "checkFailed": "Couldn't check for updates. Check your connection and try again."
+  },
+  "whatsNewDialog": {
+    "title": "What's new in {version}",
+    "fullChangelog": "Full changelog",
+    "gotIt": "Got it"
+  },
+  "announcements": {
+    "title": "Announcements",
+    "subtitle": "Show notices from the developer, such as changes to the game's API. Checked at most twice a day.",
+    "dismiss": "Got it"
   }
 }
