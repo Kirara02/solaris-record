@@ -41,7 +41,11 @@ class AppSliverHeader extends StatelessWidget {
   Widget _buildTopBar(BuildContext context, double width) {
     final tokens = context.tokens;
     final scheme = Theme.of(context).colorScheme;
-    final inset = WindowSize.sideInset(width);
+    // The app bar's own safe area already keeps its content clear of a rail
+    // the page extends under; only the size class needs the width left of it.
+    final inset = WindowSize.sideInset(
+      width - MediaQuery.paddingOf(context).left,
+    );
     return SliverAppBar(
       pinned: true,
       toolbarHeight: 72,

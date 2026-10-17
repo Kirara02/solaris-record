@@ -249,6 +249,8 @@
     "themeDark": "Gelap",
     "amoled": "Gelap AMOLED",
     "amoledSubtitle": "Latar hitam pekat pada mode gelap",
+    "navBlur": "Navigasi blur",
+    "navBlurSubtitle": "Bilah bawah di ponsel dan sidebar di layar besar dibuat transparan. Matikan di perangkat yang lebih lambat.",
     "sectionLanguage": "Bahasa",
     "language": "Bahasa",
     "dataLanguage": "Bahasa data",

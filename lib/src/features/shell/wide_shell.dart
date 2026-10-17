@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
@@ -7,6 +9,8 @@ import '../../shared/i18n/gen/strings.g.dart';
 import '../../shared/i18n/pool_labels.dart';
 import '../../shared/layout/window_size.dart';
 import '../../shared/theme/app_tokens.dart';
+import '../../shared/widgets/settings_group.dart';
+import '../settings/settings_providers.dart';
 import '../stats/domain/pool_type.dart';
 import '../stats/pool_selection.dart';
 import 'nav_destination.dart';
@@ -34,6 +38,10 @@ class WideShell extends ConsumerWidget {
   final List<NavDestination> destinations;
   final WindowSize size;
 
+  /// Width of the always-expanded rail. Pages extend under it and keep clear
+  /// through `MediaQuery.padding.left`.
+  static const railWidth = 280.0;
+
   /// Key of the pinned bottom destination.
   static const bottomItemKey = ValueKey('rail-bottom-item');
 
@@ -43,7 +51,8 @@ class WideShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    final navColor = Theme.of(context).colorScheme.surfaceContainer;
+    final blur = ref.watch(navBarBlurProvider);
+    final tint = groupColor(context);
     final shell = navigationShell;
     final current = shell.currentIndex;
     final groupOpen = ref.watch(poolGroupExpandedProvider);
@@ -64,13 +73,13 @@ class WideShell extends ConsumerWidget {
     }
 
     final rail = M3ENavigationRail(
-      background: navColor,
+      background: blur ? tint.withValues(alpha: 0.72) : tint,
       type: M3ENavigationRailType.alwaysExpand,
       labelBehavior: M3ENavigationRailLabelBehavior.alwaysShow,
       leading: const RailBrand(expanded: true),
       showDivider: true,
       // Wide enough for the longest pull-type label ("Standard Resonator").
-      expandedWidth: 280,
+      expandedWidth: WideShell.railWidth,
       selectedIndex: current == 0
           ? railSelectedIndex(branch: 0, groupVisible: groupOpen, pool: pool)
           : -1,
@@ -117,11 +126,32 @@ class WideShell extends ConsumerWidget {
       ),
     );
 
+    // The page fills the window and the rail sits over it, translucent with a
+    // blur behind, so what scrolls near the rail shows through faintly. The
+    // pages read the rail's width as left padding (see SliverAdaptivePadding).
+    Widget railView = SizedBox(width: WideShell.railWidth, child: rail);
+    if (blur) {
+      railView = ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          blendMode: BlendMode.src,
+          child: railView,
+        ),
+      );
+    }
+    final media = MediaQuery.of(context);
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          rail,
-          Expanded(child: shell),
+          Positioned.fill(
+            child: MediaQuery(
+              data: media.copyWith(
+                padding: media.padding.copyWith(left: WideShell.railWidth),
+              ),
+              child: shell,
+            ),
+          ),
+          Positioned(left: 0, top: 0, bottom: 0, child: railView),
         ],
       ),
     );

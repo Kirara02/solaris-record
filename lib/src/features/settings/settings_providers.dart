@@ -163,3 +163,20 @@ class DetailedLogging extends _$DetailedLogging {
     state = value;
   }
 }
+
+const _navBlurKey = 'nav_blur';
+
+/// Whether the phone's bottom bar is translucent with a blur behind it. On by
+/// default; the blur re-filters what scrolls underneath on every frame, so
+/// slower devices can turn it off for an opaque bar.
+@Riverpod(keepAlive: true)
+class NavBarBlur extends _$NavBarBlur {
+  @override
+  bool build() =>
+      ref.watch(sharedPreferencesProvider).getBool(_navBlurKey) ?? true;
+
+  Future<void> set(bool value) async {
+    state = value;
+    await ref.read(sharedPreferencesProvider).setBool(_navBlurKey, value);
+  }
+}

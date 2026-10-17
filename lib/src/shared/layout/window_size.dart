@@ -36,21 +36,37 @@ class SliverAdaptivePadding extends StatelessWidget {
     super.key,
     required this.sliver,
     this.bottom = 24,
+    this.clearBottomInset = true,
   });
 
   final Widget sliver;
+
+  /// Space under the content, on top of the bottom inset the shell reports
+  /// (the phone's bottom bar, which the body extends under, or the system's
+  /// gesture area).
   final double bottom;
+
+  /// Whether to add the shell's bottom inset. Only the last block of a screen
+  /// needs it; one above more content does not.
+  final bool clearBottomInset;
 
   @override
   Widget build(BuildContext context) => SliverLayoutBuilder(
-    builder: (context, constraints) => SliverPadding(
-      padding: EdgeInsets.fromLTRB(
-        WindowSize.sideInset(constraints.crossAxisExtent),
-        0,
-        WindowSize.sideInset(constraints.crossAxisExtent),
-        bottom,
-      ),
-      sliver: sliver,
-    ),
+    builder: (context, constraints) {
+      // A page can extend under the wide layout's rail; the rail's width
+      // arrives as left padding. The margin is sized to what is left of it.
+      final rail = MediaQuery.paddingOf(context).left;
+      final inset = WindowSize.sideInset(constraints.crossAxisExtent - rail);
+      return SliverPadding(
+        padding: EdgeInsets.fromLTRB(
+          rail + inset,
+          0,
+          inset,
+          bottom +
+              (clearBottomInset ? MediaQuery.paddingOf(context).bottom : 0),
+        ),
+        sliver: sliver,
+      );
+    },
   );
 }

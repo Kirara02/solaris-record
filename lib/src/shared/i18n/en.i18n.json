@@ -253,6 +253,8 @@
     "themeDark": "Dark",
     "amoled": "AMOLED dark",
     "amoledSubtitle": "Pure black background in dark mode",
+    "navBlur": "Blurred navigation",
+    "navBlurSubtitle": "Frosted bottom bar on phones and sidebar on larger screens. Turn it off on slower devices.",
     "sectionLanguage": "Language",
     "language": "Language",
     "dataLanguage": "Data language",

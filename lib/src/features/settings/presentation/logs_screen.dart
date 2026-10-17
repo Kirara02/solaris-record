@@ -125,6 +125,7 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
             ],
           ),
           SliverAdaptivePadding(
+            clearBottomInset: false,
             sliver: SliverList.list(
               children: [
                 const SizedBox(height: 8),
