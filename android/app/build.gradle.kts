@@ -17,7 +17,10 @@ val hasReleaseKey = keystoreProperties.containsKey("storeFile")
 
 android {
     namespace = "id.kirara.solaris_record_app"
-    compileSdk = flutter.compileSdkVersion
+    // receive_sharing_intent (links shared into the app) is built against API
+    // 37, newer than Flutter's default; compiling against a newer API doesn't
+    // change targetSdk or minSdk. See gradle.properties for the AGP warning.
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
