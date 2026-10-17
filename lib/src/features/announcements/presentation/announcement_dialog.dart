@@ -58,7 +58,7 @@ class _AnnouncementDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    final lang = LocaleSettings.currentLocale.languageCode;
+    final lang = LocaleSettings.currentLocale.languageTag;
     final ctaUrl = announcement.ctaUrl;
     final ctaLabel = pickText(announcement.ctaLabel, lang);
     return AlertDialog(

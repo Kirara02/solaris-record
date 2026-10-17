@@ -60,7 +60,7 @@ class ItemInfoDialog extends ConsumerWidget {
     final theme = Theme.of(context);
     final lang =
         ref.watch(dataLanguageProvider) ??
-        LocaleSettings.currentLocale.languageCode;
+        LocaleSettings.currentLocale.languageTag;
     final provider = itemInfoProvider(resourceId, resourceType, lang);
     final info = ref.watch(provider);
     // The encore.moe page of this item (null when it isn't a resonator/weapon).

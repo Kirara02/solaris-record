@@ -55,8 +55,8 @@ class ThemeSettingsController extends _$ThemeSettingsController {
   }
 }
 
-/// Language override: `null` follows the device, otherwise a slang locale code
-/// (`en`, `id`).
+/// Language override: `null` follows the device, otherwise a slang locale
+/// language tag (`en`, `id`, `ja`, `zh-Hans`, `zh-Hant`).
 @Riverpod(keepAlive: true)
 class AppLanguage extends _$AppLanguage {
   @override
@@ -64,7 +64,7 @@ class AppLanguage extends _$AppLanguage {
     final code = ref
         .watch(sharedPreferencesProvider)
         .getString(languagePrefKey);
-    return AppLocale.values.any((l) => l.languageCode == code) ? code : null;
+    return AppLocale.values.any((l) => l.languageTag == code) ? code : null;
   }
 
   Future<void> set(String? code) async {
@@ -80,6 +80,42 @@ class AppLanguage extends _$AppLanguage {
   }
 }
 
+/// Plural rules for the languages slang has none built in for (it logs
+/// "Resolver for ... not specified" and guesses otherwise). Indonesian keeps
+/// a singular for 1; Japanese and Chinese have a single form.
+void registerPluralResolvers() {
+  String single(
+    num n, {
+    String? zero,
+    String? one,
+    String? two,
+    String? few,
+    String? many,
+    String? other,
+  }) => other ?? '';
+  for (final language in const ['ja', 'zh']) {
+    LocaleSettings.setPluralResolverSync(
+      language: language,
+      cardinalResolver: single,
+      ordinalResolver: single,
+    );
+  }
+  String indonesian(
+    num n, {
+    String? zero,
+    String? one,
+    String? two,
+    String? few,
+    String? many,
+    String? other,
+  }) => n == 1 ? (one ?? other ?? '') : (other ?? '');
+  LocaleSettings.setPluralResolverSync(
+    language: 'id',
+    cardinalResolver: indonesian,
+    ordinalResolver: single,
+  );
+}
+
 /// Applies the saved language before the first frame.
 void applySavedLanguage(String? code) {
   if (code == null) {
@@ -91,7 +127,13 @@ void applySavedLanguage(String? code) {
 
 /// Language names are shown in their own language so they stay recognisable
 /// whatever the current UI language is.
-const languageNames = {'en': 'English', 'id': 'Bahasa Indonesia'};
+const languageNames = {
+  'en': 'English',
+  'id': 'Bahasa Indonesia',
+  'ja': '日本語',
+  'zh-Hans': '简体中文',
+  'zh-Hant': '繁體中文',
+};
 
 String languageLabel(String? code, Translations t) =>
     code == null ? t.language.system : languageNames[code] ?? code;

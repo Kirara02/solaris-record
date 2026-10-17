@@ -53,7 +53,7 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 - **Updates**: the app tells you when a new release is out and, on Android, installs it from inside the app.
 - **Backup**: export and import everything as JSON, and import a [WuWa Tracker](https://wuwatracker.com/) export.
 - **Quick updates**: the last working link is remembered per account.
-- **Material 3** with dynamic color, accent colors and an AMOLED dark mode. English and Indonesian.
+- **Material 3** with dynamic color, accent colors and an AMOLED dark mode. English, Indonesian, Japanese and Simplified and Traditional Chinese.
 - **Debug log** you can export when reporting a bug. UIDs and links are masked in it.
 
 ## How it gets your records
@@ -96,7 +96,7 @@ The code is organised by feature under `lib/src/features/`; see [CLAUDE.md](CLAU
 
 ## Contributing
 
-Issues and pull requests are welcome. Please run `flutter analyze` before sending a change, and add new strings to both `en.i18n.json` and `id.i18n.json` in `lib/src/shared/i18n/`.
+Issues and pull requests are welcome. Please run `flutter analyze` before sending a change, and add new strings to every language file in `lib/src/shared/i18n/` (`en`, `id`, `ja`, `zh-Hans`, `zh-Hant`).
 
 ## Acknowledgements
 
