@@ -280,11 +280,13 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                 if (_downloading)
                   SizedBox(
                     width: double.infinity,
+                    // A label without an icon is not rendered by M3EButton, so
+                    // icon-less buttons pass their text as the child.
                     child: M3EButton(
                       style: M3EButtonStyle.outlined,
                       size: M3EButtonSize.md,
-                      label: Text(t.update.cancel),
                       onPressed: () => _cancel?.cancel(),
+                      child: Text(t.update.cancel),
                     ),
                   )
                 else ...[
@@ -306,8 +308,8 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                         child: M3EButton(
                           style: M3EButtonStyle.text,
                           size: M3EButtonSize.md,
-                          label: Text(t.update.skip),
                           onPressed: _skip,
+                          child: Text(t.update.skip),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -315,8 +317,8 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                         child: M3EButton(
                           style: M3EButtonStyle.outlined,
                           size: M3EButtonSize.md,
-                          label: Text(t.update.later),
                           onPressed: () => Navigator.pop(context),
+                          child: Text(t.update.later),
                         ),
                       ),
                     ],
