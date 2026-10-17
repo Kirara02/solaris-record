@@ -108,6 +108,9 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                 builder: (context, controller) => ListView(
                   controller: controller,
                   scrollDirection: Axis.horizontal,
+                  // A null padding makes ListView add MediaQuery.padding, which
+                  // on desktop includes the rail width (280) on the left.
+                  padding: EdgeInsets.zero,
                   children: [
                     _TimelineNode(
                       width: _nodeWidth,
