@@ -47,7 +47,7 @@ Without that file, release builds fall back to the debug key, so `flutter run --
    ```
 
    The workflow fails early if the tag does not match the version in `pubspec.yaml`. A tag with a suffix (`v1.1.0-beta.1`) is published as a pre-release.
-4. When the run finishes, the release page has the Android APKs (per ABI), a Windows zip, a Linux tarball, a macOS zip and `SHA256SUMS.txt`.
+4. When the run finishes, the release page has the Android APKs (per ABI), a Windows zip, a Linux tarball, a macOS disk image (`.dmg`, built with `create-dmg`; the zip is published too for older app versions) and `SHA256SUMS.txt`.
 
 ## What the app does with a release
 
@@ -60,6 +60,6 @@ Pre-releases and drafts are not offered: only the latest stable release counts.
 
 ## Known limits
 
-- **Windows and macOS builds are not code-signed.** Windows shows a SmartScreen warning and macOS asks the user to right-click → Open. Signing needs a paid certificate (a Windows code-signing certificate, or an Apple Developer ID with notarization).
+- **Windows and macOS builds are not code-signed.** Windows shows a SmartScreen warning and macOS asks the user to remove the quarantine flag (`xattr`) or use *Open Anyway* in Privacy & Security; right-click → Open no longer works on macOS 15 and later. Signing needs a paid certificate (a Windows code-signing certificate, or an Apple Developer ID with notarization).
 - **iOS** is not built here: it needs an Apple Developer account and signing certificates.
 - **Web** is not built: the database needs extra wasm files and the game's API is probably blocked by CORS in browsers.

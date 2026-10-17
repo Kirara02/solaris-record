@@ -4,6 +4,24 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.2.0
+
+Importing is easier to get into, the navigation is translucent, dynamic color follows your wallpaper more faithfully, and there is a log viewer for bug reports.
+
+### What's new
+- **Guides for getting your link.** The import dialog now has a guide per platform (Windows, Android, iOS, macOS, Linux) with the ways WuWa Tracker documents, including copyable commands for Windows, macOS and Linux. A second guide explains where to get a backup file or a WuWa Tracker export to import.
+- **Fewer steps to import.** If a convene link is on your clipboard, the import dialog fills it in. On Android you can also share a link to Solaris Record from another app.
+- **What's new after an update.** The first launch of a new version shows its release notes once. The app can also show short notices from the developer, for example when the game's API changes. Switch them off under *Settings → About*.
+- **Log viewer.** *Settings → Data & storage → View logs* lists this session's log with search and a severity filter, and a *Detailed logging* switch records more for bug reports. *About* links to the issue tracker.
+- **Look and feel.** The bottom bar and the sidebar are translucent with a blur (switch it off under *Appearance* on slower devices). Dynamic color now uses your wallpaper palette as it is, instead of one re-derived from a single color. Item info and the pull detail sheet take their accent color from the item's icon. Buttons, chips and switches share one style, and settings groups drop their animations when the system asks for less motion.
+- **macOS disk image.** macOS downloads now come as a `.dmg` with a shortcut to Applications. The zip is still published.
+
+### Fixes
+- AMOLED mode now blackens the buttons and cards that were still grey.
+
+### Notes for macOS
+The app is not signed. Drag it to Applications, then run `xattr -dr com.apple.quarantine "/Applications/Solaris Record.app"`. On macOS 15 and later, right-click → *Open* no longer works; use *System Settings → Privacy & Security → Open Anyway*.
+
 ## 1.1.0
 
 Solaris Record can now tell you when a new version is out and, on Android, install it for you.

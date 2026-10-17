@@ -2,7 +2,7 @@ name: solaris_record_app
 description: "Wuthering Waves convene tracker."
 publish_to: 'none'
 
-version: 1.1.0+2
+version: 1.2.0+3
 
 environment:
   sdk: ^3.13.5
