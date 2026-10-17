@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -64,73 +65,77 @@ class ItemInfoDialog extends ConsumerWidget {
     // The encore.moe page of this item (null when it isn't a resonator/weapon).
     final link = encoreItemUrlFor(resourceId, resourceType, lang);
 
-    return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 12, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      t.info.title,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+    return ArtworkAccent(
+      resourceId: resourceId,
+      resourceType: resourceType,
+      child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 20, 12, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t.info.title,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: t.info.close,
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-                child: info.when(
-                  loading: () => _Loading(
-                    resourceId: resourceId,
-                    resourceType: resourceType,
-                    name: fallbackName,
-                    rarity: rarity,
-                  ),
-                  error: (_, _) => ErrorCard(
-                    message: t.info.error,
-                    retryLabel: t.import.retry,
-                    onRetry: () => ref.invalidate(provider),
-                  ),
-                  data: (data) => data == null
-                      ? _NoInfo(
-                          resourceId: resourceId,
-                          resourceType: resourceType,
-                          name: fallbackName,
-                          rarity: rarity,
-                        )
-                      : _InfoBody(info: data, resourceId: resourceId),
+                    IconButton(
+                      tooltip: t.info.close,
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            if (link != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                child: M3EButton(
-                  key: ItemInfoDialog.viewOnEncoreKey,
-                  style: M3EButtonStyle.tonal,
-                  size: M3EButtonSize.md,
-                  icon: const Icon(Icons.open_in_new),
-                  label: Text(t.info.viewOnEncore),
-                  onPressed: () => _open(context, ref, link),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                  child: info.when(
+                    loading: () => _Loading(
+                      resourceId: resourceId,
+                      resourceType: resourceType,
+                      name: fallbackName,
+                      rarity: rarity,
+                    ),
+                    error: (_, _) => ErrorCard(
+                      message: t.info.error,
+                      retryLabel: t.import.retry,
+                      onRetry: () => ref.invalidate(provider),
+                    ),
+                    data: (data) => data == null
+                        ? _NoInfo(
+                            resourceId: resourceId,
+                            resourceType: resourceType,
+                            name: fallbackName,
+                            rarity: rarity,
+                          )
+                        : _InfoBody(info: data, resourceId: resourceId),
+                  ),
                 ),
               ),
-          ],
+              if (link != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                  child: M3EButton(
+                    key: ItemInfoDialog.viewOnEncoreKey,
+                    style: M3EButtonStyle.tonal,
+                    size: M3EButtonSize.md,
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text(t.info.viewOnEncore),
+                    onPressed: () => _open(context, ref, link),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
