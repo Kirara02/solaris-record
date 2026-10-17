@@ -115,6 +115,8 @@
       "other": "{n} pull sejak 5★ terakhir di semua tipe pull"
     },
     "timelineLoadMore": "Tampilkan lagi ({n} lagi)",
+    "styleBubbles": "Tampilan gelembung",
+    "styleGrid": "Tampilan kisi",
     "timelineVertical": "Tampilan vertikal",
     "timelineHorizontal": "Tampilan horizontal"
   },

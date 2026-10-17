@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/preferences.dart';
 import '../../data/providers.dart';
 import 'domain/convene_record.dart';
 import 'domain/overview_stats.dart';
@@ -7,6 +8,26 @@ import 'domain/pity_calculator.dart';
 import 'domain/pool_type.dart';
 
 part 'stats_providers.g.dart';
+
+/// How the 5★ overview lays out its pulls.
+enum FiveStarStyle { bubbles, grid }
+
+/// The chosen [FiveStarStyle], kept across launches.
+@Riverpod(keepAlive: true)
+class FiveStarStyleChoice extends _$FiveStarStyleChoice {
+  static const _key = 'five_star_style';
+
+  @override
+  FiveStarStyle build() {
+    final saved = ref.watch(sharedPreferencesProvider).getString(_key);
+    return FiveStarStyle.values.asNameMap()[saved] ?? FiveStarStyle.grid;
+  }
+
+  Future<void> set(FiveStarStyle value) async {
+    state = value;
+    await ref.read(sharedPreferencesProvider).setString(_key, value.name);
+  }
+}
 
 @riverpod
 Stream<List<ConveneRecord>> records(Ref ref, String uid, PoolType pool) =>

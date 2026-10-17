@@ -119,6 +119,8 @@
       "other": "{n} pulls since last 5★ across pull types"
     },
     "timelineLoadMore": "Show more ({n} left)",
+    "styleBubbles": "Bubble view",
+    "styleGrid": "Grid view",
     "timelineVertical": "Vertical view",
     "timelineHorizontal": "Horizontal view"
   },

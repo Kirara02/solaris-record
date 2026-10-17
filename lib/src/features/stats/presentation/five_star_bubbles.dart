@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
@@ -9,9 +12,12 @@ import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
+import '../../info/domain/item_info.dart';
 import '../../info/presentation/item_info_dialog.dart';
+import '../../settings/settings_providers.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
+import '../stats_providers.dart';
 
 enum LuckTier { lucky, average, unlucky }
 
@@ -50,42 +56,78 @@ Color ringFor(ColorScheme scheme, FiftyFiftyResult result) => switch (result) {
   FiftyFiftyResult.notApplicable => rarityColor(scheme, 5),
 };
 
-/// Every 5★ of the pool as a round avatar with its pull count, newest first.
-/// Tapping one opens its details.
-class FiveStarBubbles extends StatelessWidget {
+/// Every 5★ of the pool, newest first, as round avatars with their pull count
+/// or (switchable, remembered) as a grid of cards. Tapping one opens its
+/// details.
+class FiveStarBubbles extends ConsumerWidget {
   const FiveStarBubbles({super.key, required this.entries, required this.pool});
 
   final List<FiveStarEntry> entries;
   final PoolType pool;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final style = ref.watch(fiveStarStyleChoiceProvider);
+    final grid = style == FiveStarStyle.grid;
+    void open(FiveStarEntry e) =>
+        showFiveStarDetail(context, e, threshold: pool.hardPity5);
 
     return SettingsGroup(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Wrap(
-                spacing: 10,
-                runSpacing: 14,
-                children: [
-                  for (final e in entries)
-                    _Bubble(
-                      entry: e,
-                      threshold: pool.hardPity5,
-                      onTap: () => showFiveStarDetail(
-                        context,
-                        e,
-                        threshold: pool.hardPity5,
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: grid ? t.stats.styleBubbles : t.stats.styleGrid,
+                  icon: Icon(
+                    grid ? Icons.bubble_chart_outlined : Icons.grid_view,
+                  ),
+                  onPressed: () => ref
+                      .read(fiveStarStyleChoiceProvider.notifier)
+                      .set(grid ? FiveStarStyle.bubbles : FiveStarStyle.grid),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: grid
+                    ? GridView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 150,
+                              mainAxisExtent: 200,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                        itemCount: entries.length,
+                        itemBuilder: (context, i) => _FiveStarCard(
+                          entry: entries[i],
+                          threshold: pool.hardPity5,
+                          onTap: () => open(entries[i]),
+                        ),
+                      )
+                    : Wrap(
+                        spacing: 10,
+                        runSpacing: 14,
+                        children: [
+                          for (final e in entries)
+                            FiveStarBubble(
+                              entry: e,
+                              threshold: pool.hardPity5,
+                              onTap: () => open(e),
+                            ),
+                        ],
                       ),
-                    ),
-                ],
               ),
               if (pool.hasFiftyFifty) ...[
                 const SizedBox(height: 20),
@@ -261,16 +303,18 @@ class _FiveStarDetailBody extends StatelessWidget {
   }
 }
 
-class _Bubble extends StatelessWidget {
-  const _Bubble({
+/// A 5★ as a round avatar with its pull count badge and name.
+class FiveStarBubble extends StatelessWidget {
+  const FiveStarBubble({
+    super.key,
     required this.entry,
-    required this.onTap,
     required this.threshold,
+    this.onTap,
   });
 
   final FiveStarEntry entry;
   final int threshold;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   static const _size = 52.0;
 
@@ -340,6 +384,139 @@ class _Bubble extends StatelessWidget {
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurface,
                 height: 1.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A 5★ as a card: convene art as the background with the outfit art over it, with the pull count on
+/// top and the name and time over a gradient at the bottom.
+class _FiveStarCard extends ConsumerWidget {
+  const _FiveStarCard({
+    required this.entry,
+    required this.onTap,
+    required this.threshold,
+  });
+
+  final FiveStarEntry entry;
+  final int threshold;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final (bg, fg) = luckColors(scheme, entry.pullsUsed, threshold: threshold);
+    final ring = ringFor(scheme, entry.result);
+    // Convene art (as in the item info dialog's gallery) when known, then
+    // outfit art, then the icon.
+    final lang =
+        ref.watch(dataLanguageProvider) ??
+        LocaleSettings.currentLocale.languageCode;
+    final info = entry.resourceId > 0
+        ? ref
+              .watch(
+                itemInfoProvider(entry.resourceId, entry.resourceType, lang),
+              )
+              .value
+        : null;
+    String? firstOf(ItemGalleryKind kind) =>
+        info?.gallery.where((g) => g.kind == kind).firstOrNull?.urls.first;
+    final iconUrl = entry.resourceId > 0
+        ? ref
+              .watch(itemImageUrlProvider(entry.resourceId, entry.resourceType))
+              .value
+        : null;
+    // Convene art is the background, outfit art the figure on top of it; items
+    // lacking one fall back to the other, then to the item image.
+    final background = firstOf(ItemGalleryKind.convene);
+    final figure = firstOf(ItemGalleryKind.outfit) ?? info?.imageUrl ?? iconUrl;
+
+    Widget placeholder() => Center(
+      child: Icon(
+        Icons.star,
+        size: 44,
+        color: rarityColor(scheme, 5).withValues(alpha: 0.6),
+      ),
+    );
+
+    return Material(
+      color: rarityColor(scheme, 5).withValues(alpha: 0.14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: ring, width: 2),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (background == null && figure == null) placeholder(),
+            for (final url in [?background, ?figure])
+              CachedNetworkImage(
+                key: ValueKey(url),
+                imageUrl: url,
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                fadeInDuration: const Duration(milliseconds: 150),
+                placeholder: (_, _) => url == (background ?? figure)
+                    ? placeholder()
+                    : const SizedBox.shrink(),
+                errorWidget: (_, _, _) => const SizedBox.shrink(),
+              ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.center,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x00000000), Color(0xE6000000)],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: StatusBadge(
+                label: '${entry.pullsUsed}',
+                background: bg,
+                foreground: fg,
+              ),
+            ),
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ItemName(
+                    resourceId: entry.resourceId,
+                    fallback: entry.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      entry.time,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
