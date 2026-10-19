@@ -40,7 +40,10 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
     <td width="25%" align="center"><img src="docs/images/mobile/5.jpg" alt="Featured Weapon pity and stats"><br><sub><b>Featured Weapon</b></sub></td>
     <td width="25%" align="center"><img src="docs/images/mobile/6.jpg" alt="Featured Weapon timeline and history"><br><sub><b>Weapon timeline</b></sub></td>
     <td width="25%" align="center"><img src="docs/images/mobile/7.jpg" alt="Item info with the image gallery"><br><sub><b>Item info</b></sub></td>
-    <td width="25%" align="center"><img src="docs/images/mobile/8.jpg" alt="Settings"><br><sub><b>Settings</b></sub></td>
+    <td width="25%" align="center"><img src="docs/images/mobile/8.jpg" alt="Share as an image"><br><sub><b>Share image</b></sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><img src="docs/images/mobile/9.jpg" alt="Settings"><br><sub><b>Settings</b></sub></td>
   </tr>
 </table>
 
