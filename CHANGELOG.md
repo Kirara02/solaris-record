@@ -4,6 +4,19 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.4.0
+
+A second look for the app, Mornye, and notifications while an update downloads on Android.
+
+### What's new
+- **Mornye style (Beta).** Pick it under *Appearance → Style*. It uses iOS-style grouped colors and icons, with glass for the tab bar, sidebar, sheets and dialogs. Choose an accent color, how clear the glass is, and whether glass surfaces get an outline. Material 3 stays the default and looks the same as before.
+- **Update notifications on Android.** While an update downloads, a notification shows the progress and keeps the download going when the screen turns off. When it is done, a notification with a sound says the update is ready, and tapping it starts the installer. A failed download gets a notification too. Once the app has been updated the notification goes away by itself.
+
+### Notes
+- Android 13 and newer asks for permission to show notifications the first time you download an update. The update still installs if you say no.
+- "Blurred navigation" also controls the glass in Mornye: turn it off on slower devices.
+- The new translations were machine-made and have not been reviewed by native speakers.
+
 ## 1.3.2
 
 Fixes importing a backup on some devices, and centers a few images and screens on wide layouts.
