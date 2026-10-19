@@ -23,9 +23,17 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    // The wide shell exposes the rail width as padding, so honor it to center
+    // within the body rather than the whole window.
+    final pad = MediaQuery.paddingOf(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.fromLTRB(
+          32 + pad.left,
+          32 + pad.top,
+          32 + pad.right,
+          32 + pad.bottom,
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 360),
           child: Column(
