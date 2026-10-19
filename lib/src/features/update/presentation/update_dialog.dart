@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -74,6 +76,9 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
   Future<void> _downloadAndInstall() async {
     final t = context.t;
     final service = ref.read(updateServiceProvider);
+    // Read before the first await: the dialog can be gone by the time the
+    // download ends, and a disposed state can't use ref any more.
+    final notifier = ref.read(updateNotificationsProvider);
     setState(() {
       _downloading = true;
       _received = 0;
@@ -81,11 +86,15 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
       _error = null;
     });
     _cancel = CancelToken();
+    // Progress notification in a foreground service, so the download keeps
+    // going when the screen turns off.
+    await notifier.beginDownload(_info.version);
     try {
       final file = await service.download(
         _asset!,
         cancelToken: _cancel,
         onProgress: (received, total) {
+          unawaited(notifier.downloadProgress(_info.version, received, total));
           if (!mounted) return;
           setState(() {
             _received = received;
@@ -93,6 +102,10 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
           });
         },
       );
+      // Tells the user (with a sound) even if they have left the app while it
+      // downloaded; tapping it opens the installer.
+      await notifier.endDownload();
+      await notifier.showDownloaded(_info.version, file);
       if (!mounted) return;
       if (await service.openInstaller(file)) {
         if (mounted) Navigator.pop(context);
@@ -103,10 +116,12 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
         });
       }
     } on Object catch (e, st) {
+      await notifier.endDownload();
       if (e is DioException && CancelToken.isCancel(e)) {
         _log.info('Update download cancelled');
       } else {
         _log.warning('Update download failed', e, st);
+        await notifier.showFailed();
       }
       if (!mounted) return;
       setState(() {

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/preferences.dart';
+import 'data/update_notifier.dart';
 import 'data/update_service.dart';
 
 part 'update_providers.g.dart';
@@ -14,6 +15,12 @@ UpdateService updateService(Ref ref) => UpdateService(
       receiveTimeout: const Duration(seconds: 20),
     ),
   ),
+);
+
+@Riverpod(keepAlive: true)
+UpdateNotifier updateNotifications(Ref ref) => UpdateNotifier(
+  prefs: ref.watch(sharedPreferencesProvider),
+  openInstaller: ref.read(updateServiceProvider).openInstaller,
 );
 
 /// Whether the app looks for a new version when it starts. On by default.

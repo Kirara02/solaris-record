@@ -8,6 +8,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../data/preferences.dart';
 import '../../announcements/announcements_providers.dart';
 import '../../announcements/presentation/announcement_dialog.dart';
+import '../../shell/rail_state.dart';
+import '../domain/update_info.dart';
 import '../domain/update_platform.dart';
 import '../update_providers.dart';
 import 'update_actions.dart';
@@ -60,9 +62,7 @@ class _UpdateStartupCheckState extends ConsumerState<UpdateStartupCheck> {
     _ranThisLaunch = true;
 
     if (updatesSupported) {
-      // An update downloaded last time is either installed now or no longer
-      // wanted; either way the file is dead weight.
-      unawaited(ref.read(updateServiceProvider).clearDownloads());
+      await _settleDownloadedUpdate();
 
       if (ref.read(autoUpdateCheckProvider) && await _due(_lastCheckKey)) {
         final result = await checkForUpdate(ref, manual: false);
@@ -78,6 +78,28 @@ class _UpdateStartupCheckState extends ConsumerState<UpdateStartupCheck> {
     if (await _due(_lastAnnouncementKey) && mounted) {
       await showAnnouncementIfAny(context, ref);
     }
+  }
+
+  /// An update downloaded earlier is either installed now (the notification
+  /// and the file are done with), still waiting for the user (keep both, and
+  /// re-attach the notification's tap handler), or gone (file removed).
+  Future<void> _settleDownloadedUpdate() async {
+    final notifier = ref.read(updateNotificationsProvider);
+    final service = ref.read(updateServiceProvider);
+    final pending = notifier.pending;
+    if (pending == null) {
+      unawaited(service.clearDownloads());
+      return;
+    }
+    final current = await ref.read(appVersionProvider.future);
+    final installed =
+        current != null && !isNewerVersion(pending.version, current);
+    if (installed || !File(pending.path).existsSync()) {
+      await notifier.dismiss();
+      unawaited(service.clearDownloads());
+      return;
+    }
+    await notifier.restore();
   }
 
   @override
