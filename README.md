@@ -1,6 +1,6 @@
 # Solaris Record
 
-Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track pity, 5★/4★ history, 50/50 results and statistics across multiple accounts. Local-first, Material 3, built with Flutter.
+Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track pity, 5★/4★ history, 50/50 results and statistics across multiple accounts. Local-first, Material 3 or the iOS-style Mornye look, built with Flutter.
 
 > Unofficial fan project. It is not affiliated with or endorsed by Kuro Games. Wuthering Waves and its assets belong to Kuro Games.
 
@@ -58,16 +58,16 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 - **Item info** for Resonators and Weapons (skills, effects, base stats by level) with an image gallery (icon, outfit, convene art).
 - **Share as an image**: a picture of the overview or one pull type, dark or light, shared or saved. With an option to show the full UID.
 - **Data language**: show item names in another language without touching your stored records.
-- **Updates**: the app tells you when a new release is out and, on Android, installs it from inside the app.
+- **Updates**: the app tells you when a new release is out and, on Android, installs it from inside the app, with a notification for the download's progress and when it is ready.
 - **Backup**: export and import everything as JSON, and import a [WuWa Tracker](https://wuwatracker.com/) export.
 - **Quick updates**: the last working link is remembered per account.
 - **Import help**: per-platform guides for finding the link, clipboard prefill, and on Android import by sharing a convene link from another app.
 - **What's new** after an update, plus occasional developer announcements.
 - **Accounts** can be reordered by dragging.
 - **5★ views**: card or bubble layout.
-- **Translucent navigation** can be toggled in Settings.
+- **Translucent navigation** (and Mornye's glass) can be toggled in Settings.
 - **Settings → Data**: log viewer, storage usage, clear cache and delete all data.
-- **Material 3** with dynamic color, accent colors and an AMOLED dark mode. English, Indonesian, Japanese and Simplified and Traditional Chinese.
+- **Two styles**: Material 3 with dynamic color, accent colors and an AMOLED dark mode, or **Mornye** (beta), an iOS-style look with glass bars, sheets and dialogs, a choice of accent color and adjustable glass clarity. English, Indonesian, Japanese and Simplified and Traditional Chinese.
 - **Debug log** you can export when reporting a bug. UIDs are partly masked and links are masked in it.
 
 ## Downloads and platforms
@@ -94,6 +94,7 @@ The link expires after a short while. The game only keeps a limited history, so 
 
 - Everything stays on your device: records live in a local SQLite database.
 - The app only talks to Kuro's convene record service (to fetch your records), to [encore.moe](https://encore.moe/) and Kuro's guide server (for item names, icons and info), and to GitHub (`api.github.com` for update checks, `raw.githubusercontent.com` for `announcements.json`). Announcements can be switched off in Settings → About.
+- On Android, the app can show notifications about an update's download. They are local; nothing is sent anywhere.
 - The link you paste carries an access token for your history, so the app keeps it only until the server rejects it or you delete the account, and never writes it to the debug log. **Delete all data** in Settings → Data also removes saved links.
 
 ## Build from source
