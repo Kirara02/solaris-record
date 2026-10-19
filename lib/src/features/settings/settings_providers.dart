@@ -13,6 +13,10 @@ const _modeKey = 'theme_mode';
 const _dynamicKey = 'use_dynamic_color';
 const _seedKey = 'seed_color';
 const _amoledKey = 'use_amoled';
+const _styleKey = 'theme_style';
+const _mornyeAccentKey = 'mornye_accent';
+const _mornyeClarityKey = 'mornye_glass_clarity';
+const _mornyeOutlinesKey = 'mornye_glass_outlines';
 const languagePrefKey = 'language';
 const _dataLanguageKey = 'data_language';
 
@@ -29,6 +33,15 @@ class ThemeSettingsController extends _$ThemeSettingsController {
       useDynamicColor: prefs.getBool(_dynamicKey) ?? true,
       seedColor: seed == null ? defaultSeedColor : Color(seed),
       useAmoled: prefs.getBool(_amoledKey) ?? false,
+      style:
+          AppThemeStyle.values.asNameMap()[prefs.getString(_styleKey)] ??
+          AppThemeStyle.material,
+      mornyeAccent:
+          MornyeAccent.values.asNameMap()[prefs.getString(_mornyeAccentKey)] ??
+          MornyeAccent.red,
+      mornyeGlassClarity:
+          prefs.getDouble(_mornyeClarityKey) ?? defaultMornyeGlassClarity,
+      mornyeGlassOutlines: prefs.getBool(_mornyeOutlinesKey) ?? true,
     );
   }
 
@@ -47,6 +60,39 @@ class ThemeSettingsController extends _$ThemeSettingsController {
     await ref
         .read(sharedPreferencesProvider)
         .setInt(_seedKey, color.toARGB32());
+  }
+
+  Future<void> setStyle(AppThemeStyle style) async {
+    state = state.copyWith(style: style);
+    await ref.read(sharedPreferencesProvider).setString(_styleKey, style.name);
+  }
+
+  Future<void> setMornyeAccent(MornyeAccent accent) async {
+    state = state.copyWith(mornyeAccent: accent);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(_mornyeAccentKey, accent.name);
+  }
+
+  /// [persist] false while a slider is being dragged, so only the final value
+  /// is written.
+  Future<void> setMornyeGlassClarity(
+    double value, {
+    bool persist = true,
+  }) async {
+    state = state.copyWith(mornyeGlassClarity: value);
+    if (persist) {
+      await ref
+          .read(sharedPreferencesProvider)
+          .setDouble(_mornyeClarityKey, state.mornyeGlassClarity);
+    }
+  }
+
+  Future<void> setMornyeGlassOutlines(bool value) async {
+    state = state.copyWith(mornyeGlassOutlines: value);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setBool(_mornyeOutlinesKey, value);
   }
 
   Future<void> setUseAmoled(bool value) async {

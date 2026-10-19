@@ -9,10 +9,14 @@ import '../../shared/i18n/gen/strings.g.dart';
 import '../../shared/i18n/pool_labels.dart';
 import '../../shared/layout/window_size.dart';
 import '../../shared/theme/app_tokens.dart';
+import '../../shared/theme/mornye_icons.dart';
+import '../../shared/theme/mornye_theme.dart';
+import '../../shared/widgets/mornye_glass.dart';
 import '../../shared/widgets/settings_group.dart';
 import '../settings/settings_providers.dart';
 import '../stats/domain/pool_type.dart';
 import '../stats/pool_selection.dart';
+import 'mornye_sidebar.dart';
 import 'nav_destination.dart';
 import 'rail_brand.dart';
 import 'rail_metrics.dart';
@@ -41,6 +45,11 @@ class WideShell extends ConsumerWidget {
   /// Width of the always-expanded rail. Pages extend under it and keep clear
   /// through `MediaQuery.padding.left`.
   static const railWidth = 280.0;
+
+  /// Mornye floats the rail as a glass panel inset from the window edge; the
+  /// pages still reserve [railWidth].
+  static const mornyePanelInset = 12.0;
+  static const mornyePanelWidth = railWidth - 2 * mornyePanelInset;
 
   /// Key of the pinned bottom destination.
   static const bottomItemKey = ValueKey('rail-bottom-item');
@@ -72,65 +81,111 @@ class WideShell extends ConsumerWidget {
       shell.goBranch(0, initialLocation: current == 0);
     }
 
-    final rail = M3ENavigationRail(
-      background: blur ? tint.withValues(alpha: 0.72) : tint,
-      type: M3ENavigationRailType.alwaysExpand,
-      labelBehavior: M3ENavigationRailLabelBehavior.alwaysShow,
-      leading: const RailBrand(expanded: true),
-      showDivider: true,
-      // Wide enough for the longest pull-type label ("Standard Resonator").
-      expandedWidth: WideShell.railWidth,
-      selectedIndex: current == 0
-          ? railSelectedIndex(branch: 0, groupVisible: groupOpen, pool: pool)
-          : -1,
-      onDestinationSelected: onSelected,
-      sections: [
-        M3ENavigationRailSection(
-          destinations: [
-            for (final d in main)
-              M3ENavigationRailDestination(
-                icon: Icon(d.icon),
-                selectedIcon: d.selectedIcon,
-                label: d.label,
+    final Widget rail = context.isMornye
+        ? MornyeSidebar(
+            main: main,
+            bottom: bottom,
+            bottomKey: WideShell.bottomItemKey,
+            selectedIndex: current == 0
+                ? railSelectedIndex(
+                    branch: 0,
+                    groupVisible: groupOpen,
+                    pool: pool,
+                  )
+                : -1,
+            bottomSelected: current == bottomIndex,
+            groupHeader: PoolGroupHeader(
+              key: WideShell.poolGroupHeaderKey,
+              label: t.stats.poolTypes,
+              activeLabel: !groupOpen ? pool?.label(t) : null,
+              tooltip: t.stats.togglePoolTypes,
+              open: groupOpen,
+              onToggle: ref.read(poolGroupExpandedProvider.notifier).toggle,
+            ),
+            poolLabels: [for (final p in PoolType.values) p.label(t)],
+            groupOpen: groupOpen,
+            onSelected: onSelected,
+            onBottomTap: () => selectBranch(bottomIndex),
+          )
+        : M3ENavigationRail(
+            background: context.isMornye
+                ? Colors.transparent
+                : blur
+                ? tint.withValues(alpha: 0.72)
+                : tint,
+            type: M3ENavigationRailType.alwaysExpand,
+            labelBehavior: M3ENavigationRailLabelBehavior.alwaysShow,
+            leading: const RailBrand(expanded: true),
+            showDivider: true,
+            // Wide enough for the longest pull-type label ("Standard Resonator").
+            expandedWidth: context.isMornye
+                ? WideShell.mornyePanelWidth
+                : WideShell.railWidth,
+            selectedIndex: current == 0
+                ? railSelectedIndex(
+                    branch: 0,
+                    groupVisible: groupOpen,
+                    pool: pool,
+                  )
+                : -1,
+            onDestinationSelected: onSelected,
+            sections: [
+              M3ENavigationRailSection(
+                destinations: [
+                  for (final d in main)
+                    M3ENavigationRailDestination(
+                      icon: AdaptiveIcon(d.icon),
+                      selectedIcon: d.selectedIcon,
+                      label: d.label,
+                    ),
+                ],
               ),
-          ],
-        ),
-        M3ENavigationRailSection(
-          header: PoolGroupHeader(
-            key: WideShell.poolGroupHeaderKey,
-            label: t.stats.poolTypes,
-            // While collapsed, say which pull type the screen shows.
-            activeLabel: !groupOpen ? pool?.label(t) : null,
-            tooltip: t.stats.togglePoolTypes,
-            open: groupOpen,
-            onToggle: ref.read(poolGroupExpandedProvider.notifier).toggle,
-          ),
-          destinations: [
-            if (groupOpen)
-              for (final p in PoolType.values)
-                M3ENavigationRailDestination(
-                  // Nested under the group header, so no icon.
-                  icon: const SizedBox.shrink(),
-                  label: p.label(t),
-                  semanticLabel: p.label(t),
-                  short: true,
+              M3ENavigationRailSection(
+                header: PoolGroupHeader(
+                  key: WideShell.poolGroupHeaderKey,
+                  label: t.stats.poolTypes,
+                  // While collapsed, say which pull type the screen shows.
+                  activeLabel: !groupOpen ? pool?.label(t) : null,
+                  tooltip: t.stats.togglePoolTypes,
+                  open: groupOpen,
+                  onToggle: ref.read(poolGroupExpandedProvider.notifier).toggle,
                 ),
-          ],
-        ),
-      ],
-      trailing: RailBottomItem(
-        key: WideShell.bottomItemKey,
-        destination: bottom,
-        selected: current == bottomIndex,
-        onTap: () => selectBranch(bottomIndex),
-      ),
-    );
+                destinations: [
+                  if (groupOpen)
+                    for (final p in PoolType.values)
+                      M3ENavigationRailDestination(
+                        // Nested under the group header, so no icon.
+                        icon: const SizedBox.shrink(),
+                        label: p.label(t),
+                        semanticLabel: p.label(t),
+                        short: true,
+                      ),
+                ],
+              ),
+            ],
+            trailing: RailBottomItem(
+              key: WideShell.bottomItemKey,
+              destination: bottom,
+              selected: current == bottomIndex,
+              onTap: () => selectBranch(bottomIndex),
+            ),
+          );
 
     // The page fills the window and the rail sits over it, translucent with a
     // blur behind, so what scrolls near the rail shows through faintly. The
     // pages read the rail's width as left padding (see SliverAdaptivePadding).
     Widget railView = SizedBox(width: WideShell.railWidth, child: rail);
-    if (blur) {
+    if (context.isMornye) {
+      railView = SizedBox(
+        width: WideShell.mornyePanelWidth,
+        child: MornyeGlass(
+          level: blur ? MornyeGlassLevel.liquid : MornyeGlassLevel.flat,
+          borderRadius: BorderRadius.circular(28),
+          fill: Theme.of(context).colorScheme.surfaceContainer,
+          child: rail,
+        ),
+      );
+    } else if (blur) {
       railView = ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -151,7 +206,15 @@ class WideShell extends ConsumerWidget {
               child: shell,
             ),
           ),
-          Positioned(left: 0, top: 0, bottom: 0, child: railView),
+          if (context.isMornye)
+            Positioned(
+              left: WideShell.mornyePanelInset,
+              top: media.padding.top + WideShell.mornyePanelInset,
+              bottom: media.padding.bottom + WideShell.mornyePanelInset,
+              child: railView,
+            )
+          else
+            Positioned(left: 0, top: 0, bottom: 0, child: railView),
         ],
       ),
     );
@@ -197,7 +260,7 @@ class PoolGroupHeader extends StatelessWidget {
       message: tooltip,
       child: InkWell(
         onTap: onToggle,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.tokens.radiusCover),
         child: Padding(
           // The rail already insets section headers by 16px; with 16px more the
           // icon lines up with the Overview icon above (x = 32).
@@ -206,7 +269,7 @@ class PoolGroupHeader extends StatelessWidget {
             builder: (context, constraints) {
               // Too narrow (rail still animating open): just the icon.
               if (constraints.maxWidth < labelMinWidth) {
-                return Icon(
+                return AdaptiveIcon(
                   groupIcon,
                   size: 24,
                   color: activeLabel != null
@@ -219,7 +282,7 @@ class PoolGroupHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      AdaptiveIcon(
                         groupIcon,
                         size: 24,
                         color: activeLabel != null
@@ -242,7 +305,7 @@ class PoolGroupHeader extends StatelessWidget {
                       AnimatedRotation(
                         turns: open ? 0.5 : 0,
                         duration: context.tokens.motionFast,
-                        child: Icon(
+                        child: AdaptiveIcon(
                           Icons.expand_more,
                           size: 20,
                           color: scheme.onSurfaceVariant,
@@ -263,7 +326,9 @@ class PoolGroupHeader extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: scheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(
+                            context.tokens.radiusCover,
+                          ),
                         ),
                         child: Text(
                           activeLabel!,
@@ -311,7 +376,9 @@ class RailBottomItem extends StatelessWidget {
     final fg = selected ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
     final icon = IconTheme(
       data: IconThemeData(color: fg, size: 24),
-      child: selected ? destination.selectedIcon : Icon(destination.icon),
+      child: selected
+          ? destination.selectedIcon
+          : AdaptiveIcon(destination.icon),
     );
 
     // While the rail animates open the slot is still too narrow for icon +
@@ -327,8 +394,18 @@ class RailBottomItem extends StatelessWidget {
               ? const EdgeInsets.symmetric(horizontal: 16)
               : EdgeInsets.zero,
           decoration: BoxDecoration(
-            color: selected ? scheme.secondaryContainer : Colors.transparent,
-            borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
+            color: !selected
+                ? Colors.transparent
+                : context.isMornye
+                ? scheme.onSurface.withValues(
+                    alpha: theme.brightness == Brightness.dark ? 0.16 : 0.08,
+                  )
+                : scheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(
+              context.isMornye
+                  ? RailMetrics.itemHeight / 2
+                  : RailMetrics.indicatorRadius,
+            ),
           ),
           child: room
               ? Row(

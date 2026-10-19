@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -26,6 +27,13 @@ Future<void> main() async {
     'Started version=$version platform=${defaultTargetPlatform.name} '
     'locale=${LocaleSettings.currentLocale.languageCode}',
   );
+  // Compile the glass shaders up front so the Mornye tab bar is glass on its
+  // first frame. Glass falls back to a frosted look when they can't load.
+  try {
+    await LiquidGlassShaders.ensureLoaded();
+  } catch (e) {
+    Logger('app').warning('Liquid glass shaders unavailable: $e');
+  }
   runApp(
     TranslationProvider(
       child: ProviderScope(

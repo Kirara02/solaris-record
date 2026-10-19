@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/history_view.dart';
 
@@ -78,7 +79,7 @@ class _HistoryFilterDialogState extends State<_HistoryFilterDialog> {
       ],
     );
 
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(t.stats.filterTitle),
       scrollable: true,
       content: ConstrainedBox(

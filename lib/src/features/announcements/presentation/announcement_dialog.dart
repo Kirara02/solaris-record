@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../data/preferences.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../announcements_providers.dart';
 import '../domain/announcement.dart';
 
@@ -61,7 +62,7 @@ class _AnnouncementDialog extends ConsumerWidget {
     final lang = LocaleSettings.currentLocale.languageTag;
     final ctaUrl = announcement.ctaUrl;
     final ctaLabel = pickText(announcement.ctaLabel, lang);
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(pickText(announcement.title, lang) ?? ''),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480),

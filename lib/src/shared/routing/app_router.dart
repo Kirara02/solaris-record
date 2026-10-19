@@ -12,6 +12,7 @@ import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/update/presentation/update_startup_check.dart';
+import '../theme/mornye_icons.dart';
 import 'app_routes.dart';
 
 export 'app_routes.dart';
@@ -121,7 +122,7 @@ class _NotFound extends StatelessWidget {
     body: Center(
       child: TextButton(
         onPressed: () => context.go(AppRoutes.convene),
-        child: const Icon(Icons.home),
+        child: const AdaptiveIcon(Icons.home),
       ),
     ),
   );

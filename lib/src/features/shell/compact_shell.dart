@@ -7,9 +7,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../shared/routing/app_routes.dart';
 import '../../shared/theme/app_tokens.dart';
+import '../../shared/theme/mornye_icons.dart';
+import '../../shared/theme/mornye_theme.dart';
 import '../../shared/widgets/settings_group.dart';
 import '../settings/settings_providers.dart';
 import '../stats/pool_selection.dart';
+import 'mornye_tab_bar.dart';
 import 'nav_destination.dart';
 
 /// Phone layout: a bottom navigation bar that only exists on the tab screens.
@@ -61,38 +64,47 @@ class CompactShell extends ConsumerWidget {
     // and the body extends under it (screens add the bar's height as bottom
     // padding); without, it is the same colour opaque.
     final tint = groupColor(context);
-    Widget bar = DecoratedBox(
-      position: DecorationPosition.foreground,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-        ),
-      ),
-      child: ColoredBox(
-        color: blur ? tint.withValues(alpha: 0.72) : tint,
-        child: SafeArea(
-          top: false,
-          child: M3ENavigationBar(
-            size: M3ENavBarSize.small,
-            autoLayout: false,
-            safeArea: false,
-            padding: EdgeInsets.zero,
-            backgroundColor: Colors.transparent,
+    Widget bar = context.isMornye
+        ? MornyeTabBar(
+            destinations: destinations,
             selectedIndex: index,
-            onDestinationSelected: onSelected,
-            destinations: [
-              for (final d in destinations)
-                M3ENavigationBarDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: d.selectedIcon,
-                  label: d.label,
+            onSelected: onSelected,
+            blur: blur,
+          )
+        : DecoratedBox(
+            position: DecorationPosition.foreground,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: scheme.outlineVariant.withValues(alpha: 0.5),
                 ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (blur) {
+              ),
+            ),
+            child: ColoredBox(
+              color: blur ? tint.withValues(alpha: 0.72) : tint,
+              child: SafeArea(
+                top: false,
+                child: M3ENavigationBar(
+                  size: M3ENavBarSize.small,
+                  autoLayout: false,
+                  safeArea: false,
+                  padding: EdgeInsets.zero,
+                  backgroundColor: Colors.transparent,
+                  selectedIndex: index,
+                  onDestinationSelected: onSelected,
+                  destinations: [
+                    for (final d in destinations)
+                      M3ENavigationBarDestination(
+                        icon: AdaptiveIcon(d.icon),
+                        selectedIcon: d.selectedIcon,
+                        label: d.label,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+    if (blur && !context.isMornye) {
       bar = ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

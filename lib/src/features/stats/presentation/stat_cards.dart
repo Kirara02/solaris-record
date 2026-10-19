@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
@@ -36,7 +37,7 @@ class StatCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: groupColor(context),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: context.tokens.borderRadiusCard,
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       clipBehavior: Clip.antiAlias,

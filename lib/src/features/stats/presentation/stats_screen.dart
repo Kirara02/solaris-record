@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -42,7 +43,7 @@ class StatsScreen extends ConsumerWidget {
           body: t.stats.noAccountBody,
           action: M3EButton(
             size: M3EButtonSize.md,
-            icon: const Icon(Icons.download),
+            icon: const AdaptiveIcon(Icons.download),
             label: Text(t.stats.goToImport),
             onPressed: () => showImportDialog(context),
           ),
@@ -62,7 +63,7 @@ class StatsScreen extends ConsumerWidget {
                     // Wide top bar: "Update" button and the account pill.
                     IconButton(
                       tooltip: t.share.tooltip,
-                      icon: const Icon(Icons.ios_share),
+                      icon: const AdaptiveIcon(Icons.ios_share),
                       onPressed: () => showShareDialog(
                         context,
                         account: account,
@@ -72,7 +73,7 @@ class StatsScreen extends ConsumerWidget {
                     const SizedBox(width: 4),
                     M3EButton(
                       size: M3EButtonSize.sm,
-                      icon: const Icon(Icons.sync),
+                      icon: const AdaptiveIcon(Icons.sync),
                       label: Text(t.stats.updateShort),
                       onPressed: () => showImportDialog(context),
                     ),
@@ -82,7 +83,7 @@ class StatsScreen extends ConsumerWidget {
                 : [
                     IconButton(
                       tooltip: t.share.tooltip,
-                      icon: const Icon(Icons.ios_share),
+                      icon: const AdaptiveIcon(Icons.ios_share),
                       onPressed: () => showShareDialog(
                         context,
                         account: account,
@@ -91,7 +92,7 @@ class StatsScreen extends ConsumerWidget {
                     ),
                     IconButton(
                       tooltip: t.settings.import,
-                      icon: const Icon(Icons.download_outlined),
+                      icon: const AdaptiveIcon(Icons.download_outlined),
                       onPressed: () => showImportDialog(context),
                     ),
                     Padding(

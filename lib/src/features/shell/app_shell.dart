@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../shared/i18n/gen/strings.g.dart';
 import '../../shared/layout/window_size.dart';
+import '../../shared/theme/mornye_icons.dart';
 import 'animated_nav_icons.dart';
 import 'compact_shell.dart';
 import 'nav_destination.dart';
@@ -33,12 +34,12 @@ class AppShell extends StatelessWidget {
     // destination is the one the wide layout pins to the bottom.
     final settings = NavDestination(
       icon: Icons.settings_outlined,
-      selectedIcon: const SpinIcon(child: Icon(Icons.settings)),
+      selectedIcon: const SpinIcon(child: AdaptiveIcon(Icons.settings)),
       label: t.nav.settings,
     );
     final overview = NavDestination(
       icon: Icons.dashboard_outlined,
-      selectedIcon: const BouncingIcon(child: Icon(Icons.dashboard)),
+      selectedIcon: const BouncingIcon(child: AdaptiveIcon(Icons.dashboard)),
       label: t.nav.overview,
     );
     // Phones: Overview, Convene (with its pull-type chips) and Settings. Wide
@@ -47,7 +48,7 @@ class AppShell extends StatelessWidget {
       overview,
       NavDestination(
         icon: Icons.insights_outlined,
-        selectedIcon: const BouncingIcon(child: Icon(Icons.insights)),
+        selectedIcon: const BouncingIcon(child: AdaptiveIcon(Icons.insights)),
         label: t.nav.stats,
       ),
       settings,

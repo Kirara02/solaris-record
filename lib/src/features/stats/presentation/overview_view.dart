@@ -6,6 +6,9 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/donut_chart.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -96,7 +99,12 @@ class _OverviewBody extends StatelessWidget {
       ),
     ];
 
-    final typeColors = [scheme.primary, scheme.tertiary, scheme.secondary];
+    // Mornye's secondary equals its primary (the accent), and a big donut in
+    // the accent red is too loud next to the gold and violet rarity chart, so
+    // the type chart takes cool system colours there.
+    final typeColors = context.isMornye
+        ? const [Color(0xFF0A84FF), Color(0xFF30B0C7), Color(0xFF5E5CE6)]
+        : [scheme.primary, scheme.tertiary, scheme.secondary];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -216,7 +224,7 @@ class _ChartCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: groupColor(context),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: context.tokens.borderRadiusCard,
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: Column(
@@ -224,7 +232,7 @@ class _ChartCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: scheme.primary),
+              AdaptiveIcon(icon, size: 20, color: scheme.primary),
               const SizedBox(width: 8),
               Text(
                 title,

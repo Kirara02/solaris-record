@@ -10,6 +10,8 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -156,7 +158,7 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
     return PopScope(
       // A running import can't be dismissed (back button / barrier tap).
       canPop: !loading && !_fileBusy,
-      child: Dialog(
+      child: AppDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 560),
@@ -178,7 +180,7 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                     ),
                     IconButton(
                       tooltip: t.import.close,
-                      icon: const Icon(Icons.close),
+                      icon: const AdaptiveIcon(Icons.close),
                       onPressed: loading ? null : () => Navigator.pop(context),
                     ),
                   ],
@@ -258,7 +260,10 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         Align(
                           alignment: AlignmentDirectional.centerStart,
                           child: TextButton.icon(
-                            icon: const Icon(Icons.open_in_new, size: 18),
+                            icon: const AdaptiveIcon(
+                              Icons.open_in_new,
+                              size: 18,
+                            ),
                             label: Text(t.import.guideFull),
                             onPressed: _openFullGuide,
                           ),
@@ -275,7 +280,7 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         suffix: hasText
                             ? IconButton(
                                 tooltip: t.import.clear,
-                                icon: const Icon(Icons.close),
+                                icon: const AdaptiveIcon(Icons.close),
                                 onPressed: loading ? null : _controller.clear,
                               )
                             : null,
@@ -301,13 +306,13 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                           final paste = M3EButton(
                             style: M3EButtonStyle.tonal,
                             size: M3EButtonSize.md,
-                            icon: const Icon(Icons.content_paste),
+                            icon: const AdaptiveIcon(Icons.content_paste),
                             label: Text(t.import.paste),
                             onPressed: loading ? null : _paste,
                           );
                           final update = M3EButton(
                             size: M3EButtonSize.md,
-                            icon: const Icon(Icons.sync),
+                            icon: const AdaptiveIcon(Icons.sync),
                             label: Text(t.import.update),
                             onPressed: loading || !hasText ? null : _run,
                           );
@@ -335,7 +340,7 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                       M3EButton(
                         style: M3EButtonStyle.outlined,
                         size: M3EButtonSize.md,
-                        icon: const Icon(Icons.file_open_outlined),
+                        icon: const AdaptiveIcon(Icons.file_open_outlined),
                         label: Text(t.import.fromFile),
                         onPressed: loading || _fileBusy ? null : _importFile,
                       ),
@@ -590,14 +595,17 @@ class _ResultCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: scheme.primaryContainer,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: context.tokens.borderRadiusCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.check_circle, color: scheme.onPrimaryContainer),
+              AdaptiveIcon(
+                Icons.check_circle,
+                color: scheme.onPrimaryContainer,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -613,7 +621,7 @@ class _ResultCard extends StatelessWidget {
           const SizedBox(height: 16),
           M3EButton(
             size: M3EButtonSize.md,
-            icon: const Icon(Icons.insights),
+            icon: const AdaptiveIcon(Icons.insights),
             label: Text(viewLabel),
             onPressed: () {
               // Capture the router before the dialog's context goes away.
@@ -678,7 +686,7 @@ class _Step extends StatelessWidget {
           : Align(
               alignment: AlignmentDirectional.centerStart,
               child: TextButton.icon(
-                icon: const Icon(Icons.open_in_new, size: 18),
+                icon: const AdaptiveIcon(Icons.open_in_new, size: 18),
                 label: Text(context.t.import.openLink),
                 onPressed: onOpenLink,
               ),
@@ -701,7 +709,7 @@ class _CommandBox extends StatelessWidget {
       padding: const EdgeInsetsDirectional.only(start: 12),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.tokens.radiusCover),
       ),
       child: Row(
         children: [
@@ -717,7 +725,7 @@ class _CommandBox extends StatelessWidget {
           ),
           IconButton(
             tooltip: context.t.import.copyCommand,
-            icon: const Icon(Icons.copy, size: 18),
+            icon: const AdaptiveIcon(Icons.copy, size: 18),
             onPressed: () => Clipboard.setData(ClipboardData(text: command)),
           ),
         ],
@@ -763,10 +771,10 @@ class _ProgressGroup extends StatelessWidget {
                 width: 24,
                 height: 24,
                 child: p.index < currentIndex
-                    ? Icon(Icons.check_circle, color: scheme.primary)
+                    ? AdaptiveIcon(Icons.check_circle, color: scheme.primary)
                     : p.index == currentIndex
                     ? const M3EProgressIndicator.circular(strokeWidth: 3)
-                    : Icon(
+                    : AdaptiveIcon(
                         Icons.radio_button_unchecked,
                         color: scheme.outlineVariant,
                       ),

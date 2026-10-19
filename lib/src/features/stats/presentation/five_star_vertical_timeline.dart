@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../domain/overview_stats.dart';
@@ -69,7 +70,7 @@ class _FiveStarVerticalTimelineState extends State<FiveStarVerticalTimeline> {
             isFirst: false,
             isLast: remaining == 0 && i == visible.length - 1,
             nodeColor: luckNodeColor(
-              scheme,
+              context,
               luckTier(item.entry.pullsUsed, threshold: item.pool.hardPity5),
             ),
             onTap: () => showFiveStarDetail(
@@ -108,7 +109,7 @@ class _ItemContent extends StatelessWidget {
     final scheme = theme.colorScheme;
     final e = item.entry;
     final tint = luckNodeColor(
-      scheme,
+      context,
       luckTier(e.pullsUsed, threshold: item.pool.hardPity5),
     );
     final when = shortDate(e.time);
@@ -122,7 +123,7 @@ class _ItemContent extends StatelessWidget {
             rarity: 5,
             size: 40,
             circular: true,
-            ringColor: ringFor(scheme, e.result),
+            ringColor: ringFor(context, e.result),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -198,7 +199,7 @@ class _VerticalRow extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(context.tokens.radiusCover),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,

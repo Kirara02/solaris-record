@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 import '../i18n/gen/strings.g.dart';
+import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
 import 'outlined_icon_button.dart';
 
 /// Row counts offered by the "rows per page" menu.
@@ -150,7 +152,7 @@ class _PageSizeMenu extends StatelessWidget {
         height: 40,
         padding: const EdgeInsets.only(left: 14, right: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(context.tokens.radiusCover),
           border: Border.all(color: scheme.outlineVariant),
         ),
         child: Row(
@@ -158,7 +160,11 @@ class _PageSizeMenu extends StatelessWidget {
           children: [
             Text('$value', style: theme.textTheme.bodyLarge),
             const SizedBox(width: 6),
-            Icon(Icons.expand_more, size: 20, color: scheme.onSurfaceVariant),
+            AdaptiveIcon(
+              Icons.expand_more,
+              size: 20,
+              color: scheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),

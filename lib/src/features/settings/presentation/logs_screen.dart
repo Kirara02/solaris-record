@@ -8,6 +8,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/logging/app_log.dart';
+import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -106,17 +108,17 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
             actions: [
               IconButton(
                 tooltip: t.logs.copy,
-                icon: const Icon(Icons.copy_all_outlined),
+                icon: const AdaptiveIcon(Icons.copy_all_outlined),
                 onPressed: shown.isEmpty ? null : () => _copy(shown),
               ),
               IconButton(
                 tooltip: t.data.exportLogs,
-                icon: const Icon(Icons.ios_share),
+                icon: const AdaptiveIcon(Icons.ios_share),
                 onPressed: () => exportLogs(context, ref),
               ),
               IconButton(
                 tooltip: t.logs.clear,
-                icon: const Icon(Icons.delete_outline),
+                icon: const AdaptiveIcon(Icons.delete_outline),
                 onPressed: () async {
                   await clearLogs(context, ref);
                   if (mounted) setState(() {});
@@ -154,12 +156,12 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
                   controller: _search,
                   outlined: true,
                   hint: t.logs.searchHint,
-                  prefix: const Icon(Icons.search),
+                  prefix: const AdaptiveIcon(Icons.search),
                   suffix: _search.text.isEmpty
                       ? null
                       : IconButton(
                           tooltip: t.import.clear,
-                          icon: const Icon(Icons.close),
+                          icon: const AdaptiveIcon(Icons.close),
                           onPressed: _search.clear,
                         ),
                 ),
@@ -234,7 +236,7 @@ class _LogTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: groupColor(context),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.tokens.radiusCover),
       ),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(

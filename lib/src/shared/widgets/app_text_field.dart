@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_tokens.dart';
+import '../theme/mornye_theme.dart';
 
 /// Rounded, borderless filled text field with a primary-coloured focus ring.
 /// Colours are read from the resolved scheme at build time, so it follows the
@@ -49,7 +50,7 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final radius = BorderRadius.circular(
-      outlined ? 12 : context.tokens.radiusControl,
+      outlined ? context.tokens.radiusCover : context.tokens.radiusControl,
     );
     final idle = outlined
         ? BorderSide(color: scheme.outlineVariant)
@@ -75,7 +76,12 @@ class AppTextField extends StatelessWidget {
         prefixIcon: prefix,
         suffixIcon: suffix,
         filled: !outlined,
-        fillColor: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        // Mornye: a soft grey well on the white grouped card.
+        fillColor: context.isMornye
+            ? scheme.onSurface.withValues(
+                alpha: scheme.brightness == Brightness.dark ? 0.16 : 0.06,
+              )
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.3),
         floatingLabelStyle: TextStyle(color: scheme.primary),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,

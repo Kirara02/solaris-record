@@ -7,6 +7,8 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/item_info.dart';
 
@@ -72,7 +74,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
           height: 240,
           decoration: BoxDecoration(
             color: widget.accent.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: context.tokens.borderRadiusCard,
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
@@ -88,7 +90,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                     placeholder: (_, _) =>
                         const Center(child: M3ELoadingIndicator()),
                     errorWidget: (_, _, _) => Center(
-                      child: Icon(
+                      child: AdaptiveIcon(
                         Icons.image_not_supported_outlined,
                         color: widget.accent,
                       ),
@@ -101,7 +103,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                   alignment: Alignment.centerLeft,
                   child: IconButton(
                     tooltip: t.info.galleryPrevious,
-                    icon: const Icon(Icons.chevron_left),
+                    icon: const AdaptiveIcon(Icons.chevron_left),
                     onPressed: () => _step(-1),
                   ),
                 ),
@@ -109,7 +111,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                   alignment: Alignment.centerRight,
                   child: IconButton(
                     tooltip: t.info.galleryNext,
-                    icon: const Icon(Icons.chevron_right),
+                    icon: const AdaptiveIcon(Icons.chevron_right),
                     onPressed: () => _step(1),
                   ),
                 ),
@@ -269,27 +271,27 @@ class _ImageViewerState extends State<_ImageViewer> {
                     children: [
                       IconButton(
                         tooltip: t.info.imageZoomOut,
-                        icon: const Icon(Icons.zoom_out),
+                        icon: const AdaptiveIcon(Icons.zoom_out),
                         onPressed: () => _zoom(1 / 1.5),
                       ),
                       IconButton(
                         tooltip: t.info.imageZoomIn,
-                        icon: const Icon(Icons.zoom_in),
+                        icon: const AdaptiveIcon(Icons.zoom_in),
                         onPressed: () => _zoom(1.5),
                       ),
                       IconButton(
                         tooltip: t.info.imageSave,
-                        icon: const Icon(Icons.download_outlined),
+                        icon: const AdaptiveIcon(Icons.download_outlined),
                         onPressed: _save,
                       ),
                       IconButton(
                         tooltip: t.info.imageRefetch,
-                        icon: const Icon(Icons.refresh),
+                        icon: const AdaptiveIcon(Icons.refresh),
                         onPressed: _refetch,
                       ),
                       IconButton(
                         tooltip: t.info.close,
-                        icon: const Icon(Icons.close),
+                        icon: const AdaptiveIcon(Icons.close),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],

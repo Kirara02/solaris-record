@@ -7,7 +7,10 @@ import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/artwork_palette.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -69,7 +72,7 @@ class ItemInfoDialog extends ConsumerWidget {
     return ArtworkAccent(
       resourceId: resourceId,
       resourceType: resourceType,
-      child: Dialog(
+      child: AppDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 560),
@@ -91,7 +94,7 @@ class ItemInfoDialog extends ConsumerWidget {
                     ),
                     IconButton(
                       tooltip: t.info.close,
-                      icon: const Icon(Icons.close),
+                      icon: const AdaptiveIcon(Icons.close),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
@@ -130,7 +133,7 @@ class ItemInfoDialog extends ConsumerWidget {
                     key: ItemInfoDialog.viewOnEncoreKey,
                     style: M3EButtonStyle.tonal,
                     size: M3EButtonSize.md,
-                    icon: const Icon(Icons.open_in_new),
+                    icon: const AdaptiveIcon(Icons.open_in_new),
                     label: Text(t.info.viewOnEncore),
                     onPressed: () => _open(context, ref, link),
                   ),
@@ -269,7 +272,7 @@ class _Stars extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < count; i++)
-          Icon(Icons.star, size: 18, color: color),
+          AdaptiveIcon(Icons.star, size: 18, color: color),
       ],
     );
   }
@@ -315,15 +318,17 @@ class _InfoBody extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: context.tokens.borderRadiusCard,
             ),
             clipBehavior: Clip.antiAlias,
             child: CachedNetworkImage(
               imageUrl: info.imageUrl!,
               fit: BoxFit.contain,
               placeholder: (_, _) => const Center(child: M3ELoadingIndicator()),
-              errorWidget: (_, _, _) =>
-                  Icon(Icons.image_not_supported_outlined, color: color),
+              errorWidget: (_, _, _) => AdaptiveIcon(
+                Icons.image_not_supported_outlined,
+                color: color,
+              ),
             ),
           ),
         Center(

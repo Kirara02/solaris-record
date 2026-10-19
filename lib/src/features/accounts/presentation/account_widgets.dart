@@ -6,6 +6,7 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../accounts_providers.dart';
 import '../domain/account.dart';
@@ -61,7 +62,7 @@ Future<void> showAccountSwitcher(BuildContext context, WidgetRef ref) {
                   subtitle: t.accounts.uid(uid: displayUid(ref, a.uid)),
                   showDivider: i != accounts.length - 1,
                   trailing: a.uid == activeUid
-                      ? Icon(
+                      ? AdaptiveIcon(
                           Icons.check_circle,
                           color: Theme.of(sheetContext).colorScheme.primary,
                         )
@@ -164,7 +165,7 @@ class AccountPill extends ConsumerWidget {
                   ),
                 ),
                 if (a.uid == account.uid)
-                  Icon(Icons.check, size: 18, color: scheme.primary),
+                  AdaptiveIcon(Icons.check, size: 18, color: scheme.primary),
               ],
             ),
           ),
@@ -173,7 +174,7 @@ class AccountPill extends ConsumerWidget {
           value: manageValue,
           child: Row(
             children: [
-              Icon(
+              AdaptiveIcon(
                 Icons.manage_accounts_outlined,
                 size: 20,
                 color: scheme.onSurfaceVariant,
@@ -190,13 +191,13 @@ class AccountPill extends ConsumerWidget {
         constraints: const BoxConstraints(maxWidth: 260),
         padding: const EdgeInsets.only(left: 14, right: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: context.tokens.borderRadiusCard,
           border: Border.all(color: scheme.outlineVariant),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            AdaptiveIcon(
               Icons.person_outline,
               size: 18,
               color: scheme.onSurfaceVariant,
@@ -213,7 +214,11 @@ class AccountPill extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 4),
-            Icon(Icons.expand_more, size: 20, color: scheme.onSurfaceVariant),
+            AdaptiveIcon(
+              Icons.expand_more,
+              size: 20,
+              color: scheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),

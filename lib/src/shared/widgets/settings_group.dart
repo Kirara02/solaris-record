@@ -1,12 +1,17 @@
+import 'package:flutter/cupertino.dart' show CupertinoSwitch;
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
+import '../theme/mornye_theme.dart';
 
 /// Surface tint shared by grouped containers: the page surface nudged toward
 /// black (light) or white (dark), so groups read as raised without shadows.
 Color groupColor(BuildContext context) {
   final theme = Theme.of(context);
+  // Inset grouped: white (or system gray) rows on the grey page.
+  if (context.isMornye) return theme.colorScheme.surfaceContainer;
   final dark = theme.brightness == Brightness.dark;
   return Color.alphaBlend(
     (dark ? Colors.white : Colors.black).withValues(alpha: dark ? 0.08 : 0.04),
@@ -24,15 +29,15 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final border = BorderSide(
-      color: scheme.outlineVariant.withValues(alpha: 0.5),
-    );
+    final border = context.isMornye
+        ? BorderSide.none
+        : BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5));
     final content = Material(
       type: MaterialType.transparency,
       child: Column(mainAxisSize: MainAxisSize.min, children: children),
     );
     // With reduced motion the group is a plain surface: no M3ECard behaviour.
-    if (MediaQuery.disableAnimationsOf(context)) {
+    if (MediaQuery.disableAnimationsOf(context) || context.isMornye) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Container(
@@ -75,6 +80,7 @@ class SettingsItem extends StatelessWidget {
     this.leading,
     required this.title,
     this.titleStyle,
+    this.badge,
     this.subtitle,
     this.footer,
     this.trailing,
@@ -90,6 +96,9 @@ class SettingsItem extends StatelessWidget {
   final Widget? leading;
   final String title;
   final TextStyle? titleStyle;
+
+  /// Small label after the title (e.g. a Beta tag).
+  final String? badge;
   final String? subtitle;
   final Widget? footer;
   final Widget? trailing;
@@ -122,7 +131,7 @@ class SettingsItem extends StatelessWidget {
               children: [
                 if (hasLeading) ...[
                   leading ??
-                      Icon(
+                      AdaptiveIcon(
                         icon,
                         color: iconColor ?? scheme.onSurfaceVariant,
                         size: 24,
@@ -133,7 +142,36 @@ class SettingsItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: titleStyle ?? text.bodyLarge),
+                      if (badge == null)
+                        Text(title, style: titleStyle ?? text.bodyLarge)
+                      else
+                        Wrap(
+                          spacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(title, style: titleStyle ?? text.bodyLarge),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: scheme.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(
+                                  tokens.radiusBadge,
+                                ),
+                              ),
+                              child: Text(
+                                badge!,
+                                style: TextStyle(
+                                  color: scheme.primary,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
                         Text(
@@ -155,9 +193,9 @@ class SettingsItem extends StatelessWidget {
                   trailing!,
                 ] else if (onTap != null) ...[
                   const SizedBox(width: 8),
-                  Icon(
+                  AdaptiveIcon(
                     Icons.chevron_right,
-                    size: 24,
+                    size: context.isMornye ? 20 : 24,
                     color: scheme.onSurfaceVariant,
                   ),
                 ],
@@ -205,7 +243,13 @@ class SettingsSwitchItem extends StatelessWidget {
     subtitle: subtitle,
     showDivider: showDivider,
     onTap: onChanged == null ? null : () => onChanged!(!value),
-    trailing: MediaQuery.disableAnimationsOf(context)
+    trailing: context.isMornye
+        ? CupertinoSwitch(
+            value: value,
+            onChanged: onChanged,
+            activeTrackColor: mornyeGreen,
+          )
+        : MediaQuery.disableAnimationsOf(context)
         ? Switch(value: value, onChanged: onChanged)
         : M3ESwitch(value: value, onChanged: onChanged, semanticLabel: title),
   );
@@ -221,6 +265,25 @@ class SettingsSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (context.isMornye) {
+      // iOS footnote header: small, upper case, grey.
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 6),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Row(
@@ -265,10 +328,18 @@ class SettingsChoiceChip extends StatelessWidget {
     return AnimatedContainer(
       duration: context.tokens.motionFast,
       decoration: BoxDecoration(
-        color: isSelected ? scheme.secondaryContainer : groupColor(context),
+        color: context.isMornye
+            ? isSelected
+                  ? scheme.primary.withValues(alpha: 0.14)
+                  : scheme.onSurface.withValues(
+                      alpha: scheme.brightness == Brightness.dark ? 0.16 : 0.06,
+                    )
+            : isSelected
+            ? scheme.secondaryContainer
+            : groupColor(context),
         borderRadius: radius,
         border: Border.all(
-          color: isSelected
+          color: isSelected || context.isMornye
               ? Colors.transparent
               : scheme.outlineVariant.withValues(alpha: 0.5),
         ),
@@ -291,7 +362,9 @@ class SettingsChoiceChip extends StatelessWidget {
   }
 
   Widget _content(BuildContext context, ColorScheme scheme) {
-    final color = isSelected
+    final color = context.isMornye
+        ? (isSelected ? scheme.primary : scheme.onSurface)
+        : isSelected
         ? scheme.onSecondaryContainer
         : scheme.onSurfaceVariant;
     final text = Text(
@@ -306,7 +379,7 @@ class SettingsChoiceChip extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: color),
+        AdaptiveIcon(icon, color: color),
         const SizedBox(height: 6),
         text,
       ],

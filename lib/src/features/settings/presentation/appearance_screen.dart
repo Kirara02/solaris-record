@@ -5,11 +5,14 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/horizontal_scroll_area.dart';
+import '../../../shared/widgets/mornye_segmented_control.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/theme_settings.dart';
 import '../settings_providers.dart';
+import 'appearance_widgets.dart';
 
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
@@ -20,6 +23,7 @@ class AppearanceScreen extends ConsumerWidget {
     final settings = ref.watch(themeSettingsControllerProvider);
     final controller = ref.read(themeSettingsControllerProvider.notifier);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mornye = settings.style == AppThemeStyle.mornye;
 
     return Scaffold(
       body: CustomScrollView(
@@ -28,64 +32,141 @@ class AppearanceScreen extends ConsumerWidget {
           SliverAdaptivePadding(
             sliver: SliverList.list(
               children: [
-                SettingsSectionHeader(title: t.appearance.sectionColor),
+                SettingsSectionHeader(title: t.appearance.sectionStyle),
                 SettingsGroup(
                   children: [
-                    SettingsSwitchItem(
-                      icon: Icons.wallpaper,
-                      title: t.appearance.dynamicColor,
-                      subtitle: t.appearance.dynamicColorSubtitle,
-                      value: settings.useDynamicColor,
-                      onChanged: controller.setUseDynamicColor,
-                      showDivider: false,
-                    ),
+                    for (final (i, option) in [
+                      (
+                        AppThemeStyle.material,
+                        Icons.palette_outlined,
+                        t.appearance.styleMaterial,
+                      ),
+                      (
+                        AppThemeStyle.mornye,
+                        Icons.blur_on,
+                        t.appearance.styleMornye,
+                      ),
+                    ].indexed)
+                      SettingsItem(
+                        // The grouped iOS look has no leading icons.
+                        icon: mornye ? null : option.$2,
+                        title: option.$3,
+                        badge: option.$1 == AppThemeStyle.mornye
+                            ? t.appearance.beta
+                            : null,
+                        showDivider: i == 0,
+                        trailing: settings.style == option.$1
+                            ? AdaptiveIcon(
+                                Icons.check_circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                            : const SizedBox(width: 24),
+                        onTap: () => controller.setStyle(option.$1),
+                      ),
                   ],
                 ),
-                if (!settings.useDynamicColor) ...[
-                  SettingsSectionHeader(title: t.appearance.accent),
-                  _AccentPicker(
-                    selected: settings.seedColor,
-                    onSelected: controller.setSeedColor,
+                SettingsSectionHeader(title: t.appearance.sectionColor),
+                if (mornye)
+                  SettingsGroup(
+                    children: [
+                      MornyeAccentPicker(
+                        selected: settings.mornyeAccent,
+                        onChanged: controller.setMornyeAccent,
+                      ),
+                      const MornyeGlassClaritySlider(),
+                      SettingsSwitchItem(
+                        icon: Icons.rounded_corner,
+                        title: t.appearance.glassOutlines,
+                        subtitle: t.appearance.glassOutlinesSubtitle,
+                        value: settings.mornyeGlassOutlines,
+                        onChanged: controller.setMornyeGlassOutlines,
+                        showDivider: false,
+                      ),
+                    ],
+                  )
+                else ...[
+                  SettingsGroup(
+                    children: [
+                      SettingsSwitchItem(
+                        icon: Icons.wallpaper,
+                        title: t.appearance.dynamicColor,
+                        subtitle: t.appearance.dynamicColorSubtitle,
+                        value: settings.useDynamicColor,
+                        onChanged: controller.setUseDynamicColor,
+                        showDivider: false,
+                      ),
+                    ],
                   ),
+                  if (!settings.useDynamicColor) ...[
+                    SettingsSectionHeader(title: t.appearance.accent),
+                    _AccentPicker(
+                      selected: settings.seedColor,
+                      onSelected: controller.setSeedColor,
+                    ),
+                  ],
                 ],
                 SettingsSectionHeader(title: t.appearance.sectionTheme),
                 SettingsGroup(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          for (final (i, option) in [
-                            (
-                              ThemeMode.system,
-                              Icons.brightness_auto,
-                              t.appearance.themeSystem,
-                            ),
-                            (
-                              ThemeMode.light,
-                              Icons.light_mode,
-                              t.appearance.themeLight,
-                            ),
-                            (
-                              ThemeMode.dark,
-                              Icons.dark_mode,
-                              t.appearance.themeDark,
-                            ),
-                          ].indexed) ...[
-                            if (i > 0) const SizedBox(width: 8),
-                            Expanded(
-                              child: SettingsChoiceChip(
-                                icon: option.$2,
-                                label: option.$3,
-                                isSelected: settings.mode == option.$1,
-                                onTap: () => controller.setMode(option.$1),
-                              ),
-                            ),
+                    if (mornye)
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: MornyeSegmentedControl(
+                          labels: [
+                            t.appearance.themeSystem,
+                            t.appearance.themeLight,
+                            t.appearance.themeDark,
                           ],
-                        ],
+                          selectedIndex: switch (settings.mode) {
+                            ThemeMode.system => 0,
+                            ThemeMode.light => 1,
+                            ThemeMode.dark => 2,
+                          },
+                          onChanged: (i) => controller.setMode(
+                            const [
+                              ThemeMode.system,
+                              ThemeMode.light,
+                              ThemeMode.dark,
+                            ][i],
+                          ),
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            for (final (i, option) in [
+                              (
+                                ThemeMode.system,
+                                Icons.brightness_auto,
+                                t.appearance.themeSystem,
+                              ),
+                              (
+                                ThemeMode.light,
+                                Icons.light_mode,
+                                t.appearance.themeLight,
+                              ),
+                              (
+                                ThemeMode.dark,
+                                Icons.dark_mode,
+                                t.appearance.themeDark,
+                              ),
+                            ].indexed) ...[
+                              if (i > 0) const SizedBox(width: 8),
+                              Expanded(
+                                child: SettingsChoiceChip(
+                                  icon: option.$2,
+                                  label: option.$3,
+                                  isSelected: settings.mode == option.$1,
+                                  onTap: () => controller.setMode(option.$1),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
-                    if (isDark)
+                    if (isDark && !mornye)
                       SettingsSwitchItem(
                         icon: Icons.brightness_2,
                         title: t.appearance.amoled,
@@ -142,7 +223,7 @@ class AppearanceScreen extends ConsumerWidget {
     final notifier = ref.read(dataLanguageProvider.notifier);
 
     Widget check(bool on) => on
-        ? Icon(Icons.check_circle, color: scheme.primary)
+        ? AdaptiveIcon(Icons.check_circle, color: scheme.primary)
         : const SizedBox(width: 24);
 
     return showAdaptiveSheet(
@@ -207,7 +288,7 @@ class AppearanceScreen extends ConsumerWidget {
     final notifier = ref.read(appLanguageProvider.notifier);
 
     Widget check(bool on) => on
-        ? Icon(Icons.check_circle, color: scheme.primary)
+        ? AdaptiveIcon(Icons.check_circle, color: scheme.primary)
         : const SizedBox(width: 24);
 
     return showAdaptiveSheet(
@@ -361,7 +442,11 @@ class _Swatch extends StatelessWidget {
                 ),
                 if (selected)
                   Center(
-                    child: Icon(Icons.check, color: scheme.onPrimary, size: 26),
+                    child: AdaptiveIcon(
+                      Icons.check,
+                      color: scheme.onPrimary,
+                      size: 26,
+                    ),
                   ),
               ],
             ),

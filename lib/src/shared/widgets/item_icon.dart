@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../data/providers.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
 
 /// Rarity-tinted tile showing an item's icon, with a star placeholder while
 /// loading or when no icon exists. Disk-cached by CachedNetworkImage.
@@ -40,7 +41,7 @@ class ItemIcon extends ConsumerWidget {
         : null;
 
     Widget placeholder() => Center(
-      child: Icon(Icons.star, size: size * 0.45, color: color),
+      child: AdaptiveIcon(Icons.star, size: size * 0.45, color: color),
     );
 
     return Container(

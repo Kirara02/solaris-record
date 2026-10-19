@@ -7,6 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../settings/data/storage_usage.dart';
 import '../data/update_service.dart';
 import '../domain/update_info.dart';
@@ -141,7 +143,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
 
     return PopScope(
       canPop: !_downloading,
-      child: Dialog(
+      child: AppDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
@@ -157,9 +159,9 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: scheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: context.tokens.borderRadiusControl,
                       ),
-                      child: Icon(
+                      child: AdaptiveIcon(
                         Icons.system_update,
                         color: scheme.onPrimaryContainer,
                         size: 28,
@@ -210,7 +212,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                         version: widget.update.currentVersion,
                       ),
                       const SizedBox(width: 12),
-                      Icon(
+                      AdaptiveIcon(
                         Icons.arrow_forward,
                         size: 20,
                         color: scheme.primary,
@@ -243,7 +245,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                         ),
                       ),
                       TextButton.icon(
-                        icon: const Icon(Icons.open_in_new, size: 16),
+                        icon: const AdaptiveIcon(Icons.open_in_new, size: 16),
                         label: Text(t.update.releasePage),
                         onPressed: () => _open(_info.pageUrl),
                       ),
@@ -294,7 +296,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                     width: double.infinity,
                     child: M3EButton(
                       size: M3EButtonSize.md,
-                      icon: Icon(
+                      icon: AdaptiveIcon(
                         _installInApp ? Icons.download : Icons.open_in_new,
                       ),
                       label: Text(primaryLabel),
@@ -363,7 +365,7 @@ class _VersionChip extends StatelessWidget {
             color: highlighted
                 ? scheme.primaryContainer
                 : scheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: context.tokens.borderRadiusCard,
           ),
           child: Text(
             'v$version',

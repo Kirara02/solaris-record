@@ -7,6 +7,8 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -123,22 +125,29 @@ class _PityHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final scheme = Theme.of(context).colorScheme;
+    // Mornye's containers are neutral greys, so the cards take their tint from
+    // the rarity colour (gold and violet) instead of a scheme role.
+    final mornye = context.isMornye;
+    Color tinted(int rarity) => Color.alphaBlend(
+      rarityColor(scheme, rarity).withValues(alpha: 0.2),
+      scheme.surfaceContainer,
+    );
     final cards = [
       _PityCard(
         title: t.stats.fiveStarPity,
         value: stats.pity5,
         max: pool.hardPity5,
         accent: rarityColor(scheme, 5),
-        container: scheme.tertiaryContainer,
-        onContainer: scheme.onTertiaryContainer,
+        container: mornye ? tinted(5) : scheme.tertiaryContainer,
+        onContainer: mornye ? scheme.onSurface : scheme.onTertiaryContainer,
       ),
       _PityCard(
         title: t.stats.fourStarPity,
         value: stats.pity4,
         max: hardPity4,
         accent: rarityColor(scheme, 4),
-        container: scheme.primaryContainer,
-        onContainer: scheme.onPrimaryContainer,
+        container: mornye ? tinted(4) : scheme.primaryContainer,
+        onContainer: mornye ? scheme.onSurface : scheme.onPrimaryContainer,
       ),
     ];
     return LayoutBuilder(
@@ -381,11 +390,11 @@ class _HistorySectionState extends ConsumerState<_HistorySection> {
                   controller: _search,
                   hint: t.stats.searchHint,
                   outlined: true,
-                  prefix: const Icon(Icons.search),
+                  prefix: const AdaptiveIcon(Icons.search),
                   suffix: _filter.query.isEmpty
                       ? null
                       : IconButton(
-                          icon: const Icon(Icons.close),
+                          icon: const AdaptiveIcon(Icons.close),
                           onPressed: () {
                             _search.clear();
                             _setFilter(_filter.copyWith(query: ''));

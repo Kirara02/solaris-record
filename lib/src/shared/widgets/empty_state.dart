@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../theme/mornye_icons.dart';
+
 /// Centered icon + title + body (+ optional action) for empty screens.
 class EmptyState extends StatelessWidget {
   const EmptyState({
@@ -47,7 +49,7 @@ class EmptyState extends StatelessWidget {
                       color: scheme.primaryContainer,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: AdaptiveIcon(
                       icon,
                       size: 44,
                       color: scheme.onPrimaryContainer,

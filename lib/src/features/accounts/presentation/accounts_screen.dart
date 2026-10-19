@@ -6,6 +6,8 @@ import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
@@ -39,7 +41,7 @@ class AccountsScreen extends ConsumerWidget {
                 body: t.accounts.empty,
                 action: M3EButton(
                   size: M3EButtonSize.md,
-                  icon: const Icon(Icons.download),
+                  icon: const AdaptiveIcon(Icons.download),
                   label: Text(t.accounts.addAccount),
                   onPressed: () => showImportDialog(context),
                 ),
@@ -182,7 +184,7 @@ class _AccountTile extends ConsumerWidget {
             ),
           IconButton(
             tooltip: t.accounts.actions,
-            icon: const Icon(Icons.more_vert),
+            icon: const AdaptiveIcon(Icons.more_vert),
             onPressed: () => _showActions(context, ref),
           ),
           ReorderableDragStartListener(
@@ -191,7 +193,10 @@ class _AccountTile extends ConsumerWidget {
               message: t.accounts.dragHandle,
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Icon(Icons.drag_handle, color: scheme.onSurfaceVariant),
+                child: AdaptiveIcon(
+                  Icons.drag_handle,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -300,7 +305,7 @@ class _AliasDialogState extends State<_AliasDialog> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(t.accounts.editAlias),
       content: AppTextField(
         controller: _controller,

@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../data/preferences.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../domain/update_info.dart';
 import '../domain/update_platform.dart';
 import '../update_providers.dart';
@@ -65,7 +66,7 @@ class _WhatsNewDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(t.whatsNewDialog.title(version: version)),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480),

@@ -7,7 +7,10 @@ import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/artwork_palette.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -30,31 +33,89 @@ LuckTier luckTier(int pulls, {int threshold = hardPity5}) {
   return LuckTier.unlucky;
 }
 
+/// The data colours for luck and 50/50 outcomes. Material derives them from the
+/// scheme (primary, tertiary, error). Mornye's accent is red, which would make
+/// "lucky" and "won" collide with "unlucky" and "lost", so it uses the iOS
+/// traffic-light colours instead.
+class _Outcome {
+  const _Outcome(this.good, this.middle, this.bad);
+
+  final Color good;
+  final Color middle;
+  final Color bad;
+
+  factory _Outcome.of(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    if (!context.isMornye) {
+      return _Outcome(scheme.primary, scheme.tertiary, scheme.error);
+    }
+    final dark = scheme.brightness == Brightness.dark;
+    return _Outcome(
+      dark ? const Color(0xFF30D158) : const Color(0xFF34C759),
+      dark ? const Color(0xFFFF9F0A) : const Color(0xFFFF9500),
+      scheme.error,
+    );
+  }
+}
+
 /// Tinted container pair for a pull-count badge.
 (Color, Color) luckColors(
-  ColorScheme scheme,
+  BuildContext context,
   int pulls, {
   int threshold = hardPity5,
-}) => switch (luckTier(pulls, threshold: threshold)) {
-  LuckTier.lucky => (scheme.primaryContainer, scheme.onPrimaryContainer),
-  LuckTier.average => (scheme.secondaryContainer, scheme.onSecondaryContainer),
-  LuckTier.unlucky => (scheme.errorContainer, scheme.onErrorContainer),
-};
+}) {
+  final scheme = Theme.of(context).colorScheme;
+  final tier = luckTier(pulls, threshold: threshold);
+  if (!context.isMornye) {
+    return switch (tier) {
+      LuckTier.lucky => (scheme.primaryContainer, scheme.onPrimaryContainer),
+      LuckTier.average => (
+        scheme.secondaryContainer,
+        scheme.onSecondaryContainer,
+      ),
+      LuckTier.unlucky => (scheme.errorContainer, scheme.onErrorContainer),
+    };
+  }
+  final outcome = _Outcome.of(context);
+  final base = switch (tier) {
+    LuckTier.lucky => outcome.good,
+    LuckTier.average => outcome.middle,
+    LuckTier.unlucky => outcome.bad,
+  };
+  // Readable on white as well: the tinted fill carries the hue, the text is
+  // the same colour darkened in light mode.
+  final text = scheme.brightness == Brightness.dark
+      ? base
+      : Color.lerp(base, Colors.black, 0.35)!;
+  return (
+    Color.alphaBlend(base.withValues(alpha: 0.18), scheme.surfaceContainer),
+    text,
+  );
+}
 
 /// Solid colour for a timeline node of the given [tier].
-Color luckNodeColor(ColorScheme scheme, LuckTier tier) => switch (tier) {
-  LuckTier.lucky => scheme.primary,
-  LuckTier.average => scheme.tertiary,
-  LuckTier.unlucky => scheme.error,
-};
+Color luckNodeColor(BuildContext context, LuckTier tier) {
+  final outcome = _Outcome.of(context);
+  return switch (tier) {
+    LuckTier.lucky => outcome.good,
+    LuckTier.average => outcome.middle,
+    LuckTier.unlucky => outcome.bad,
+  };
+}
 
 /// Ring colour for a 5★'s 50/50 outcome (rarity colour where not applicable).
-Color ringFor(ColorScheme scheme, FiftyFiftyResult result) => switch (result) {
-  FiftyFiftyResult.won => scheme.primary,
-  FiftyFiftyResult.lost => scheme.error,
-  FiftyFiftyResult.guaranteed => scheme.tertiary,
-  FiftyFiftyResult.notApplicable => rarityColor(scheme, 5),
-};
+Color ringFor(BuildContext context, FiftyFiftyResult result) {
+  final outcome = _Outcome.of(context);
+  return switch (result) {
+    FiftyFiftyResult.won => outcome.good,
+    FiftyFiftyResult.lost => outcome.bad,
+    FiftyFiftyResult.guaranteed => outcome.middle,
+    FiftyFiftyResult.notApplicable => rarityColor(
+      Theme.of(context).colorScheme,
+      5,
+    ),
+  };
+}
 
 /// Every 5★ of the pool, newest first, as round avatars with their pull count
 /// or (switchable, remembered) as a grid of cards. Tapping one opens its
@@ -87,7 +148,7 @@ class FiveStarBubbles extends ConsumerWidget {
                 child: IconButton(
                   visualDensity: VisualDensity.compact,
                   tooltip: grid ? t.stats.styleBubbles : t.stats.styleGrid,
-                  icon: Icon(
+                  icon: AdaptiveIcon(
                     grid ? Icons.bubble_chart_outlined : Icons.grid_view,
                   ),
                   onPressed: () => ref
@@ -195,7 +256,7 @@ class _FiveStarDetailBody extends StatelessWidget {
     final e = entry;
     final t = context.t;
     final scheme = Theme.of(context).colorScheme;
-    final (bg, fg) = luckColors(scheme, e.pullsUsed, threshold: threshold);
+    final (bg, fg) = luckColors(context, e.pullsUsed, threshold: threshold);
 
     return SizedBox(
       width: double.infinity,
@@ -211,7 +272,7 @@ class _FiveStarDetailBody extends StatelessWidget {
               rarity: 5,
               size: 96,
               circular: true,
-              ringColor: ringFor(scheme, e.result),
+              ringColor: ringFor(context, e.result),
             ),
             const SizedBox(height: 12),
             ItemName(
@@ -255,7 +316,7 @@ class _FiveStarDetailBody extends StatelessWidget {
                         FiftyFiftyResult.lost => t.stats.lost,
                         _ => t.stats.guaranteed,
                       },
-                      background: ringFor(scheme, e.result),
+                      background: ringFor(context, e.result),
                       foreground: scheme.surface,
                     ),
                     showDivider: false,
@@ -267,7 +328,7 @@ class _FiveStarDetailBody extends StatelessWidget {
               M3EButton(
                 style: M3EButtonStyle.tonal,
                 size: M3EButtonSize.md,
-                icon: const Icon(Icons.info_outline),
+                icon: const AdaptiveIcon(Icons.info_outline),
                 label: Text(t.info.button),
                 onPressed: onItemInfo,
               ),
@@ -298,13 +359,13 @@ class FiveStarBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final (bg, fg) = luckColors(scheme, entry.pullsUsed, threshold: threshold);
+    final (bg, fg) = luckColors(context, entry.pullsUsed, threshold: threshold);
 
     return SizedBox(
       width: 64,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: context.tokens.borderRadiusControl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -321,7 +382,7 @@ class FiveStarBubble extends StatelessWidget {
                     rarity: 5,
                     size: _size,
                     circular: true,
-                    ringColor: ringFor(scheme, entry.result),
+                    ringColor: ringFor(context, entry.result),
                   ),
                   Positioned(
                     right: 0,
@@ -335,7 +396,9 @@ class FiveStarBubble extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: bg,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          context.tokens.radiusCover,
+                        ),
                         border: Border.all(color: scheme.surface, width: 2),
                       ),
                       child: Text(
@@ -386,8 +449,8 @@ class _FiveStarCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final (bg, fg) = luckColors(scheme, entry.pullsUsed, threshold: threshold);
-    final ring = ringFor(scheme, entry.result);
+    final (bg, fg) = luckColors(context, entry.pullsUsed, threshold: threshold);
+    final ring = ringFor(context, entry.result);
     // Convene art (as in the item info dialog's gallery) when known, then
     // outfit art, then the icon.
     final lang =
@@ -413,7 +476,7 @@ class _FiveStarCard extends ConsumerWidget {
     final figure = firstOf(ItemGalleryKind.outfit) ?? info?.imageUrl ?? iconUrl;
 
     Widget placeholder() => Center(
-      child: Icon(
+      child: AdaptiveIcon(
         Icons.star,
         size: 44,
         color: rarityColor(scheme, 5).withValues(alpha: 0.6),
@@ -423,7 +486,7 @@ class _FiveStarCard extends ConsumerWidget {
     return Material(
       color: rarityColor(scheme, 5).withValues(alpha: 0.14),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: context.tokens.borderRadiusControl,
         side: BorderSide(color: ring, width: 2),
       ),
       clipBehavior: Clip.antiAlias,

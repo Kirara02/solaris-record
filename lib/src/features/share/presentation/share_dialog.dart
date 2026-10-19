@@ -7,6 +7,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/logging/log_sanitize.dart';
+import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_dialog.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/domain/account.dart';
 import '../../accounts/presentation/account_widgets.dart';
@@ -138,7 +141,7 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
     final content = _content();
     final uid = widget.account.uid;
 
-    return Dialog(
+    return AppDialog(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900, maxHeight: 800),
         child: Padding(
@@ -154,12 +157,12 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
                 segments: [
                   ButtonSegment(
                     value: true,
-                    icon: const Icon(Icons.dark_mode_outlined),
+                    icon: const AdaptiveIcon(Icons.dark_mode_outlined),
                     label: Text(t.share.themeDark),
                   ),
                   ButtonSegment(
                     value: false,
-                    icon: const Icon(Icons.light_mode_outlined),
+                    icon: const AdaptiveIcon(Icons.light_mode_outlined),
                     label: Text(t.share.themeLight),
                   ),
                 ],
@@ -180,7 +183,7 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
                         child: Center(child: M3ELoadingIndicator()),
                       )
                     : ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: context.tokens.borderRadiusControl,
                         child: SingleChildScrollView(
                           child: FittedBox(
                             fit: BoxFit.fitWidth,
@@ -222,7 +225,7 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.ios_share),
+                        : const AdaptiveIcon(Icons.ios_share),
                     label: Text(t.share.share),
                   ),
                 ],

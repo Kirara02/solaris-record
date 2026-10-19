@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -163,14 +164,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       icon: Icons.bug_report_outlined,
                       title: t.about.reportTitle,
                       subtitle: t.about.reportBody,
-                      trailing: const Icon(Icons.open_in_new, size: 20),
+                      trailing: const AdaptiveIcon(Icons.open_in_new, size: 20),
                       onTap: () => _open('$_repoUrl/issues/new'),
                     ),
                     SettingsItem(
                       icon: Icons.code,
                       title: t.about.repoTitle,
                       subtitle: t.about.repoBody,
-                      trailing: const Icon(Icons.open_in_new, size: 20),
+                      trailing: const AdaptiveIcon(Icons.open_in_new, size: 20),
                       showDivider: false,
                       onTap: () => _open(_repoUrl),
                     ),

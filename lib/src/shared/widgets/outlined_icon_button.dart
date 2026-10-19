@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
+
 /// Square icon button with a thin outline (toolbar / pager style). An optional
 /// [badge] count sits next to the icon, like the filter button's active count.
 class OutlinedIconButton extends StatelessWidget {
@@ -25,7 +28,7 @@ class OutlinedIconButton extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final enabled = onPressed != null;
-    final radius = BorderRadius.circular(12);
+    final radius = BorderRadius.circular(context.tokens.radiusCover);
     final color = enabled
         ? scheme.onSurface
         : scheme.onSurface.withValues(alpha: 0.38);
@@ -48,7 +51,7 @@ class OutlinedIconButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 20, color: color),
+              AdaptiveIcon(icon, size: 20, color: color),
               if (badge > 0) ...[
                 const SizedBox(width: 8),
                 Container(

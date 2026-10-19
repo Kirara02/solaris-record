@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/horizontal_scroll_area.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
@@ -61,7 +63,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: groupColor(context),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: context.tokens.borderRadiusCard,
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
@@ -70,7 +72,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
         children: [
           Row(
             children: [
-              Icon(Icons.timeline, size: 20, color: scheme.primary),
+              AdaptiveIcon(Icons.timeline, size: 20, color: scheme.primary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -86,7 +88,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                   tooltip: _vertical
                       ? t.stats.timelineHorizontal
                       : t.stats.timelineVertical,
-                  icon: Icon(
+                  icon: AdaptiveIcon(
                     _vertical ? Icons.view_week_outlined : Icons.view_list,
                   ),
                   onPressed: () => setState(() => _vertical = !_vertical),
@@ -138,7 +140,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                         isFirst: false,
                         isLast: i == widget.entries.length - 1,
                         nodeColor: luckNodeColor(
-                          scheme,
+                          context,
                           luckTier(e.pullsUsed, threshold: widget.threshold),
                         ),
                         top: Column(
@@ -150,7 +152,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                               rarity: 5,
                               size: 40,
                               circular: true,
-                              ringColor: ringFor(scheme, e.result),
+                              ringColor: ringFor(context, e.result),
                             ),
                             const SizedBox(height: 4),
                             ItemName(
@@ -160,7 +162,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: luckNodeColor(
-                                  scheme,
+                                  context,
                                   luckTier(
                                     e.pullsUsed,
                                     threshold: widget.threshold,
@@ -185,7 +187,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
             runSpacing: 6,
             children: [
               for (final tier in LuckTier.values)
-                _LegendDot(luckNodeColor(scheme, tier), switch (tier) {
+                _LegendDot(luckNodeColor(context, tier), switch (tier) {
                   LuckTier.lucky => t.stats.luckLucky,
                   LuckTier.average => t.stats.luckAverage,
                   LuckTier.unlucky => t.stats.luckUnlucky,
@@ -232,7 +234,7 @@ class _TimelineNode extends StatelessWidget {
       width: width,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(context.tokens.radiusCover),
         child: Column(
           children: [
             SizedBox(

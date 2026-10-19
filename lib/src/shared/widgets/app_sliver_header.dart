@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../layout/window_size.dart';
 import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
+import '../theme/mornye_theme.dart';
 
 /// Header for every screen.
 ///
@@ -60,7 +62,7 @@ class AppSliverHeader extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: tokens.headerExpandedTitleSize - 2,
+          fontSize: tokens.headerExpandedTitleSize - (context.isMornye ? 6 : 2),
           fontWeight: FontWeight.bold,
           color: scheme.onSurface,
         ),
@@ -77,11 +79,11 @@ class AppSliverHeader extends StatelessWidget {
       backgroundColor: scheme.surface,
       surfaceTintColor: Colors.transparent,
       automaticallyImplyLeading: false,
-      centerTitle: false,
-      titleSpacing: 0,
+      centerTitle: context.isMornye,
+      titleSpacing: context.isMornye ? null : 0,
       leading: IconButton(
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-        icon: const Icon(Icons.arrow_back),
+        icon: const AdaptiveIcon(Icons.arrow_back),
         onPressed: () => context.pop(),
       ),
       title: Text(
@@ -89,8 +91,8 @@ class AppSliverHeader extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: tokens.headerExpandedTitleSize - 4,
-          fontWeight: FontWeight.bold,
+          fontSize: context.isMornye ? 17 : tokens.headerExpandedTitleSize - 4,
+          fontWeight: context.isMornye ? FontWeight.w600 : FontWeight.bold,
           color: scheme.onSurface,
         ),
       ),

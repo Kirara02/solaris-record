@@ -2,6 +2,7 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_tokens.dart';
+import '../theme/mornye_icons.dart';
 
 class ErrorCard extends StatelessWidget {
   const ErrorCard({
@@ -31,7 +32,7 @@ class ErrorCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.error_outline, color: scheme.error),
+          AdaptiveIcon(Icons.error_outline, color: scheme.error),
           SizedBox(width: tokens.gapMd),
           Expanded(
             child: Column(
@@ -56,7 +57,7 @@ class ErrorCard extends StatelessWidget {
                   SizedBox(height: tokens.gapMd),
                   M3EButton(
                     style: M3EButtonStyle.tonal,
-                    icon: const Icon(Icons.refresh),
+                    icon: const AdaptiveIcon(Icons.refresh),
                     label: Text(retryLabel ?? ''),
                     onPressed: onRetry,
                   ),
