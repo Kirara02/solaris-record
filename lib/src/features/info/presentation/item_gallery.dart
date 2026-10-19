@@ -26,10 +26,14 @@ class ItemGalleryCard extends StatefulWidget {
     super.key,
     required this.groups,
     required this.accent,
+    this.shiftLeft = false,
   });
 
   final List<ItemGallery> groups;
   final Color accent;
+
+  /// Nudges the art left (weapon art sits right of center).
+  final bool shiftLeft;
 
   @override
   State<ItemGalleryCard> createState() => _ItemGalleryCardState();
@@ -45,6 +49,14 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
     final n = _current.urls.length;
     setState(() => _index = (_index + delta) % n);
   }
+
+  // Scaling up first keeps the bleed on the right edge from showing a gap.
+  Widget _shifted(Widget image) => widget.shiftLeft
+      ? FractionalTranslation(
+          translation: const Offset(-0.1, 0),
+          child: Transform.scale(scale: 1.2, child: image),
+        )
+      : image;
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +80,18 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
             children: [
               InkWell(
                 onTap: () => showImageViewer(context, url),
-                child: CachedNetworkImage(
-                  key: ValueKey(url),
-                  imageUrl: url,
-                  fit: BoxFit.contain,
-                  placeholder: (_, _) =>
-                      const Center(child: M3ELoadingIndicator()),
-                  errorWidget: (_, _, _) => Center(
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: widget.accent,
+                child: _shifted(
+                  CachedNetworkImage(
+                    key: ValueKey(url),
+                    imageUrl: url,
+                    fit: BoxFit.contain,
+                    placeholder: (_, _) =>
+                        const Center(child: M3ELoadingIndicator()),
+                    errorWidget: (_, _, _) => Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: widget.accent,
+                      ),
                     ),
                   ),
                 ),

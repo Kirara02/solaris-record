@@ -303,7 +303,11 @@ class _InfoBody extends StatelessWidget {
         if (info.gallery.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: ItemGalleryCard(groups: info.gallery, accent: color),
+            child: ItemGalleryCard(
+              groups: info.gallery,
+              accent: color,
+              shiftLeft: info.kind == ItemKind.weapon,
+            ),
           )
         else if (info.imageUrl != null)
           Container(

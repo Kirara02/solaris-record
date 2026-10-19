@@ -12,6 +12,7 @@ import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../info/domain/item_info.dart';
+import '../../info/domain/item_kind.dart';
 import '../../info/presentation/item_info_dialog.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/pity_calculator.dart';
@@ -437,7 +438,11 @@ class _FiveStarCard extends ConsumerWidget {
                 key: ValueKey(url),
                 imageUrl: url,
                 fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
+                // Weapon art sits right of center; showing more of the right
+                // side of the crop moves it toward the middle.
+                alignment: info?.kind == ItemKind.weapon
+                    ? const Alignment(1, -1)
+                    : Alignment.topCenter,
                 fadeInDuration: const Duration(milliseconds: 150),
                 placeholder: (_, _) => url == (background ?? figure)
                     ? placeholder()
