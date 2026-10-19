@@ -12,6 +12,7 @@ permissions:
 jobs:
   version:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     outputs:
       name: ${{ steps.v.outputs.name }}
       base: ${{ steps.v.outputs.base }}
@@ -40,6 +41,7 @@ jobs:
   android:
     needs: version
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Holds the signing secrets, and can require a manual approval (Settings →
     # Environments → release) before anything is signed.
     environment: release
@@ -55,6 +57,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
       - uses: ./.github/actions/flutter-setup
 
       # Never publish an APK signed with the debug key.
@@ -92,10 +95,12 @@ jobs:
         with:
           name: android
           path: out/*
+          retention-days: 1
 
   windows:
     needs: version
     runs-on: windows-latest
+    timeout-minutes: 30
     env:
       NAME: ${{ needs.version.outputs.name }}
     steps:
@@ -114,10 +119,12 @@ jobs:
         with:
           name: windows
           path: out/*
+          retention-days: 1
 
   linux:
     needs: version
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       NAME: ${{ needs.version.outputs.name }}
     steps:
@@ -137,10 +144,12 @@ jobs:
         with:
           name: linux
           path: out/*
+          retention-days: 1
 
   macos:
     needs: version
     runs-on: macos-latest
+    timeout-minutes: 30
     env:
       NAME: ${{ needs.version.outputs.name }}
     steps:
@@ -174,10 +183,12 @@ jobs:
         with:
           name: macos
           path: out/*
+          retention-days: 1
 
   publish:
     needs: [version, android, windows, linux, macos]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
