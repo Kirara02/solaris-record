@@ -11,15 +11,19 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 <table>
   <tr>
     <td width="50%"><img src="docs/images/desktop/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b>: totals, rarity and type charts, 5★ per pull type.</sub></td>
-    <td width="50%"><img src="docs/images/desktop/2.png" alt="Featured Resonator pity, 50/50 and 5★ timeline"><br><sub><b>Featured Resonator</b>: pity, 50/50 record and the 5★ timeline.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b>: pity and 50/50 record.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/images/desktop/3.png" alt="Featured Weapon pity and 5★ timeline"><br><sub><b>Featured Weapon</b>: pity and timeline, colored by luck.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/3.png" alt="Featured Resonator 5★ timeline and history"><br><sub><b>Resonator timeline</b>: 5★ timeline, 5★ pulls and history.</sub></td>
     <td width="50%"><img src="docs/images/desktop/4.png" alt="Item info dialog with the image gallery"><br><sub><b>Item info</b>: details and an icon, outfit and convene art gallery.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/images/desktop/5.png" alt="Settings"><br><sub><b>Settings</b>: import, accounts, appearance, data and about.</sub></td>
-    <td width="50%"></td>
+    <td width="50%"><img src="docs/images/desktop/5.png" alt="Featured Weapon pity and stats"><br><sub><b>Featured Weapon</b>: pity and stats.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/6.png" alt="Featured Weapon 5★ timeline and history"><br><sub><b>Weapon timeline</b>: timeline colored by luck, 5★ pulls and history.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/desktop/7.png" alt="Share as an image"><br><sub><b>Share image</b>: a picture of the overview or one pull type, dark or light.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/8.png" alt="Settings"><br><sub><b>Settings</b>: import, accounts, appearance, data and about.</sub></td>
   </tr>
 </table>
 
