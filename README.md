@@ -54,14 +54,31 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 - **Pity** for 5★ and 4★ with the pulls left until it is guaranteed, averages, and a **50/50** record for the featured Resonator banner.
 - **Timelines** of every 5★, per pull type and across all of them, colored by luck, horizontal or vertical.
 - **Overview** with rarity and item type charts, 5★ per pull type, and the current pity of each pull type.
-- **History** with search, rarity and type filters, multi-column sort, pull numbers and per-pull pity.
+- **History** with search, rarity and type filters, sort by time, name, type, rarity or pity, pull numbers and per-pull pity.
 - **Item info** for Resonators and Weapons (skills, effects, base stats by level) with an image gallery (icon, outfit, convene art).
+- **Share as an image**: a picture of the overview or one pull type, dark or light, shared or saved. With an option to show the full UID.
 - **Data language**: show item names in another language without touching your stored records.
 - **Updates**: the app tells you when a new release is out and, on Android, installs it from inside the app.
 - **Backup**: export and import everything as JSON, and import a [WuWa Tracker](https://wuwatracker.com/) export.
 - **Quick updates**: the last working link is remembered per account.
+- **Import help**: per-platform guides for finding the link, clipboard prefill, and on Android import by sharing a convene link from another app.
+- **What's new** after an update, plus occasional developer announcements.
+- **Accounts** can be reordered by dragging.
+- **5★ views**: card or bubble layout.
+- **Translucent navigation** can be toggled in Settings.
+- **Settings → Data**: log viewer, storage usage, clear cache and delete all data.
 - **Material 3** with dynamic color, accent colors and an AMOLED dark mode. English, Indonesian, Japanese and Simplified and Traditional Chinese.
-- **Debug log** you can export when reporting a bug. UIDs and links are masked in it.
+- **Debug log** you can export when reporting a bug. UIDs are partly masked and links are masked in it.
+
+## Downloads and platforms
+
+Releases on GitHub include:
+
+- **Android**: an APK per ABI; the app can download and install updates itself.
+- **Windows**: zip. **Linux**: tar.gz. **macOS**: dmg (zip too).
+- `SHA256SUMS.txt` to verify downloads.
+
+Windows and macOS builds are unsigned. iOS and web are not published (see [docs/RELEASING.md](docs/RELEASING.md)). On non-Android platforms, an update opens the download in your browser.
 
 ## How it gets your records
 
@@ -71,17 +88,17 @@ The game keeps your convene history on Kuro's servers and shows it on the in-gam
 2. Copy the page's URL. It contains `svr_id`, `player_id` and `record_id`.
 3. Paste it into **Import** in the app and tap **Update records**.
 
-The link expires after a short while (roughly 10 to 20 minutes). The game only keeps a limited history, so Solaris Record merges what it fetches into your local data and never deletes older records. Export a backup now and then.
+The link expires after a short while. The game only keeps a limited history, so Solaris Record merges what it fetches into your local data and never deletes older records. Export a backup now and then.
 
 ## Privacy
 
 - Everything stays on your device: records live in a local SQLite database.
-- The app only talks to Kuro's convene record service (to fetch your records) and to [encore.moe](https://encore.moe/) and Kuro's guide server (for item names, icons and info).
-- The link you paste carries an access token for your history, so the app keeps it only until the server rejects it or you delete the account, and never writes it to the debug log.
+- The app only talks to Kuro's convene record service (to fetch your records), to [encore.moe](https://encore.moe/) and Kuro's guide server (for item names, icons and info), and to GitHub (`api.github.com` for update checks, `raw.githubusercontent.com` for `announcements.json`). Announcements can be switched off in Settings → About.
+- The link you paste carries an access token for your history, so the app keeps it only until the server rejects it or you delete the account, and never writes it to the debug log. **Delete all data** in Settings → Data also removes saved links.
 
 ## Build from source
 
-You need a recent stable [Flutter](https://docs.flutter.dev/get-started/install) (Dart `^3.13.5`).
+You need [Flutter](https://docs.flutter.dev/get-started/install) 3.47.x (pinned in `.github/actions/flutter-setup`, Dart `^3.13.5`).
 
 ```bash
 flutter pub get
