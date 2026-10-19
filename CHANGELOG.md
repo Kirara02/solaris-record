@@ -16,6 +16,7 @@ A second look for the app, Mornye, and notifications while an update downloads o
 - Android 13 and newer asks for permission to show notifications the first time you download an update. The update still installs if you say no.
 - "Blurred navigation" also controls the glass in Mornye: turn it off on slower devices.
 - The new translations were machine-made and have not been reviewed by native speakers.
+- **An iOS version is planned** for an upcoming release. It will be an unsigned build that you install yourself with a sideloading tool. It is not part of this release.
 
 ## 1.3.2
 
