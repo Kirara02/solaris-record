@@ -57,15 +57,26 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 4;
 
+  /// Lets an upgrade step re-run safely when the column already exists (e.g.
+  /// a database touched by a build with a newer schema).
+  Future<bool> _hasColumn(String table, String column) async {
+    final rows = await customSelect('PRAGMA table_info($table)').get();
+    return rows.any((r) => r.read<String>('name') == column);
+  }
+
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
       if (from < 2) {
-        await m.addColumn(conveneRecords, conveneRecords.resourceId);
+        if (!await _hasColumn('convene_records', 'resource_id')) {
+          await m.addColumn(conveneRecords, conveneRecords.resourceId);
+        }
       }
       if (from < 3) {
-        await m.addColumn(accounts, accounts.number);
+        if (!await _hasColumn('accounts', 'number')) {
+          await m.addColumn(accounts, accounts.number);
+        }
         // Existing accounts keep the order they were added in (insertion
         // order, which rowid still reflects at this point).
         final rows = await customSelect(
@@ -79,7 +90,9 @@ class AppDatabase extends _$AppDatabase {
         }
       }
       if (from < 4) {
-        await m.addColumn(accounts, accounts.sortOrder);
+        if (!await _hasColumn('accounts', 'sort_order')) {
+          await m.addColumn(accounts, accounts.sortOrder);
+        }
         // The list starts in the order accounts were added.
         await customStatement('UPDATE accounts SET sort_order = number');
       }
