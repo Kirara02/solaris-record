@@ -4,6 +4,15 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.3.2
+
+Fixes importing a backup on some devices, and centers a few images and screens on wide layouts.
+
+### Fixes
+- Importing a backup could fail with "duplicate column name" when the database had already been upgraded. Database upgrades now skip columns that already exist.
+- The "No account yet" screen is now centered in the area beside the side rail on desktop, not on the whole window.
+- Weapon artwork is shifted toward the center in the item info dialog and on 5★ cards, instead of sitting at the right edge.
+
 ## 1.3.1
 
 Fixes the Android release build crashing at startup.
