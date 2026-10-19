@@ -7,10 +7,12 @@ import 'app_tokens.dart';
 /// Only shapes, padding and behaviour are set here. Colours stay out because
 /// M3ETheme swaps in the dynamic palette after this theme is built, so any
 /// colour baked in here would go stale.
-ThemeData applyAppTheme(ThemeData base) {
-  const tokens = AppTokens.standard;
+ThemeData applyAppTheme(
+  ThemeData base, {
+  AppTokens tokens = AppTokens.standard,
+}) {
   return base.copyWith(
-    extensions: const [tokens],
+    extensions: [...base.extensions.values, tokens],
     cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: tokens.borderRadiusControl),
