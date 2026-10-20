@@ -1,0 +1,4 @@
+-keep class io.flutter.plugins.sharedpreferences.** { *; }
+-keep class kotlin.** { *; }
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlin.**
