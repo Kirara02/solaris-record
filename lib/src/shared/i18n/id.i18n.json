@@ -3,7 +3,8 @@
   "nav": {
     "stats": "Convene",
     "settings": "Pengaturan",
-    "overview": "Ringkasan"
+    "overview": "Ringkasan",
+    "explore": "Jelajahi"
   },
   "pools": {
     "featuredResonator": "Resonator Unggulan",
@@ -414,7 +415,14 @@
     "imageZoomOut": "Perkecil",
     "imageSaved": "Gambar disimpan",
     "imageSaveFailed": "Gagal menyimpan gambar",
-    "imageLoadFailed": "Gagal memuat gambar"
+    "imageLoadFailed": "Gagal memuat gambar",
+    "gallerySkill": "Skill",
+    "chain": "Rantai Resonansi",
+    "profile": "Profil",
+    "birthday": "Ulang tahun",
+    "region": "Wilayah",
+    "affiliation": "Afiliasi",
+    "voiceActor": "Pengisi suara"
   },
   "update": {
     "title": "Pembaruan tersedia",
@@ -462,5 +470,55 @@
     "title": "Pengumuman",
     "subtitle": "Tampilkan pemberitahuan dari pengembang, misalnya perubahan API game. Dicek paling banyak dua kali sehari.",
     "dismiss": "Mengerti"
+  },
+  "explore": {
+    "title": "Jelajahi",
+    "tools": "Alat & panduan",
+    "guide": "Panduan",
+    "redeem": "Kode Tukar",
+    "guideDesc": "Resonator, senjata, dan echo",
+    "redeemDesc": "Kode aktif dan cara memakainya"
+  },
+  "guide": {
+    "title": "Panduan",
+    "resonators": "Resonator",
+    "weapons": "Senjata",
+    "echoes": "Echo",
+    "echo": "Echo",
+    "search": "Cari berdasarkan nama",
+    "noResults": "Tidak ada yang cocok dengan pencarian.",
+    "error": "Daftar tidak bisa dimuat. Periksa koneksi lalu coba lagi.",
+    "classCommon": "Biasa",
+    "classElite": "Elite",
+    "classOverlord": "Overlord",
+    "classCalamity": "Calamity",
+    "location": "Lokasi",
+    "echoSkill": "Skill Echo",
+    "cooldown": "Cooldown {n}d",
+    "mainStats": "Stat utama",
+    "sonata": "Efek Sonata",
+    "pieces": "{n} bagian",
+    "filter": "Filter",
+    "reset": "Atur ulang",
+    "element": "Elemen",
+    "weapon": "Senjata",
+    "rarity": "Kelangkaan",
+    "class": "Kelas"
+  },
+  "redeem": {
+    "title": "Kode Tukar",
+    "refresh": "Muat ulang",
+    "error": "Kode tidak bisa dimuat. Periksa koneksi lalu coba lagi.",
+    "empty": "Belum ada kode",
+    "emptyBody": "Kode baru akan muncul di sini saat dipublikasikan.",
+    "offline": "Offline: menampilkan daftar tersimpan terakhir",
+    "active": "Aktif",
+    "noneActive": "Belum ada kode yang berlaku.",
+    "expired": "Kedaluwarsa",
+    "noExpiry": "Tanggal berakhir tidak diketahui",
+    "expires": "Sampai {date}",
+    "copy": "Salin kode",
+    "copied": "{code} disalin",
+    "howTo": "Masukkan kode di dalam game lewat Pengaturan > Kode Tukar."
   }
 }

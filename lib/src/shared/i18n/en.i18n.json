@@ -3,7 +3,8 @@
   "nav": {
     "stats": "Convene",
     "settings": "Settings",
-    "overview": "Overview"
+    "overview": "Overview",
+    "explore": "Explore"
   },
   "pools": {
     "featuredResonator": "Featured Resonator",
@@ -418,7 +419,14 @@
     "imageZoomOut": "Zoom out",
     "imageSaved": "Image saved",
     "imageSaveFailed": "Couldn't save the image",
-    "imageLoadFailed": "Couldn't load the image"
+    "imageLoadFailed": "Couldn't load the image",
+    "gallerySkill": "Skill",
+    "chain": "Resonance chain",
+    "profile": "Profile",
+    "birthday": "Birthday",
+    "region": "Region",
+    "affiliation": "Affiliation",
+    "voiceActor": "Voice actor"
   },
   "update": {
     "title": "Update available",
@@ -466,5 +474,55 @@
     "title": "Announcements",
     "subtitle": "Show notices from the developer, such as changes to the game's API. Checked at most twice a day.",
     "dismiss": "Got it"
+  },
+  "explore": {
+    "title": "Explore",
+    "tools": "Tools & guides",
+    "guide": "Guide",
+    "redeem": "Redeem Code",
+    "guideDesc": "Resonators, weapons and echoes",
+    "redeemDesc": "Active codes and how to use them"
+  },
+  "guide": {
+    "title": "Guide",
+    "resonators": "Resonators",
+    "weapons": "Weapons",
+    "echoes": "Echoes",
+    "echo": "Echo",
+    "search": "Search by name",
+    "noResults": "Nothing matches your search.",
+    "error": "Couldn't load the list. Check your connection and try again.",
+    "classCommon": "Common",
+    "classElite": "Elite",
+    "classOverlord": "Overlord",
+    "classCalamity": "Calamity",
+    "location": "Location",
+    "echoSkill": "Echo skill",
+    "cooldown": "Cooldown {n}s",
+    "mainStats": "Main stats",
+    "sonata": "Sonata effects",
+    "pieces": "{n}-piece",
+    "filter": "Filter",
+    "reset": "Reset",
+    "element": "Element",
+    "weapon": "Weapon",
+    "rarity": "Rarity",
+    "class": "Class"
+  },
+  "redeem": {
+    "title": "Redeem Code",
+    "refresh": "Refresh",
+    "error": "Couldn't load the codes. Check your connection and try again.",
+    "empty": "No codes yet",
+    "emptyBody": "New codes show up here when they are published.",
+    "offline": "Offline: showing the last saved list",
+    "active": "Active",
+    "noneActive": "No working codes right now.",
+    "expired": "Expired",
+    "noExpiry": "No known end date",
+    "expires": "Until {date}",
+    "copy": "Copy code",
+    "copied": "Copied {code}",
+    "howTo": "Enter codes in the game under Settings > Redeem Code."
   }
 }

@@ -10,7 +10,7 @@ import 'nav_destination.dart';
 import 'wide_shell.dart';
 
 /// Picks the base layout for the window size: [CompactShell] (bottom bar) on
-/// phones, [WideShell] (rail, Settings at the bottom) on tablets and desktops.
+/// phones, [WideShell] (rail, Explore and Settings at the bottom) on tablets and desktops.
 /// The screens inside are the same widgets either way.
 class AppShell extends StatelessWidget {
   const AppShell({
@@ -31,7 +31,7 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     // Each tab animates its selected icon when it is chosen. The last
-    // destination is the one the wide layout pins to the bottom.
+    // destinations are the ones the wide layout pins to the bottom.
     final settings = NavDestination(
       icon: Icons.settings_outlined,
       selectedIcon: const SpinIcon(child: AdaptiveIcon(Icons.settings)),
@@ -42,8 +42,14 @@ class AppShell extends StatelessWidget {
       selectedIcon: const BouncingIcon(child: AdaptiveIcon(Icons.dashboard)),
       label: t.nav.overview,
     );
-    // Phones: Overview, Convene (with its pull-type chips) and Settings. Wide
-    // layouts: Overview with the pull types nested under it in the rail.
+    final explore = NavDestination(
+      icon: Icons.explore_outlined,
+      selectedIcon: const BouncingIcon(child: AdaptiveIcon(Icons.explore)),
+      label: t.nav.explore,
+    );
+    // Phones: Overview, Convene (with its pull-type chips), Explore and
+    // Settings. Wide layouts: Overview with the pull types nested under it in
+    // the rail, then Explore and Settings pinned at the bottom.
     final compactDestinations = [
       overview,
       NavDestination(
@@ -51,9 +57,10 @@ class AppShell extends StatelessWidget {
         selectedIcon: const BouncingIcon(child: AdaptiveIcon(Icons.insights)),
         label: t.nav.stats,
       ),
+      explore,
       settings,
     ];
-    final wideDestinations = [overview, settings];
+    final wideDestinations = [overview, explore, settings];
 
     return LayoutBuilder(
       builder: (context, constraints) {

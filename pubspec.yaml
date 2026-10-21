@@ -58,6 +58,8 @@ flutter:
     - assets/
     - assets/fonts/
     - assets/images/
+    # Local copy of the redeem list, read in debug builds only (RedeemService).
+    - redeem-codes.json
 
   fonts:
     - family: Inter

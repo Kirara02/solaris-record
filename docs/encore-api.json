@@ -1,0 +1,2931 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "encore.moe API v2",
+    "description": "\n# encore.moe API\n\nThis is the API documentation for api-v2.encore.moe. The API provides data for Wuthering Waves including characters, weapons, items, echoes, and more.\n\n## Usage\nMost endpoints require a `{lang}` parameter (e.g. `en`, `ja`).\n\n## Resources\n* [Website](https://encore.moe)\n* [GitHub](https://github.com/alt3ri)\n",
+    "version": "2.0.0",
+    "contact": {
+      "name": "encore.moe's developer",
+      "url": "https://alteri.moe"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-v2.encore.moe/api",
+      "description": "Primary API server (Nuxt backend)"
+    },
+    {
+      "url": "https://api.encore.moe",
+      "description": "Secondary API server (legacy backend)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Core",
+      "description": "Core API endpoints."
+    },
+    {
+      "name": "Exploration Reports",
+      "description": "Operations related to [Exploration Reports]."
+    },
+    {
+      "name": "Characters",
+      "description": "Operations related to [Characters]."
+    },
+    {
+      "name": "Doubled Pawns Matrix",
+      "description": "Operations related to [Doubled Pawns Matrix]."
+    },
+    {
+      "name": "Echoes",
+      "description": "Operations related to [Echoes]."
+    },
+    {
+      "name": "Fantasies of the Thousand Gateways",
+      "description": "Operations related to [Fantasies of the Thousand Gateways]."
+    },
+    {
+      "name": "Information",
+      "description": "Operations related to [Information]."
+    },
+    {
+      "name": "Items",
+      "description": "Operations related to [Items]."
+    },
+    {
+      "name": "Monsters",
+      "description": "Operations related to [Monsters]."
+    },
+    {
+      "name": "Namecards",
+      "description": "Operations related to [Namecards]."
+    },
+    {
+      "name": "New Content",
+      "description": "Operations related to [New Content]."
+    },
+    {
+      "name": "Phone",
+      "description": "Operations related to [Phone]."
+    },
+    {
+      "name": "Dreaming Deep",
+      "description": "Operations related to [Dreaming Deep]."
+    },
+    {
+      "name": "Stories",
+      "description": "Operations related to [Stories]."
+    },
+    {
+      "name": "Terms",
+      "description": "Operations related to [Terms]."
+    },
+    {
+      "name": "Titles",
+      "description": "Operations related to [Titles]."
+    },
+    {
+      "name": "Tower of Adversity",
+      "description": "Operations related to [Tower of Adversity]."
+    },
+    {
+      "name": "Weapons",
+      "description": "Operations related to [Weapons]."
+    },
+    {
+      "name": "Whimpering Wastes",
+      "description": "Operations related to [Whimpering Wastes]."
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "/",
+        "operationId": "_",
+        "tags": [
+          "Core"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiServerList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}": {
+      "get": {
+        "summary": "Get route list for language",
+        "operationId": "_lang",
+        "tags": [
+          "Core"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/arearp": {
+      "get": {
+        "summary": "List Exploration Reports",
+        "operationId": "_lang_arearp",
+        "tags": [
+          "Exploration Reports"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExplorationReportList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/arearp/{id}": {
+      "get": {
+        "summary": "Get Exploration Reports details",
+        "operationId": "_lang_arearp_id",
+        "tags": [
+          "Exploration Reports"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExplorationReportDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/character": {
+      "get": {
+        "summary": "List Characters",
+        "operationId": "_lang_character",
+        "tags": [
+          "Characters"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CharacterList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/character/{id}": {
+      "get": {
+        "summary": "Get Characters details",
+        "operationId": "_lang_character_id",
+        "tags": [
+          "Characters"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CharacterDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/dpmatrix": {
+      "get": {
+        "summary": "List Doubled Pawns Matrix",
+        "operationId": "_lang_dpmatrix",
+        "tags": [
+          "Doubled Pawns Matrix"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DPMatrixSeasonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/dpmatrix/{id}": {
+      "get": {
+        "summary": "Get Doubled Pawns Matrix details",
+        "operationId": "_lang_dpmatrix_id",
+        "tags": [
+          "Doubled Pawns Matrix"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DPMatrixSeasonDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/echo": {
+      "get": {
+        "summary": "List Echoes",
+        "operationId": "_lang_echo",
+        "tags": [
+          "Echoes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EchoList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/echo/{id}": {
+      "get": {
+        "summary": "Get Echoes details",
+        "operationId": "_lang_echo_id",
+        "tags": [
+          "Echoes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EchoDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/fotg": {
+      "get": {
+        "summary": "List FOTG",
+        "operationId": "_lang_fotg",
+        "tags": [
+          "Fantasies of the Thousand Gateways"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FOTGList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/fotg/buffpool": {
+      "get": {
+        "summary": "List FOTG buff pools",
+        "operationId": "_lang_fotg_buffpool",
+        "tags": [
+          "Fantasies of the Thousand Gateways"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FOTGBuffPoolList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/fotg/{id}": {
+      "get": {
+        "summary": "Get FOTG details",
+        "operationId": "_lang_fotg_id",
+        "tags": [
+          "Fantasies of the Thousand Gateways"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FOTGDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/info": {
+      "get": {
+        "summary": "List Information",
+        "operationId": "_lang_info",
+        "tags": [
+          "Information"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/info/{id}": {
+      "get": {
+        "summary": "Get Information details",
+        "operationId": "_lang_info_id",
+        "tags": [
+          "Information"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/item": {
+      "get": {
+        "summary": "List Items",
+        "operationId": "_lang_item",
+        "tags": [
+          "Items"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/item/{id}": {
+      "get": {
+        "summary": "Get Items details",
+        "operationId": "_lang_item_id",
+        "tags": [
+          "Items"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/monster": {
+      "get": {
+        "summary": "List Monsters",
+        "operationId": "_lang_monster",
+        "tags": [
+          "Monsters"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonsterList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/monster/{id}": {
+      "get": {
+        "summary": "Get Monsters details",
+        "operationId": "_lang_monster_id",
+        "tags": [
+          "Monsters"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonsterDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/namecard": {
+      "get": {
+        "summary": "List Namecards",
+        "operationId": "_lang_namecard",
+        "tags": [
+          "Namecards"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NamecardList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/namecard/{id}": {
+      "get": {
+        "summary": "Get Namecards details",
+        "operationId": "_lang_namecard_id",
+        "tags": [
+          "Namecards"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NamecardDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/new": {
+      "get": {
+        "summary": "List New Content",
+        "operationId": "_lang_new",
+        "tags": [
+          "New Content"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewContentList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/phone": {
+      "get": {
+        "summary": "List Phone",
+        "operationId": "_lang_phone",
+        "tags": [
+          "Phone"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhoneList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/phone/{id}": {
+      "get": {
+        "summary": "Get Phone details",
+        "operationId": "_lang_phone_id",
+        "tags": [
+          "Phone"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhoneDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/rogue": {
+      "get": {
+        "summary": "List Dreaming Deep",
+        "operationId": "_lang_rogue",
+        "tags": [
+          "Dreaming Deep"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RogueEventList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/rogue/{id}": {
+      "get": {
+        "summary": "Get Dreaming Deep details",
+        "operationId": "_lang_rogue_id",
+        "tags": [
+          "Dreaming Deep"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RogueEventDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/story": {
+      "get": {
+        "summary": "List Stories",
+        "operationId": "_lang_story",
+        "tags": [
+          "Stories"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/story/{id}": {
+      "get": {
+        "summary": "Get Stories details",
+        "operationId": "_lang_story_id",
+        "tags": [
+          "Stories"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/term": {
+      "get": {
+        "summary": "List Terms",
+        "operationId": "_lang_term",
+        "tags": [
+          "Terms"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TermList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/term/{id}": {
+      "get": {
+        "summary": "Get Terms details",
+        "operationId": "_lang_term_id",
+        "tags": [
+          "Terms"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TermDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/title": {
+      "get": {
+        "summary": "List Titles",
+        "operationId": "_lang_title",
+        "tags": [
+          "Titles"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TitleList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/title/{id}": {
+      "get": {
+        "summary": "Get Titles details",
+        "operationId": "_lang_title_id",
+        "tags": [
+          "Titles"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TitleDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/toa": {
+      "get": {
+        "summary": "List Tower of Adversity",
+        "operationId": "_lang_toa",
+        "tags": [
+          "Tower of Adversity"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TOASeasonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/toa/{seasonId}": {
+      "get": {
+        "summary": "Get Tower of Adversity season data",
+        "operationId": "_lang_toa_seasonId",
+        "tags": [
+          "Tower of Adversity"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "$ref": "#/components/parameters/seasonId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TOASeasonDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/weapon": {
+      "get": {
+        "summary": "List Weapons",
+        "operationId": "_lang_weapon",
+        "tags": [
+          "Weapons"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeaponList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/weapon/{id}": {
+      "get": {
+        "summary": "Get Weapons details",
+        "operationId": "_lang_weapon_id",
+        "tags": [
+          "Weapons"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Numeric id identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeaponDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/whiwa": {
+      "get": {
+        "summary": "List Whimpering Wastes",
+        "operationId": "_lang_whiwa",
+        "tags": [
+          "Whimpering Wastes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhiwaSeasonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/{lang}/whiwa/{seasonId}": {
+      "get": {
+        "summary": "Get Whimpering Wastes season data",
+        "operationId": "_lang_whiwa_seasonId",
+        "tags": [
+          "Whimpering Wastes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "$ref": "#/components/parameters/seasonId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhiwaSeasonDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiServerList": {
+        "type": "object",
+        "description": "API servers and languages list",
+        "properties": {
+          "apiList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "P": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExplorationReportList": {
+        "type": "array",
+        "description": "List of Exploration Reports.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "integer"
+            },
+            "Title": {
+              "type": "string"
+            },
+            "Desc": {
+              "type": "string"
+            },
+            "Icon": {
+              "type": "string"
+            },
+            "Logo": {
+              "type": "string"
+            },
+            "SortIndex": {
+              "type": "integer"
+            },
+            "Areas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AreaId": {
+                    "type": "integer"
+                  },
+                  "Title": {
+                    "type": "string"
+                  },
+                  "Level": {
+                    "type": "integer"
+                  },
+                  "Father": {
+                    "type": "integer"
+                  },
+                  "SortIndex": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ExplorationReportDetail": {
+        "type": "object",
+        "description": "Exploration Report details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Title": {
+            "type": "string"
+          },
+          "Desc": {
+            "type": "string"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "Logo": {
+            "type": "string"
+          },
+          "SortIndex": {
+            "type": "integer"
+          },
+          "Areas": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "CharacterList": {
+        "type": "object",
+        "description": "List of playable characters.",
+        "properties": {
+          "roleList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "QualityId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Rarity / quality id."
+                },
+                "Element": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "Icon": {
+                      "type": "string",
+                      "description": "Element icon path without domain."
+                    },
+                    "Name": {
+                      "type": "string",
+                      "description": "Localized element name."
+                    }
+                  }
+                },
+                "RoleHeadIcon": {
+                  "type": "string"
+                },
+                "WeaponType": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "Name": {
+                      "type": "string"
+                    },
+                    "Icon": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CharacterDetail": {
+        "type": "object",
+        "description": "Character details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "QualityId": {
+            "type": "integer"
+          },
+          "Element": {
+            "type": "object"
+          },
+          "RoleHeadIcon": {
+            "type": "string"
+          },
+          "WeaponType": {
+            "type": "object"
+          },
+          "Introduction": {
+            "type": "string"
+          },
+          "Skills": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "ResonantChain": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Skins": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Properties": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "SkillTree": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Stories": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Words": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Goods": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Breaches": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "SkillInputs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "DPMatrixSeasonList": {
+        "type": "array",
+        "description": "List of DP Matrix seasons.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Season": {
+              "type": "integer"
+            },
+            "Name": {
+              "type": "string"
+            },
+            "LevelIds": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "LevelNames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "DPMatrixSeasonDetail": {
+        "type": "object",
+        "description": "DP Matrix season details.",
+        "properties": {
+          "Season": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "LevelIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "Levels": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Roles": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "EchoList": {
+        "type": "object",
+        "description": "List of echoes.",
+        "properties": {
+          "phantomsList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Rarity": {
+                  "type": "integer"
+                },
+                "Icon": {
+                  "type": "string"
+                },
+                "PhantomType": {
+                  "type": "integer"
+                },
+                "Element": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "Name": {
+                      "type": "string"
+                    },
+                    "Icon": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "FetterGroups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Id": {
+                        "type": "integer"
+                      },
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Icon": {
+                        "type": "string"
+                      },
+                      "Fetters": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Id": {
+                              "type": "integer"
+                            },
+                            "Name": {
+                              "type": "string"
+                            },
+                            "Level": {
+                              "type": "integer"
+                            },
+                            "EffectDescription": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "EchoDetail": {
+        "type": "object",
+        "description": "Echo details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Rarity": {
+            "type": "integer"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "PhantomType": {
+            "type": "integer"
+          },
+          "Element": {
+            "type": "object"
+          },
+          "FetterGroups": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Skill": {
+            "type": "object",
+            "properties": {
+              "DamageList": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "FOTGList": {
+        "type": "array",
+        "description": "List of FOTG cycles.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "string",
+              "format": "date"
+            },
+            "finish": {
+              "type": "string",
+              "format": "date"
+            },
+            "current": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "FOTGBuffPoolList": {
+        "type": "array",
+        "description": "List of FOTG buff pools.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "integer"
+            },
+            "BuffName": {
+              "type": "string"
+            },
+            "BuffDesc": {
+              "type": "string"
+            },
+            "BuffIcon": {
+              "type": "string"
+            },
+            "PerIds": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "BuffTagId": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer"
+                  },
+                  "Name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "Color": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "FOTGDetail": {
+        "type": "object",
+        "description": "FOTG cycle details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "CycleName": {
+            "type": "string"
+          },
+          "ViewBackground": {
+            "type": "string"
+          },
+          "BuffDesc": {
+            "type": "string"
+          },
+          "RecommendedRole": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string"
+                },
+                "QualityId": {
+                  "type": "integer"
+                },
+                "RoleHeadIcon": {
+                  "type": "string"
+                },
+                "Element": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "Icon": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "InfoDetail": {
+        "type": "object",
+        "description": "Info item details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Title": {
+            "type": "string"
+          },
+          "Text": {
+            "type": "string"
+          },
+          "ItemId": {
+            "type": "integer"
+          },
+          "Picture": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "InfoList": {
+        "type": "object",
+        "description": "List of info items.",
+        "properties": {
+          "infoList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "Title": {
+                  "type": "string"
+                },
+                "Text": {
+                  "type": "string"
+                },
+                "ItemId": {
+                  "type": "integer"
+                },
+                "Picture": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ItemDetail": {
+        "type": "object",
+        "description": "Item details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "QualityId": {
+            "type": "integer"
+          },
+          "TypeId": {
+            "type": "integer"
+          },
+          "TypeName": {
+            "type": "string"
+          }
+        }
+      },
+      "ItemList": {
+        "type": "object",
+        "description": "List of items.",
+        "properties": {
+          "itemList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Icon": {
+                  "type": "string"
+                },
+                "QualityId": {
+                  "type": "integer"
+                },
+                "TypeId": {
+                  "type": "integer"
+                },
+                "TypeName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MonsterDetail": {
+        "type": "object",
+        "description": "Monster details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Rarity": {
+            "type": "string"
+          },
+          "RarityId": {
+            "type": "integer"
+          },
+          "ModelName": {
+            "type": "string"
+          }
+        }
+      },
+      "MonsterList": {
+        "type": "object",
+        "description": "List of monsters.",
+        "properties": {
+          "monsterList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "Icon": {
+                  "type": "string"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Rarity": {
+                  "type": "string"
+                },
+                "RarityId": {
+                  "type": "integer"
+                },
+                "ModelName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NamecardDetail": {
+        "type": "object",
+        "description": "Namecard details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "CardPath": {
+            "type": "string"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          }
+        }
+      },
+      "NamecardList": {
+        "type": "object",
+        "description": "List of namecards.",
+        "properties": {
+          "namecardList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "CardPath": {
+                  "type": "string"
+                },
+                "Icon": {
+                  "type": "string"
+                },
+                "Name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NewContentList": {
+        "type": "array",
+        "description": "New content info.",
+        "items": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "GameVer": {
+                  "type": "string"
+                },
+                "ResVer": {
+                  "type": "string"
+                },
+                "Changelist": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "PhoneDetail": {
+        "type": "object",
+        "description": "WavesLine details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "IsGroupChat": {
+            "type": "boolean"
+          },
+          "Desc": {
+            "type": "string"
+          },
+          "PeopleNum": {
+            "type": "integer"
+          }
+        }
+      },
+      "PhoneList": {
+        "type": "array",
+        "description": "List of WavesLine contacts.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "integer"
+            },
+            "Icon": {
+              "type": "string"
+            },
+            "Name": {
+              "type": "string"
+            },
+            "IsGroupChat": {
+              "type": "boolean"
+            },
+            "Desc": {
+              "type": "string"
+            },
+            "PeopleNum": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "RogueEventDetail": {
+        "type": "object",
+        "description": "Rogue event details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Event": {
+            "type": "object",
+            "properties": {
+              "Id": {
+                "type": "integer"
+              },
+              "Title": {
+                "type": "string"
+              },
+              "Desc": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "RogueEventList": {
+        "type": "object",
+        "description": "List of rogue events.",
+        "properties": {
+          "rogueEvents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "Event": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "Title": {
+                      "type": "string"
+                    },
+                    "Desc": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "StoryDetail": {
+        "type": "object",
+        "description": "Story details including dialogue.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "Type": {
+            "type": "string"
+          },
+          "Chapters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Title": {
+                  "type": "string"
+                },
+                "Dialogues": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Id": {
+                        "type": "integer"
+                      },
+                      "Speaker": {
+                        "type": "string"
+                      },
+                      "PlotLineKey": {
+                        "type": "string"
+                      },
+                      "Options": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "StoryList": {
+        "type": "object",
+        "description": "List of stories grouped by type.",
+        "properties": {
+          "storyTypes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "TypeId": {
+                  "type": "string"
+                },
+                "TypeDescription": {
+                  "type": "string"
+                },
+                "Stories": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Group": {
+                        "type": "string"
+                      },
+                      "Stories": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Id": {
+                              "type": "integer"
+                            },
+                            "Name": {
+                              "type": "string"
+                            },
+                            "Description": {
+                              "type": "string"
+                            },
+                            "QuestId": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "TermDetail": {
+        "type": "object",
+        "description": "Term details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "TermName": {
+            "type": "string"
+          },
+          "TermTitle": {
+            "type": "string"
+          },
+          "TermDesc": {
+            "type": "string"
+          }
+        }
+      },
+      "TermList": {
+        "type": "array",
+        "description": "List of terms.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "integer"
+            },
+            "TermName": {
+              "type": "string"
+            },
+            "TermTitle": {
+              "type": "string"
+            },
+            "TermDesc": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TitleDetail": {
+        "type": "object",
+        "description": "Title details.",
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "TitleName": {
+            "type": "string"
+          },
+          "Image": {
+            "type": "string"
+          }
+        }
+      },
+      "TitleList": {
+        "type": "object",
+        "description": "List of player titles.",
+        "properties": {
+          "titleList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer"
+                },
+                "TitleName": {
+                  "type": "string"
+                },
+                "Image": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TOASeasonList": {
+        "type": "object",
+        "description": "List of TOA seasons.",
+        "properties": {
+          "seasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "areas": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "finish": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "current": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TOASeasonDetail": {
+        "type": "object",
+        "description": "TOA season details (Area -> Floor -> Cost -> Towers).",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "instanceId": {
+                      "type": "integer"
+                    },
+                    "season": {
+                      "type": "integer"
+                    },
+                    "areaNum": {
+                      "type": "integer"
+                    },
+                    "floor": {
+                      "type": "integer"
+                    },
+                    "cost": {
+                      "type": "integer"
+                    },
+                    "difficulty": {
+                      "type": "integer"
+                    },
+                    "areaName": {
+                      "type": "string"
+                    },
+                    "monsters": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "rarity": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "desc": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "elements": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "whiteGreenProps": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "attributeType": {
+                                  "type": "integer"
+                                },
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "number"
+                                },
+                                "isPercent": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "buffs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "desc": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "targets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "score": {
+                            "type": "integer"
+                          },
+                          "desc": {
+                            "type": "string"
+                          },
+                          "rawDesc": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            }
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "bgPath": {
+                      "type": "string"
+                    },
+                    "itemBgPath": {
+                      "type": "string"
+                    },
+                    "background": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "WeaponDetail": {
+        "type": "object",
+        "description": "Weapon details.",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Icon": {
+            "type": "string"
+          },
+          "Type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "QualityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TypeName": {
+            "type": "string"
+          },
+          "TypeIcon": {
+            "type": "string"
+          }
+        }
+      },
+      "WeaponList": {
+        "type": "object",
+        "description": "List of weapons.",
+        "properties": {
+          "weapons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Icon": {
+                  "type": "string",
+                  "description": "Full URL to weapon icon."
+                },
+                "Type": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Numeric weapon type id."
+                },
+                "QualityId": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "TypeName": {
+                  "type": "string",
+                  "description": "Localized weapon type name."
+                },
+                "TypeIcon": {
+                  "type": "string",
+                  "description": "Weapon type icon path without domain."
+                }
+              },
+              "required": [
+                "Id",
+                "Name",
+                "Icon",
+                "Type",
+                "QualityId",
+                "TypeName",
+                "TypeIcon"
+              ]
+            }
+          }
+        },
+        "required": [
+          "weapons"
+        ]
+      },
+      "WhiwaSeasonList": {
+        "type": "array",
+        "description": "List of Whimpering Wastes seasons.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Season": {
+              "type": "integer"
+            },
+            "Name": {
+              "type": "string"
+            },
+            "start": {
+              "type": "string",
+              "format": "date"
+            },
+            "finish": {
+              "type": "string",
+              "format": "date"
+            },
+            "current": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "WhiwaSeasonDetail": {
+        "type": "object",
+        "description": "Whimpering Wastes season details.",
+        "properties": {
+          "Season": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "StageGroups": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "Levels": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "BuffItems": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "lang": {
+        "name": "lang",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh-Hans",
+            "zh-Hant",
+            "ja",
+            "ko",
+            "de",
+            "es",
+            "fr",
+            "id",
+            "pt",
+            "ru",
+            "th",
+            "vi"
+          ]
+        },
+        "description": "Language code (e.g. en, ja, zh-Hans)."
+      },
+      "seasonId": {
+        "name": "seasonId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Season identifier."
+      }
+    }
+  }
+}

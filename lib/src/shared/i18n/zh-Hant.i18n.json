@@ -3,7 +3,8 @@
   "nav": {
     "stats": "喚取",
     "settings": "設定",
-    "overview": "總覽"
+    "overview": "總覽",
+    "explore": "探索"
   },
   "pools": {
     "featuredResonator": "角色活動喚取",
@@ -414,7 +415,14 @@
     "imageZoomOut": "縮小",
     "imageSaved": "圖片已儲存",
     "imageSaveFailed": "無法儲存圖片",
-    "imageLoadFailed": "無法載入圖片"
+    "imageLoadFailed": "無法載入圖片",
+    "gallerySkill": "技能",
+    "chain": "共鳴鏈",
+    "profile": "檔案",
+    "birthday": "生日",
+    "region": "地區",
+    "affiliation": "所屬",
+    "voiceActor": "配音"
   },
   "update": {
     "title": "有可用更新",
@@ -462,5 +470,55 @@
     "title": "公告",
     "subtitle": "顯示開發者的通知，例如遊戲 API 的變更。每天最多檢查兩次。",
     "dismiss": "知道了"
+  },
+  "explore": {
+    "title": "探索",
+    "tools": "工具與指南",
+    "guide": "指南",
+    "redeem": "兌換碼",
+    "guideDesc": "共鳴者、武器與聲骸",
+    "redeemDesc": "可用兌換碼及使用方法"
+  },
+  "guide": {
+    "title": "指南",
+    "resonators": "共鳴者",
+    "weapons": "武器",
+    "echoes": "聲骸",
+    "echo": "聲骸",
+    "search": "依名稱搜尋",
+    "noResults": "沒有符合搜尋的內容。",
+    "error": "無法載入列表。請檢查網路後重試。",
+    "classCommon": "普通",
+    "classElite": "精英",
+    "classOverlord": "領袖",
+    "classCalamity": "災厄",
+    "location": "地點",
+    "echoSkill": "聲骸技能",
+    "cooldown": "冷卻 {n} 秒",
+    "mainStats": "主屬性",
+    "sonata": "合鳴效果",
+    "pieces": "{n} 件",
+    "filter": "篩選",
+    "reset": "重設",
+    "element": "屬性",
+    "weapon": "武器",
+    "rarity": "稀有度",
+    "class": "等級"
+  },
+  "redeem": {
+    "title": "兌換碼",
+    "refresh": "重新整理",
+    "error": "無法載入兌換碼。請檢查網路後重試。",
+    "empty": "尚無兌換碼",
+    "emptyBody": "新的兌換碼發布後會顯示在這裡。",
+    "offline": "離線：顯示上次儲存的列表",
+    "active": "有效",
+    "noneActive": "目前沒有可用的兌換碼。",
+    "expired": "已過期",
+    "noExpiry": "結束日期未知",
+    "expires": "截止 {date}",
+    "copy": "複製兌換碼",
+    "copied": "已複製 {code}",
+    "howTo": "請在遊戲內的設定 > 兌換碼中輸入。"
   }
 }

@@ -31,3 +31,9 @@ String? encoreItemUrlFor(int resourceId, String resourceType, String lang) {
   if (kind == null || resourceId <= 0) return null;
   return encoreItemUrl(kind, resourceId, lang);
 }
+
+/// The encore.moe web page of an echo, in [lang].
+String encoreEchoUrl(int id, String lang) {
+  final language = encoreLanguages.contains(lang) ? lang : 'en';
+  return 'https://encore.moe/echo/$id?lang=$language';
+}

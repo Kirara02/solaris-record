@@ -16,7 +16,7 @@ import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../info/domain/item_info.dart';
 import '../../info/domain/item_kind.dart';
-import '../../info/presentation/item_info_dialog.dart';
+import '../../info/presentation/open_item_info.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
@@ -227,13 +227,7 @@ void showFiveStarDetail(
         threshold: threshold,
         onItemInfo: () {
           Navigator.pop(inner);
-          showItemInfo(
-            context,
-            resourceId: e.resourceId,
-            resourceType: e.resourceType,
-            name: e.name,
-            rarity: 5,
-          );
+          openItemInfo(context, e.resourceId, e.resourceType);
         },
       ),
     ),

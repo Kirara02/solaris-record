@@ -27,8 +27,8 @@ import 'rail_state.dart';
 /// - The first destination (Overview) is at the top. With the rail expanded, a
 ///   collapsible "Pull types" group below it lists the pull types, so the
 ///   Convene screen itself needs no selector.
-/// - The last destination (Settings) is pinned to the bottom, where desktop
-///   apps usually keep it.
+/// - The other destinations (Explore, Settings) are pinned to the bottom, where
+///   desktop apps usually keep them. Pinned destination `i` is branch `i + 1`.
 /// - The rail is always expanded; it has no collapsed mode.
 class WideShell extends ConsumerWidget {
   const WideShell({
@@ -67,9 +67,8 @@ class WideShell extends ConsumerWidget {
     final groupOpen = ref.watch(poolGroupExpandedProvider);
     final pool = ref.watch(selectedPoolProvider);
 
-    final main = destinations.sublist(0, destinations.length - 1);
-    final bottomIndex = destinations.length - 1;
-    final bottom = destinations.last;
+    final main = destinations.sublist(0, 1);
+    final pinned = destinations.sublist(1);
 
     void selectBranch(int i) =>
         shell.goBranch(i, initialLocation: i == current);
@@ -84,8 +83,11 @@ class WideShell extends ConsumerWidget {
     final Widget rail = context.isMornye
         ? MornyeSidebar(
             main: main,
-            bottom: bottom,
-            bottomKey: WideShell.bottomItemKey,
+            pinned: pinned,
+            pinnedKeys: [
+              for (var i = 0; i < pinned.length; i++)
+                i == pinned.length - 1 ? WideShell.bottomItemKey : null,
+            ],
             selectedIndex: current == 0
                 ? railSelectedIndex(
                     branch: 0,
@@ -93,7 +95,7 @@ class WideShell extends ConsumerWidget {
                     pool: pool,
                   )
                 : -1,
-            bottomSelected: current == bottomIndex,
+            pinnedSelected: current - 1,
             groupHeader: PoolGroupHeader(
               key: WideShell.poolGroupHeaderKey,
               label: t.stats.poolTypes,
@@ -105,7 +107,7 @@ class WideShell extends ConsumerWidget {
             poolLabels: [for (final p in PoolType.values) p.label(t)],
             groupOpen: groupOpen,
             onSelected: onSelected,
-            onBottomTap: () => selectBranch(bottomIndex),
+            onPinnedTap: (i) => selectBranch(i + 1),
           )
         : M3ENavigationRail(
             background: context.isMornye
@@ -163,11 +165,26 @@ class WideShell extends ConsumerWidget {
                 ],
               ),
             ],
-            trailing: RailBottomItem(
-              key: WideShell.bottomItemKey,
-              destination: bottom,
-              selected: current == bottomIndex,
-              onTap: () => selectBranch(bottomIndex),
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Separates the pinned destinations from the list above them.
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).colorScheme.outlineVariant
+                      .withValues(alpha: 0.6),
+                ),
+                for (final (i, d) in pinned.indexed)
+                  RailBottomItem(
+                    key: i == pinned.length - 1
+                        ? WideShell.bottomItemKey
+                        : null,
+                    destination: d,
+                    selected: current == i + 1,
+                    onTap: () => selectBranch(i + 1),
+                    last: i == pinned.length - 1,
+                  ),
+              ],
             ),
           );
 
@@ -359,11 +376,15 @@ class RailBottomItem extends StatelessWidget {
     required this.destination,
     required this.selected,
     required this.onTap,
+    this.last = true,
   });
 
   final NavDestination destination;
   final bool selected;
   final VoidCallback onTap;
+
+  /// Whether this is the last pinned item (it gets the bottom margin).
+  final bool last;
 
   /// Narrowest slot width that still fits icon, gap and a label.
   static const labelMinWidth = 120.0;
@@ -432,27 +453,20 @@ class RailBottomItem extends StatelessWidget {
       },
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Separates the pinned destination from the list above it.
-        Divider(height: 1, color: scheme.outlineVariant.withValues(alpha: 0.6)),
-        Padding(
-          // The rail's trailing slot already insets by 16px on each side,
-          // which is what the other items' indicators use too.
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 16),
-          child: Semantics(
-            button: true,
-            selected: selected,
-            label: destination.label,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
-              child: content,
-            ),
-          ),
+    return Padding(
+      // The rail's trailing slot already insets by 16px on each side, which is
+      // what the other items' indicators use too.
+      padding: EdgeInsets.fromLTRB(0, 12, 0, last ? 16 : 0),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: destination.label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
+          child: content,
         ),
-      ],
+      ),
     );
   }
 }

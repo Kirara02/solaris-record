@@ -18,6 +18,7 @@ String _kindLabel(Translations t, ItemGalleryKind kind) => switch (kind) {
   ItemGalleryKind.icon => t.info.galleryIcon,
   ItemGalleryKind.outfit => t.info.galleryOutfit,
   ItemGalleryKind.convene => t.info.galleryConvene,
+  ItemGalleryKind.skill => t.info.gallerySkill,
 };
 
 /// Large image of an item with chips for its image groups (icon, outfit,
@@ -98,6 +99,33 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                   ),
                 ),
               ),
+              if (_current.captionAt(_index) case final caption?)
+                Positioned(
+                  left: 12,
+                  bottom: 8,
+                  right: 80,
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: scheme.surface.withValues(alpha: 0.75),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        child: Text(
+                          caption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               if (urls.length > 1) ...[
                 Align(
                   alignment: Alignment.centerLeft,

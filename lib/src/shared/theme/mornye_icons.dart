@@ -59,6 +59,11 @@ final _cupertinoFor = <IconData, IconData>{
   Icons.system_update: CupertinoIcons.arrow_down_circle,
   Icons.system_update_outlined: CupertinoIcons.arrow_down_circle,
   Icons.cloud_download_outlined: CupertinoIcons.cloud_download,
+  Icons.explore_outlined: CupertinoIcons.compass,
+  Icons.explore: CupertinoIcons.compass_fill,
+  Icons.menu_book_outlined: CupertinoIcons.book,
+  Icons.card_giftcard_outlined: CupertinoIcons.gift,
+  Icons.place_outlined: CupertinoIcons.location,
   Icons.settings_outlined: CupertinoIcons.gear,
   Icons.settings: CupertinoIcons.gear_solid,
   Icons.dashboard_outlined: CupertinoIcons.square_grid_2x2,
@@ -94,6 +99,14 @@ final _cupertinoFor = <IconData, IconData>{
   Icons.campaign_outlined: CupertinoIcons.speaker_2,
   Icons.arrow_forward: CupertinoIcons.arrow_right,
   Icons.arrow_back: CupertinoIcons.chevron_back,
+  Icons.expand_less: CupertinoIcons.chevron_up,
+  Icons.cake_outlined: CupertinoIcons.gift,
+  Icons.public: CupertinoIcons.globe,
+  Icons.groups_outlined: CupertinoIcons.person_3,
+  Icons.mic_none: CupertinoIcons.mic,
+  Icons.person: CupertinoIcons.person_fill,
+  Icons.graphic_eq: CupertinoIcons.waveform,
+  Icons.filter_list: CupertinoIcons.line_horizontal_3_decrease,
 };
 
 /// The Cupertino glyph for a Material [icon], or [icon] itself when there is

@@ -3,7 +3,8 @@
   "nav": {
     "stats": "唤取",
     "settings": "设置",
-    "overview": "总览"
+    "overview": "总览",
+    "explore": "探索"
   },
   "pools": {
     "featuredResonator": "角色活动唤取",
@@ -414,7 +415,14 @@
     "imageZoomOut": "缩小",
     "imageSaved": "图片已保存",
     "imageSaveFailed": "无法保存图片",
-    "imageLoadFailed": "无法加载图片"
+    "imageLoadFailed": "无法加载图片",
+    "gallerySkill": "技能",
+    "chain": "共鸣链",
+    "profile": "档案",
+    "birthday": "生日",
+    "region": "地区",
+    "affiliation": "所属",
+    "voiceActor": "配音"
   },
   "update": {
     "title": "有可用更新",
@@ -462,5 +470,55 @@
     "title": "公告",
     "subtitle": "显示开发者发布的通知，例如游戏 API 的变更。每天最多检查两次。",
     "dismiss": "知道了"
+  },
+  "explore": {
+    "title": "探索",
+    "tools": "工具与指南",
+    "guide": "指南",
+    "redeem": "兑换码",
+    "guideDesc": "共鸣者、武器与声骸",
+    "redeemDesc": "可用兑换码及使用方法"
+  },
+  "guide": {
+    "title": "指南",
+    "resonators": "共鸣者",
+    "weapons": "武器",
+    "echoes": "声骸",
+    "echo": "声骸",
+    "search": "按名称搜索",
+    "noResults": "没有符合搜索的内容。",
+    "error": "无法加载列表。请检查网络后重试。",
+    "classCommon": "普通",
+    "classElite": "精英",
+    "classOverlord": "领袖",
+    "classCalamity": "灾厄",
+    "location": "地点",
+    "echoSkill": "声骸技能",
+    "cooldown": "冷却 {n} 秒",
+    "mainStats": "主属性",
+    "sonata": "合鸣效果",
+    "pieces": "{n} 件",
+    "filter": "筛选",
+    "reset": "重置",
+    "element": "属性",
+    "weapon": "武器",
+    "rarity": "稀有度",
+    "class": "等级"
+  },
+  "redeem": {
+    "title": "兑换码",
+    "refresh": "刷新",
+    "error": "无法加载兑换码。请检查网络后重试。",
+    "empty": "暂无兑换码",
+    "emptyBody": "新的兑换码发布后会显示在这里。",
+    "offline": "离线：显示上次保存的列表",
+    "active": "有效",
+    "noneActive": "目前没有可用的兑换码。",
+    "expired": "已过期",
+    "noExpiry": "结束日期未知",
+    "expires": "截止 {date}",
+    "copy": "复制兑换码",
+    "copied": "已复制 {code}",
+    "howTo": "请在游戏内的设置 > 兑换码中输入。"
   }
 }

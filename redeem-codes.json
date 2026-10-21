@@ -1,0 +1,466 @@
+{
+  "codes": [
+    {
+      "code": "WUTHERINGGIFT",
+      "rewards": {
+        "en": "Astrite x50, Premium Resonance Potion x2, Medium Revival Inhaler x2, Medium Energy Bag x2, Shell Credit (amount varies by region)"
+      },
+      "source": {
+        "en": "Official (standing code)"
+      }
+    },
+    {
+      "code": "STARRYSTAGE2",
+      "rewards": {
+        "en": "Astrite x80"
+      },
+      "source": {
+        "en": "Solaris Starry Stage"
+      },
+      "expires": "2026-10-13"
+    },
+    {
+      "code": "KEEPONSHINING",
+      "rewards": {
+        "en": "Astrite x80"
+      },
+      "source": {
+        "en": "Solaris Starry Stage"
+      },
+      "expires": "2026-10-13"
+    },
+    {
+      "code": "FALLINGSANCTUM",
+      "rewards": {
+        "en": "Astrite x100, Premium Resonance Potion x3, Advanced Revival Inhaler x2"
+      },
+      "source": {
+        "en": "3.7 livestream"
+      },
+      "expires": "2026-09-21"
+    },
+    {
+      "code": "FINDSENTINEL",
+      "rewards": {
+        "en": "Astrite x100, Shell Credit x20000, Premium Enclosure Tank II x3"
+      },
+      "source": {
+        "en": "3.7 livestream"
+      },
+      "expires": "2026-09-21"
+    },
+    {
+      "code": "WAKINGMOON",
+      "rewards": {
+        "en": "Astrite x100, Premium Tuner x20, Advanced Sealed Tube x5"
+      },
+      "source": {
+        "en": "3.7 livestream"
+      },
+      "expires": "2026-09-21"
+    },
+    {
+      "code": "F5F4D3B2A2",
+      "source": {
+        "en": "3.5 collaboration (skin/livery)"
+      },
+      "expires": "2026-08-19"
+    },
+    {
+      "code": "HEARTOFSWORD",
+      "source": {
+        "en": "3.6 livestream"
+      },
+      "expires": "2026-08-09"
+    },
+    {
+      "code": "ETERNALFLAME",
+      "source": {
+        "en": "3.6 livestream"
+      },
+      "expires": "2026-08-09"
+    },
+    {
+      "code": "THEANSWER",
+      "source": {
+        "en": "3.6 livestream"
+      },
+      "expires": "2026-08-09"
+    },
+    {
+      "code": "MECHANISMCITY",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.5 livestream"
+      },
+      "expires": "2026-06-28"
+    },
+    {
+      "code": "INTOTHEFOG",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.5 livestream"
+      },
+      "expires": "2026-06-28"
+    },
+    {
+      "code": "REUNION",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.5 livestream"
+      },
+      "expires": "2026-06-28"
+    },
+    {
+      "code": "STRANGEVISITORS",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.4 livestream"
+      },
+      "expires": "2026-05-31"
+    },
+    {
+      "code": "BEYONDTHEDOOR",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.4 livestream"
+      },
+      "expires": "2026-05-31"
+    },
+    {
+      "code": "SAYCHEESE",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.4 livestream"
+      },
+      "expires": "2026-05-31"
+    },
+    {
+      "code": "PAPERPLANE",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.1 livestream"
+      },
+      "expires": "2026-01-25"
+    },
+    {
+      "code": "WARMSUNLIGHT",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.1 livestream"
+      },
+      "expires": "2026-01-25"
+    },
+    {
+      "code": "JOURNEYWELL",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "3.1 livestream"
+      },
+      "expires": "2026-01-25"
+    },
+    {
+      "code": "SOLARISSUPERCUP",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Solaris Cup"
+      },
+      "expires": "2026-01-19"
+    },
+    {
+      "code": "FASTERHIGHERSTRONGER",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Solaris Cup"
+      },
+      "expires": "2026-01-19"
+    },
+    {
+      "code": "BACKTOSCHOOL",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Seasonal event"
+      },
+      "active": false
+    },
+    {
+      "code": "HITTHEROAD",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Seasonal event"
+      },
+      "active": false
+    },
+    {
+      "code": "STARCHASER",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Seasonal event"
+      },
+      "active": false
+    },
+    {
+      "code": "AGONISON",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Livestream"
+      },
+      "active": false
+    },
+    {
+      "code": "FLAMESOFHEART",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Livestream"
+      },
+      "active": false
+    },
+    {
+      "code": "SHADOWOFGLORY",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "Livestream"
+      },
+      "active": false
+    },
+    {
+      "code": "ILLUSIONHAUNTS",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "2.5 livestream"
+      },
+      "expires": "2025-07-20"
+    },
+    {
+      "code": "DREAMSPERSIST",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "2.5 livestream"
+      },
+      "expires": "2025-07-20"
+    },
+    {
+      "code": "THISISFINALE",
+      "rewards": {
+        "en": "Astrite x100"
+      },
+      "source": {
+        "en": "2.5 livestream"
+      },
+      "expires": "2025-07-20"
+    },
+    {
+      "code": "1STANNIVERSARY",
+      "source": {
+        "en": "Anniversary"
+      },
+      "active": false
+    },
+    {
+      "code": "WITHYOU",
+      "source": {
+        "en": "Anniversary"
+      },
+      "active": false
+    },
+    {
+      "code": "EVERFLOWING",
+      "source": {
+        "en": "Anniversary"
+      },
+      "active": false
+    },
+    {
+      "code": "BAHAMUTKXMHM",
+      "rewards": {
+        "en": "Medium Resonance Potion x5, Medium Energy Core x5, Shell Credit x5000"
+      },
+      "source": {
+        "en": "Partner"
+      },
+      "active": false
+    },
+    {
+      "code": "DCARD3VN7M",
+      "rewards": {
+        "en": "Medium Resonance Potion x5, Medium Energy Core x5, Shell Credit x5000"
+      },
+      "source": {
+        "en": "Partner"
+      },
+      "active": false
+    },
+    {
+      "code": "WUWA4PC",
+      "rewards": {
+        "en": "Astrite x50, Shell Credit x20000"
+      },
+      "source": {
+        "en": "PC launch (sources disagree on status)"
+      },
+      "active": false
+    },
+    {
+      "code": "BLACKSHORES",
+      "active": false
+    },
+    {
+      "code": "SHOREKEEPER",
+      "active": false
+    },
+    {
+      "code": "FORYOU",
+      "active": false
+    },
+    {
+      "code": "WUTHERINGWAVESGIFT",
+      "active": false
+    },
+    {
+      "code": "WUTHERING2024",
+      "active": false
+    },
+    {
+      "code": "PTTMYZSOM",
+      "active": false
+    },
+    {
+      "code": "ALLEYESONUS",
+      "active": false
+    },
+    {
+      "code": "STARRYSTAGE",
+      "active": false
+    },
+    {
+      "code": "SETSAIL",
+      "active": false
+    },
+    {
+      "code": "VAULTOPS",
+      "active": false
+    },
+    {
+      "code": "TREASUREHUNT",
+      "active": false
+    },
+    {
+      "code": "JOINCARNEVALE",
+      "active": false
+    },
+    {
+      "code": "GETREADY",
+      "active": false
+    },
+    {
+      "code": "WHOAMI",
+      "active": false
+    },
+    {
+      "code": "LEVIATHAN",
+      "active": false
+    },
+    {
+      "code": "IMPERATOR",
+      "active": false
+    },
+    {
+      "code": "OFFWEGO",
+      "active": false
+    },
+    {
+      "code": "DARKSIDE",
+      "active": false
+    },
+    {
+      "code": "RABBITHOLE",
+      "active": false
+    },
+    {
+      "code": "RUNEREADER",
+      "active": false
+    },
+    {
+      "code": "SLICEDSPACE",
+      "active": false
+    },
+    {
+      "code": "CRUMBLEDCITY",
+      "active": false
+    },
+    {
+      "code": "ENDLESSSUMMER",
+      "active": false
+    },
+    {
+      "code": "NOMATTERTHECOST",
+      "active": false
+    },
+    {
+      "code": "RISKEVERYTHING",
+      "active": false
+    },
+    {
+      "code": "FIGHTFORHOPE",
+      "active": false
+    },
+    {
+      "code": "BURNINGSUN",
+      "active": false
+    },
+    {
+      "code": "MOONLIGHT",
+      "active": false
+    },
+    {
+      "code": "FACETHEFATE",
+      "active": false
+    },
+    {
+      "code": "SUMMERSHALLNOTFADE",
+      "active": false
+    },
+    {
+      "code": "SOLARISSEASIDESTORY",
+      "active": false
+    }
+  ]
+}

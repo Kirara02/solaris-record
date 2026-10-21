@@ -55,6 +55,7 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 - **Timelines** of every 5★, per pull type and across all of them, colored by luck, horizontal or vertical.
 - **Overview** with rarity and item type charts, 5★ per pull type, and the current pity of each pull type.
 - **History** with search, rarity and type filters, sort by time, name, type, rarity or pity, pull numbers and per-pull pity.
+- **Explore** tab with a **Guide** (every Resonator, Weapon and Echo with search, filters and a detail screen) and **Redeem Code** (a list the maintainer keeps in `redeem-codes.json`, with a copy button).
 - **Item info** for Resonators and Weapons (skills, effects, base stats by level) with an image gallery (icon, outfit, convene art).
 - **Share as an image**: a picture of the overview or one pull type, dark or light, shared or saved. With an option to show the full UID.
 - **Data language**: show item names in another language without touching your stored records.
@@ -93,7 +94,7 @@ The link expires after a short while. The game only keeps a limited history, so 
 ## Privacy
 
 - Everything stays on your device: records live in a local SQLite database.
-- The app only talks to Kuro's convene record service (to fetch your records), to [encore.moe](https://encore.moe/) and Kuro's guide server (for item names, icons and info), and to GitHub (`api.github.com` for update checks, `raw.githubusercontent.com` for `announcements.json`). Announcements can be switched off in Settings → About.
+- The app only talks to Kuro's convene record service (to fetch your records), to [encore.moe](https://encore.moe/) and Kuro's guide server (for item names, icons and info), and to GitHub (`api.github.com` for update checks, `raw.githubusercontent.com` for `announcements.json` and `redeem-codes.json`). Announcements can be switched off in Settings → About.
 - On Android, the app can show notifications about an update's download. They are local; nothing is sent anywhere.
 - The link you paste carries an access token for your history, so the app keeps it only until the server rejects it or you delete the account, and never writes it to the debug log. **Delete all data** in Settings → Data also removes saved links.
 

@@ -3,7 +3,8 @@
   "nav": {
     "stats": "喚取",
     "settings": "設定",
-    "overview": "概要"
+    "overview": "概要",
+    "explore": "探索"
   },
   "pools": {
     "featuredResonator": "限定共鳴者",
@@ -414,7 +415,14 @@
     "imageZoomOut": "縮小",
     "imageSaved": "画像を保存しました",
     "imageSaveFailed": "画像を保存できませんでした",
-    "imageLoadFailed": "画像を読み込めませんでした"
+    "imageLoadFailed": "画像を読み込めませんでした",
+    "gallerySkill": "スキル",
+    "chain": "共鳴チェーン",
+    "profile": "プロフィール",
+    "birthday": "誕生日",
+    "region": "地域",
+    "affiliation": "所属",
+    "voiceActor": "声優"
   },
   "update": {
     "title": "アップデートがあります",
@@ -462,5 +470,55 @@
     "title": "お知らせ",
     "subtitle": "ゲームのAPI変更など、開発者からのお知らせを表示します。確認は1日2回までです。",
     "dismiss": "OK"
+  },
+  "explore": {
+    "title": "探索",
+    "tools": "ツールとガイド",
+    "guide": "ガイド",
+    "redeem": "引き換えコード",
+    "guideDesc": "共鳴者・武器・音骸",
+    "redeemDesc": "有効なコードと使い方"
+  },
+  "guide": {
+    "title": "ガイド",
+    "resonators": "共鳴者",
+    "weapons": "武器",
+    "echoes": "音骸",
+    "echo": "音骸",
+    "search": "名前で検索",
+    "noResults": "検索に一致するものはありません。",
+    "error": "一覧を読み込めませんでした。接続を確認してもう一度お試しください。",
+    "classCommon": "コモン",
+    "classElite": "エリート",
+    "classOverlord": "オーバーロード",
+    "classCalamity": "カラミティ",
+    "location": "場所",
+    "echoSkill": "音骸スキル",
+    "cooldown": "クールダウン {n}秒",
+    "mainStats": "メインステータス",
+    "sonata": "ソナタ効果",
+    "pieces": "{n}セット",
+    "filter": "フィルター",
+    "reset": "リセット",
+    "element": "属性",
+    "weapon": "武器",
+    "rarity": "レアリティ",
+    "class": "クラス"
+  },
+  "redeem": {
+    "title": "引き換えコード",
+    "refresh": "更新",
+    "error": "コードを読み込めませんでした。接続を確認してもう一度お試しください。",
+    "empty": "コードはまだありません",
+    "emptyBody": "新しいコードは公開されるとここに表示されます。",
+    "offline": "オフライン: 最後に保存した一覧を表示中",
+    "active": "有効",
+    "noneActive": "現在使えるコードはありません。",
+    "expired": "期限切れ",
+    "noExpiry": "終了日は不明",
+    "expires": "{date}まで",
+    "copy": "コードをコピー",
+    "copied": "{code} をコピーしました",
+    "howTo": "ゲーム内の設定 > 引き換えコードで入力してください。"
   }
 }
