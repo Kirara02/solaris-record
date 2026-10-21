@@ -17,7 +17,7 @@ import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/outlined_icon_button.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/table_pager.dart';
-import '../../info/presentation/item_info_dialog.dart';
+import '../../info/presentation/open_item_info.dart';
 import '../domain/history_view.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
@@ -529,14 +529,8 @@ class _HistoryRow extends StatelessWidget {
     final color = rarityColor(theme.colorScheme, record.rarity);
     final notable = record.rarity >= 4;
     return InkWell(
-      onTap: record.resourceId > 0
-          ? () => showItemInfo(
-              context,
-              resourceId: record.resourceId,
-              resourceType: record.resourceType,
-              name: record.name,
-              rarity: record.rarity,
-            )
+      onTap: hasItemInfo(record.resourceId, record.resourceType)
+          ? () => openItemInfo(context, record.resourceId, record.resourceType)
           : null,
       child: Container(
         color: record.rarity == 5 ? color.withValues(alpha: 0.08) : null,

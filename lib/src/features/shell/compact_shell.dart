@@ -18,8 +18,9 @@ import 'nav_destination.dart';
 /// Phone layout: a bottom navigation bar that only exists on the tab screens.
 /// Detail screens (Appearance, Accounts, ...) use the full height.
 ///
-/// Three tabs: Overview and Convene share the stats branch (the selected pull
-/// type decides which one is showing), Settings is the second branch.
+/// Four tabs: Overview and Convene share the stats branch (the selected pull
+/// type decides which one is showing), Explore and Settings are the next
+/// branches.
 class CompactShell extends ConsumerWidget {
   const CompactShell({
     super.key,
@@ -41,12 +42,12 @@ class CompactShell extends ConsumerWidget {
     final blur = ref.watch(navBarBlurProvider);
     final pool = ref.watch(selectedPoolProvider);
     final branch = navigationShell.currentIndex;
-    final index = branch == 0 ? (pool == null ? 0 : 1) : 2;
+    final index = branch == 0 ? (pool == null ? 0 : 1) : branch + 1;
 
     void onSelected(int i) {
       final selection = ref.read(selectedPoolProvider.notifier);
-      if (i == 2) {
-        navigationShell.goBranch(1, initialLocation: branch == 1);
+      if (i >= 2) {
+        navigationShell.goBranch(i - 1, initialLocation: branch == i - 1);
         return;
       }
       if (i == 0) {

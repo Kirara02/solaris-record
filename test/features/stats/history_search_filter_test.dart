@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:solaris_record_app/src/data/database.dart';
 import 'package:solaris_record_app/src/data/providers.dart';
+import 'package:solaris_record_app/src/features/guide/presentation/guide_detail_screen.dart';
 import 'package:solaris_record_app/src/features/info/domain/item_info.dart';
 import 'package:solaris_record_app/src/features/info/domain/item_kind.dart';
 import 'package:solaris_record_app/src/features/stats/domain/convene_record.dart';
@@ -243,7 +244,7 @@ void main() {
       overrides: [
         itemInfoProvider(
           1105,
-          'Resonator',
+          'resonator', // the detail screen asks by kind name
           'en',
         ).overrideWith((ref) async => jinhsi),
       ],
@@ -253,7 +254,8 @@ void main() {
     tapHistoryRow(tester, 'Jinhsi'); // the history row, not a bubble
     await settle(tester);
 
-    expect(find.text('Item info'), findsOneWidget);
+    await settle(tester); // the detail screen loads its info after opening
+    expect(find.byKey(GuideDetailScreen.viewOnEncoreKey), findsOneWidget);
     expect(find.text('Element: Spectro'), findsOneWidget);
     expect(find.text('Weapon type: Broadblade'), findsOneWidget);
     expect(find.text('Magistrate of Jinzhou.'), findsOneWidget);
@@ -271,7 +273,7 @@ void main() {
       overrides: [
         itemInfoProvider(
           1105,
-          'Resonator',
+          'resonator', // the detail screen asks by kind name
           'en',
         ).overrideWith((ref) async => throw Exception('offline')),
       ],

@@ -3,7 +3,15 @@ import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/accounts/presentation/accounts_screen.dart';
+import '../../features/challenges/presentation/matrix_screen.dart';
+import '../../features/challenges/presentation/tower_screen.dart';
+import '../../features/challenges/presentation/whiwa_screen.dart';
+import '../../features/explore/presentation/explore_screen.dart';
+import '../../features/guide/domain/guide_entry.dart';
+import '../../features/guide/presentation/guide_detail_screen.dart';
+import '../../features/guide/presentation/guide_screen.dart';
 import '../../features/import/share_intent.dart';
+import '../../features/redeem/presentation/redeem_screen.dart';
 import '../../features/settings/presentation/about_screen.dart';
 import '../../features/settings/presentation/appearance_screen.dart';
 import '../../features/settings/presentation/data_screen.dart';
@@ -51,10 +59,25 @@ Page<void> _subPage(GoRouterState state, Widget child) =>
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  // One key per router: a shared one would collide across app instances.
+  final rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   final router = GoRouter(
+    navigatorKey: rootKey,
     initialLocation: AppRoutes.convene,
     errorPageBuilder: (context, state) => _page(state, const _NotFound()),
     routes: [
+      GoRoute(
+        path: '/item/:kind/:id',
+        parentNavigatorKey: rootKey,
+        pageBuilder: (c, s) {
+          final kind = GuideKind.values.asNameMap()[s.pathParameters['kind']];
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          if (kind == null || kind == GuideKind.echo || id == null) {
+            return _page(s, const _NotFound());
+          }
+          return _subPage(s, GuideDetailScreen(kind: kind, id: id));
+        },
+      ),
       StatefulShellRoute.indexedStack(
         pageBuilder: (context, state, shell) => _page(
           state,
@@ -70,6 +93,53 @@ GoRouter appRouter(Ref ref) {
               GoRoute(
                 path: AppRoutes.convene,
                 pageBuilder: (c, s) => _page(s, const StatsScreen()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.explore,
+                pageBuilder: (c, s) => _page(s, const ExploreScreen()),
+                routes: [
+                  GoRoute(
+                    path: 'guide',
+                    pageBuilder: (c, s) => _subPage(s, const GuideScreen()),
+                    routes: [
+                      GoRoute(
+                        path: ':kind/:id',
+                        pageBuilder: (c, s) {
+                          final kind = GuideKind.values
+                              .asNameMap()[s.pathParameters['kind']];
+                          final id = int.tryParse(s.pathParameters['id'] ?? '');
+                          if (kind == null || id == null) {
+                            return _page(s, const _NotFound());
+                          }
+                          return _subPage(
+                            s,
+                            GuideDetailScreen(kind: kind, id: id),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'tower',
+                    pageBuilder: (c, s) => _subPage(s, const TowerScreen()),
+                  ),
+                  GoRoute(
+                    path: 'whiwa',
+                    pageBuilder: (c, s) => _subPage(s, const WhiwaScreen()),
+                  ),
+                  GoRoute(
+                    path: 'matrix',
+                    pageBuilder: (c, s) => _subPage(s, const MatrixScreen()),
+                  ),
+                  GoRoute(
+                    path: 'redeem',
+                    pageBuilder: (c, s) => _subPage(s, const RedeemScreen()),
+                  ),
+                ],
               ),
             ],
           ),

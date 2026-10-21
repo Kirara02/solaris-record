@@ -10,6 +10,7 @@ import '../../../shared/logging/log_sanitize.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_segmented_control.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/domain/account.dart';
 import '../../accounts/presentation/account_widgets.dart';
@@ -152,22 +153,21 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
             children: [
               Text(t.share.title, style: theme.textTheme.titleLarge),
               const SizedBox(height: 16),
-              SegmentedButton<bool>(
-                showSelectedIcon: false,
+              AppSegmentedControl<bool>(
                 segments: [
-                  ButtonSegment(
+                  AppSegment(
                     value: true,
                     icon: const AdaptiveIcon(Icons.dark_mode_outlined),
-                    label: Text(t.share.themeDark),
+                    label: t.share.themeDark,
                   ),
-                  ButtonSegment(
+                  AppSegment(
                     value: false,
                     icon: const AdaptiveIcon(Icons.light_mode_outlined),
-                    label: Text(t.share.themeLight),
+                    label: t.share.themeLight,
                   ),
                 ],
-                selected: {dark},
-                onSelectionChanged: (v) => setState(() => _dark = v.first),
+                selected: dark,
+                onChanged: (v) => setState(() => _dark = v),
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,

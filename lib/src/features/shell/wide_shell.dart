@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../shared/i18n/gen/strings.g.dart';
 import '../../shared/i18n/pool_labels.dart';
 import '../../shared/layout/window_size.dart';
+import '../../shared/routing/app_routes.dart';
 import '../../shared/theme/app_tokens.dart';
 import '../../shared/theme/mornye_icons.dart';
 import '../../shared/theme/mornye_theme.dart';
@@ -27,8 +28,10 @@ import 'rail_state.dart';
 /// - The first destination (Overview) is at the top. With the rail expanded, a
 ///   collapsible "Pull types" group below it lists the pull types, so the
 ///   Convene screen itself needs no selector.
-/// - The last destination (Settings) is pinned to the bottom, where desktop
-///   apps usually keep it.
+/// - Settings is pinned to the bottom, where desktop apps usually keep it (the
+///   pinned destinations' branches are [pinnedBranches]). Explore has no
+///   destination of its own: its tools are a collapsible group in the list,
+///   and the tab's root screen forwards to the Guide.
 /// - The rail is always expanded; it has no collapsed mode.
 class WideShell extends ConsumerWidget {
   const WideShell({
@@ -36,11 +39,16 @@ class WideShell extends ConsumerWidget {
     required this.navigationShell,
     required this.destinations,
     required this.size,
+    required this.location,
   });
 
   final StatefulNavigationShell navigationShell;
   final List<NavDestination> destinations;
   final WindowSize size;
+
+  /// Current full path; tells which Explore tool is open, to highlight it in
+  /// the Explore group.
+  final String location;
 
   /// Width of the always-expanded rail. Pages extend under it and keep clear
   /// through `MediaQuery.padding.left`.
@@ -51,11 +59,18 @@ class WideShell extends ConsumerWidget {
   static const mornyePanelInset = 12.0;
   static const mornyePanelWidth = railWidth - 2 * mornyePanelInset;
 
+  /// Branch of each pinned destination (Settings); branch 1, Explore, is only
+  /// reached through the group.
+  static const pinnedBranches = [2];
+
   /// Key of the pinned bottom destination.
   static const bottomItemKey = ValueKey('rail-bottom-item');
 
   /// Key of the collapsible "Pull types" header.
   static const poolGroupHeaderKey = ValueKey('rail-pool-group-header');
+
+  /// Key of the collapsible "Explore" header.
+  static const exploreGroupHeaderKey = ValueKey('rail-explore-group-header');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,15 +81,47 @@ class WideShell extends ConsumerWidget {
     final current = shell.currentIndex;
     final groupOpen = ref.watch(poolGroupExpandedProvider);
     final pool = ref.watch(selectedPoolProvider);
+    final exploreOpen = ref.watch(exploreGroupExpandedProvider);
+    // The same tools as the phone's Explore tab.
+    final exploreItems = [
+      (t.explore.guide, AppRoutes.guide),
+      (t.explore.tower, AppRoutes.tower),
+      (t.explore.whiwa, AppRoutes.whiwa),
+      (t.explore.matrix, AppRoutes.matrix),
+      (t.explore.redeem, AppRoutes.redeem),
+    ];
+    final exploreLabels = [for (final e in exploreItems) e.$1];
+    final exploreActive = current == 1
+        ? exploreItems.indexWhere((e) => location.startsWith(e.$2))
+        : -1;
+    // Flat rail indexes: 0 Overview, then the pull types while their group is
+    // open, then the Explore tools while the Explore group is open.
+    final exploreBase = 1 + (groupOpen ? PoolType.values.length : 0);
+    final selectedIndex = current == 0
+        ? railSelectedIndex(branch: 0, groupVisible: groupOpen, pool: pool)
+        : exploreActive >= 0 && exploreOpen
+        ? exploreBase + exploreActive
+        : -1;
 
-    final main = destinations.sublist(0, destinations.length - 1);
-    final bottomIndex = destinations.length - 1;
-    final bottom = destinations.last;
+    // The Explore list screen is for phones; here the sidebar group does its
+    // job, so land on the first tool.
+    if (current == 1 && location == AppRoutes.explore) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.go(AppRoutes.guide);
+      });
+    }
+
+    final main = destinations.sublist(0, 1);
+    final pinned = destinations.sublist(1);
+    assert(pinned.length == WideShell.pinnedBranches.length);
 
     void selectBranch(int i) =>
         shell.goBranch(i, initialLocation: i == current);
 
+    void onExploreSelected(int j) => context.go(exploreItems[j].$2);
+
     void onSelected(int i) {
+      if (i >= exploreBase) return onExploreSelected(i - exploreBase);
       // 0 is Overview; 1.. are the pull types of the open group.
       final selection = i == 0 ? null : PoolType.values[i - 1];
       ref.read(selectedPoolProvider.notifier).select(selection);
@@ -84,8 +131,11 @@ class WideShell extends ConsumerWidget {
     final Widget rail = context.isMornye
         ? MornyeSidebar(
             main: main,
-            bottom: bottom,
-            bottomKey: WideShell.bottomItemKey,
+            pinned: pinned,
+            pinnedKeys: [
+              for (var i = 0; i < pinned.length; i++)
+                i == pinned.length - 1 ? WideShell.bottomItemKey : null,
+            ],
             selectedIndex: current == 0
                 ? railSelectedIndex(
                     branch: 0,
@@ -93,7 +143,22 @@ class WideShell extends ConsumerWidget {
                     pool: pool,
                   )
                 : -1,
-            bottomSelected: current == bottomIndex,
+            extraHeader: PoolGroupHeader(
+              key: WideShell.exploreGroupHeaderKey,
+              label: t.nav.explore,
+              icon: Icons.explore_outlined,
+              activeLabel: !exploreOpen && exploreActive >= 0
+                  ? exploreLabels[exploreActive]
+                  : null,
+              tooltip: t.explore.toggleGroup,
+              open: exploreOpen,
+              onToggle: ref.read(exploreGroupExpandedProvider.notifier).toggle,
+            ),
+            extraLabels: exploreLabels,
+            extraOpen: exploreOpen,
+            extraSelected: exploreActive,
+            onExtraSelected: onExploreSelected,
+            pinnedSelected: WideShell.pinnedBranches.indexOf(current),
             groupHeader: PoolGroupHeader(
               key: WideShell.poolGroupHeaderKey,
               label: t.stats.poolTypes,
@@ -105,7 +170,7 @@ class WideShell extends ConsumerWidget {
             poolLabels: [for (final p in PoolType.values) p.label(t)],
             groupOpen: groupOpen,
             onSelected: onSelected,
-            onBottomTap: () => selectBranch(bottomIndex),
+            onPinnedTap: (i) => selectBranch(WideShell.pinnedBranches[i]),
           )
         : M3ENavigationRail(
             background: context.isMornye
@@ -121,13 +186,7 @@ class WideShell extends ConsumerWidget {
             expandedWidth: context.isMornye
                 ? WideShell.mornyePanelWidth
                 : WideShell.railWidth,
-            selectedIndex: current == 0
-                ? railSelectedIndex(
-                    branch: 0,
-                    groupVisible: groupOpen,
-                    pool: pool,
-                  )
-                : -1,
+            selectedIndex: selectedIndex,
             onDestinationSelected: onSelected,
             sections: [
               M3ENavigationRailSection(
@@ -162,12 +221,52 @@ class WideShell extends ConsumerWidget {
                       ),
                 ],
               ),
+              M3ENavigationRailSection(
+                header: PoolGroupHeader(
+                  key: WideShell.exploreGroupHeaderKey,
+                  label: t.nav.explore,
+                  icon: Icons.explore_outlined,
+                  activeLabel: !exploreOpen && exploreActive >= 0
+                      ? exploreLabels[exploreActive]
+                      : null,
+                  tooltip: t.explore.toggleGroup,
+                  open: exploreOpen,
+                  onToggle: ref
+                      .read(exploreGroupExpandedProvider.notifier)
+                      .toggle,
+                ),
+                destinations: [
+                  if (exploreOpen)
+                    for (final label in exploreLabels)
+                      M3ENavigationRailDestination(
+                        icon: const SizedBox.shrink(),
+                        label: label,
+                        semanticLabel: label,
+                        short: true,
+                      ),
+                ],
+              ),
             ],
-            trailing: RailBottomItem(
-              key: WideShell.bottomItemKey,
-              destination: bottom,
-              selected: current == bottomIndex,
-              onTap: () => selectBranch(bottomIndex),
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Separates the pinned destinations from the list above them.
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).colorScheme.outlineVariant
+                      .withValues(alpha: 0.6),
+                ),
+                for (final (i, d) in pinned.indexed)
+                  RailBottomItem(
+                    key: i == pinned.length - 1
+                        ? WideShell.bottomItemKey
+                        : null,
+                    destination: d,
+                    selected: current == WideShell.pinnedBranches[i],
+                    onTap: () => selectBranch(WideShell.pinnedBranches[i]),
+                    last: i == pinned.length - 1,
+                  ),
+              ],
             ),
           );
 
@@ -231,9 +330,13 @@ class PoolGroupHeader extends StatelessWidget {
     required this.open,
     required this.onToggle,
     this.activeLabel,
+    this.icon = groupIcon,
   });
 
   final String label;
+
+  /// Icon of this group's header (the pull types use [groupIcon]).
+  final IconData icon;
 
   /// Name of the shown pull type, displayed as a pill while the group is
   /// collapsed and nothing in the list can be highlighted.
@@ -270,7 +373,7 @@ class PoolGroupHeader extends StatelessWidget {
               // Too narrow (rail still animating open): just the icon.
               if (constraints.maxWidth < labelMinWidth) {
                 return AdaptiveIcon(
-                  groupIcon,
+                  icon,
                   size: 24,
                   color: activeLabel != null
                       ? scheme.primary
@@ -283,7 +386,7 @@ class PoolGroupHeader extends StatelessWidget {
                   Row(
                     children: [
                       AdaptiveIcon(
-                        groupIcon,
+                        icon,
                         size: 24,
                         color: activeLabel != null
                             ? scheme.primary
@@ -359,11 +462,15 @@ class RailBottomItem extends StatelessWidget {
     required this.destination,
     required this.selected,
     required this.onTap,
+    this.last = true,
   });
 
   final NavDestination destination;
   final bool selected;
   final VoidCallback onTap;
+
+  /// Whether this is the last pinned item (it gets the bottom margin).
+  final bool last;
 
   /// Narrowest slot width that still fits icon, gap and a label.
   static const labelMinWidth = 120.0;
@@ -432,27 +539,20 @@ class RailBottomItem extends StatelessWidget {
       },
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Separates the pinned destination from the list above it.
-        Divider(height: 1, color: scheme.outlineVariant.withValues(alpha: 0.6)),
-        Padding(
-          // The rail's trailing slot already insets by 16px on each side,
-          // which is what the other items' indicators use too.
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 16),
-          child: Semantics(
-            button: true,
-            selected: selected,
-            label: destination.label,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
-              child: content,
-            ),
-          ),
+    return Padding(
+      // The rail's trailing slot already insets by 16px on each side, which is
+      // what the other items' indicators use too.
+      padding: EdgeInsets.fromLTRB(0, 12, 0, last ? 16 : 0),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: destination.label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
+          child: content,
         ),
-      ],
+      ),
     );
   }
 }

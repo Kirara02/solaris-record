@@ -4,11 +4,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solaris_record_app/src/data/preferences.dart';
 import 'package:solaris_record_app/src/data/providers.dart';
+import 'package:solaris_record_app/src/features/guide/domain/guide_entry.dart';
+import 'package:solaris_record_app/src/features/guide/presentation/guide_detail_screen.dart';
 import 'package:solaris_record_app/src/features/info/data/url_opener.dart';
 import 'package:solaris_record_app/src/features/info/domain/encore_links.dart';
 import 'package:solaris_record_app/src/features/info/domain/item_info.dart';
 import 'package:solaris_record_app/src/features/info/domain/item_kind.dart';
-import 'package:solaris_record_app/src/features/info/presentation/item_info_dialog.dart';
 import 'package:solaris_record_app/src/shared/i18n/gen/strings.g.dart';
 
 class _RecordingOpener implements UrlOpener {
@@ -72,15 +73,15 @@ void main() {
     });
   });
 
-  Future<_RecordingOpener> pumpDialog(
+  Future<_RecordingOpener> pumpDetail(
     WidgetTester tester, {
     bool openSucceeds = true,
     int resourceId = 1105,
-    String resourceType = 'Resonator',
+    GuideKind kind = GuideKind.resonator,
     Future<ItemInfo?> Function()? info,
   }) async {
     final opener = _RecordingOpener(succeeds: openSucceeds);
-    // The dialog reads the data language setting.
+    // The screen reads the data language setting.
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(
@@ -90,58 +91,47 @@ void main() {
           urlOpenerProvider.overrideWithValue(opener),
           itemInfoProvider(
             resourceId,
-            resourceType,
+            kind.name,
             'en',
           ).overrideWith((ref) => (info ?? () async => jinhsi)()),
         ],
         child: TranslationProvider(
           child: MaterialApp(
-            home: Scaffold(
-              body: Builder(
-                builder: (context) => TextButton(
-                  onPressed: () => showItemInfo(
-                    context,
-                    resourceId: resourceId,
-                    resourceType: resourceType,
-                    name: 'Jinhsi',
-                    rarity: 5,
-                  ),
-                  child: const Text('open'),
-                ),
-              ),
-            ),
+            home: GuideDetailScreen(kind: kind, id: resourceId),
           ),
         ),
       ),
     );
-    await tester.tap(find.text('open'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     return opener;
   }
 
-  testWidgets(
-    'the dialog offers "View on encore.moe" and opens the item page',
-    (tester) async {
-      final opener = await pumpDialog(tester);
-      expect(find.text('View on encore.moe'), findsOneWidget);
+  Future<void> tapViewOnEncore(WidgetTester tester) async {
+    await tester.ensureVisible(find.byKey(GuideDetailScreen.viewOnEncoreKey));
+    await tester.tap(find.byKey(GuideDetailScreen.viewOnEncoreKey));
+    await tester.pump();
+  }
 
-      await tester.tap(find.byKey(ItemInfoDialog.viewOnEncoreKey));
-      await tester.pump();
-      expect(opener.opened.map((u) => u.toString()), [
-        'https://encore.moe/character/1105?lang=en',
-      ]);
-    },
-  );
+  testWidgets('the detail offers "View on encore.moe" and opens the page', (
+    tester,
+  ) async {
+    final opener = await pumpDetail(tester);
+    expect(find.text('View on encore.moe'), findsOneWidget);
+
+    await tapViewOnEncore(tester);
+    expect(opener.opened.map((u) => u.toString()), [
+      'https://encore.moe/character/1105?lang=en',
+    ]);
+  });
 
   testWidgets('weapons link to /weapon/', (tester) async {
-    final opener = await pumpDialog(
+    final opener = await pumpDetail(
       tester,
       resourceId: 21010011,
-      resourceType: 'Weapon',
+      kind: GuideKind.weapon,
     );
-    await tester.tap(find.byKey(ItemInfoDialog.viewOnEncoreKey));
-    await tester.pump();
+    await tapViewOnEncore(tester);
     expect(
       opener.opened.single.toString(),
       'https://encore.moe/weapon/21010011?lang=en',
@@ -151,40 +141,24 @@ void main() {
   testWidgets('the link is still offered when the info could not be loaded', (
     tester,
   ) async {
-    final opener = await pumpDialog(
+    final opener = await pumpDetail(
       tester,
       info: () async => throw Exception('offline'),
     );
-    // The error card shows, and the page link remains usable.
     expect(
       find.text(
         "Couldn't load item info. Check your connection and try again.",
       ),
       findsOneWidget,
     );
-    await tester.tap(find.byKey(ItemInfoDialog.viewOnEncoreKey));
-    await tester.pump();
+    await tapViewOnEncore(tester);
     expect(opener.opened, hasLength(1));
   });
 
   testWidgets('a failed launch says so', (tester) async {
-    await pumpDialog(tester, openSucceeds: false);
-    await tester.tap(find.byKey(ItemInfoDialog.viewOnEncoreKey));
-    await tester.pump();
+    await pumpDetail(tester, openSucceeds: false);
+    await tapViewOnEncore(tester);
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text("Couldn't open the link."), findsOneWidget);
-  });
-
-  testWidgets('there is no link for items that are not resonators/weapons', (
-    tester,
-  ) async {
-    await pumpDialog(
-      tester,
-      resourceId: 123,
-      resourceType: '',
-      info: () async => null,
-    );
-    expect(find.byKey(ItemInfoDialog.viewOnEncoreKey), findsNothing);
-    expect(find.text('No info available for this item.'), findsOneWidget);
   });
 }

@@ -35,6 +35,11 @@ Future<void> showAdaptiveSheet(BuildContext context, WidgetBuilder builder) {
       // Under Mornye the handle is drawn inside the glass panel.
       showDragHandle: !context.isMornye,
       isScrollControlled: true,
+      // Tall content scrolls inside the sheet instead of filling the screen,
+      // which would leave no scrim to tap and close it.
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
       builder: (sheetContext) {
         final content = SafeArea(
           child: SingleChildScrollView(child: builder(sheetContext)),

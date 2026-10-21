@@ -9,35 +9,54 @@ import 'rail_metrics.dart';
 
 /// Sidebar content of the Mornye style, replacing the Material rail: brand,
 /// the main destinations, the pull-type group, and the pinned bottom
-/// destination. Every row draws its own selection capsule, which springs in
+/// destinations. Every row draws its own selection capsule, which springs in
 /// and firms up slightly while the row is pressed.
 class MornyeSidebar extends StatelessWidget {
   const MornyeSidebar({
     super.key,
     required this.main,
-    required this.bottom,
-    required this.bottomKey,
+    required this.pinned,
+    required this.pinnedKeys,
     required this.selectedIndex,
-    required this.bottomSelected,
+    required this.pinnedSelected,
     required this.groupHeader,
     required this.poolLabels,
     required this.groupOpen,
     required this.onSelected,
-    required this.onBottomTap,
+    required this.onPinnedTap,
+    this.extraHeader,
+    this.extraLabels = const [],
+    this.extraOpen = false,
+    this.extraSelected = -1,
+    this.onExtraSelected,
   });
 
   final List<NavDestination> main;
-  final NavDestination bottom;
-  final Key bottomKey;
+
+  /// Destinations pinned under the list (Explore, Settings), with an optional
+  /// key for each.
+  final List<NavDestination> pinned;
+  final List<Key?> pinnedKeys;
 
   /// Index into [main] followed by the pull types; -1 for none.
   final int selectedIndex;
-  final bool bottomSelected;
+
+  /// Index into [pinned] of the open one; -1 for none.
+  final int pinnedSelected;
   final Widget groupHeader;
   final List<String> poolLabels;
   final bool groupOpen;
   final ValueChanged<int> onSelected;
-  final VoidCallback onBottomTap;
+  final ValueChanged<int> onPinnedTap;
+
+  /// A second collapsible group under the pull types (the Explore tools):
+  /// its header, row labels, whether it is open, the highlighted row (-1 for
+  /// none) and the tap callback.
+  final Widget? extraHeader;
+  final List<String> extraLabels;
+  final bool extraOpen;
+  final int extraSelected;
+  final ValueChanged<int>? onExtraSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -74,20 +93,34 @@ class MornyeSidebar extends StatelessWidget {
                     short: true,
                     onTap: () => onSelected(main.length + i),
                   ),
+              ?extraHeader,
+              if (extraHeader != null && extraOpen)
+                for (final (i, label) in extraLabels.indexed)
+                  MornyeSidebarItem(
+                    label: label,
+                    selected: i == extraSelected,
+                    short: true,
+                    onTap: () => onExtraSelected?.call(i),
+                  ),
             ],
           ),
         ),
         Divider(color: scheme.outlineVariant),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-          child: MornyeSidebarItem(
-            key: bottomKey,
-            icon: bottomSelected
-                ? bottom.selectedIcon
-                : AdaptiveIcon(bottom.icon),
-            label: bottom.label,
-            selected: bottomSelected,
-            onTap: onBottomTap,
+          child: Column(
+            children: [
+              for (final (i, d) in pinned.indexed)
+                MornyeSidebarItem(
+                  key: pinnedKeys[i],
+                  icon: i == pinnedSelected
+                      ? d.selectedIcon
+                      : AdaptiveIcon(d.icon),
+                  label: d.label,
+                  selected: i == pinnedSelected,
+                  onTap: () => onPinnedTap(i),
+                ),
+            ],
           ),
         ),
       ],

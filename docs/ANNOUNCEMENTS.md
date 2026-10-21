@@ -1,6 +1,6 @@
 # Announcements
 
-The app reads `announcements.json` from the root of the `main` branch (at most twice a day, switchable in About) and shows the first applicable notice once. Edit the file and push to publish; nothing about the user is sent.
+The app reads `announcements.json` from the root of the `main` branch (at most twice a day, switchable in About) and shows the first applicable notice once. Edit the file and merge it into `main` to publish (a push to `dev` changes nothing for users); nothing about the user is sent.
 
 ```json
 {

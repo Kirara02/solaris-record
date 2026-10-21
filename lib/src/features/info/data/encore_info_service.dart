@@ -44,11 +44,30 @@ class EncoreInfoService {
   }
 
   Future<ItemInfo?> _fetchIn(ItemKind kind, int id, String lang) async {
-    final body = await _loadJson(urlFor(kind, id, lang));
+    final url = urlFor(kind, id, lang);
+    final body = await _loadJson(url);
+    try {
+      return _parse(kind, body);
+    } catch (_) {
+      // A stale or odd cached copy would fail on every open: drop it and
+      // fetch once more; a second failure propagates. Network errors never
+      // get here, so an offline cache is kept.
+      await _evict(url);
+      return _parse(kind, await _loadJson(url));
+    }
+  }
+
+  static ItemInfo? _parse(ItemKind kind, String body) {
     final json = jsonDecode(body);
     if (json is! Map<String, dynamic>) return null;
     return kind == ItemKind.resonator
         ? parseCharacter(json)
         : parseWeapon(json);
+  }
+
+  static Future<void> _evict(String url) async {
+    try {
+      await DefaultCacheManager().removeFile(url);
+    } catch (_) {}
   }
 }

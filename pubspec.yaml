@@ -2,7 +2,7 @@ name: solaris_record_app
 description: "Wuthering Waves convene tracker."
 publish_to: 'none'
 
-version: 1.4.0+8
+version: 1.5.0+9
 
 environment:
   sdk: ^3.13.5
@@ -28,7 +28,7 @@ dependencies:
   logging: ^1.3.0
   material_3_expressive: ^1.1.6
   material_color_utilities: ^0.13.0
-  material_ui: ^1.7.0
+  material_ui: ">=1.7.0 <1.8.0" # 1.8.0 clashes with material_3_expressive 1.1.7 (RoundedPolygon)
   open_filex: ^5.0.0
   package_info_plus: ^10.2.2
   path: ^1.9.1
@@ -51,11 +51,6 @@ dev_dependencies:
   flutter_gen_runner: ^5.15.0
   flutter_launcher_icons: ^0.14.4
 
-# 2.5.0 crashes release builds (R8 breaks its suspend Pigeon API); 2.4.28 is the
-# last version known good. Drop once a fixed plugin version ships.
-dependency_overrides:
-  shared_preferences_android: 2.4.28
-
 flutter:
   generate: true
   uses-material-design: true
@@ -63,6 +58,8 @@ flutter:
     - assets/
     - assets/fonts/
     - assets/images/
+    # Local copy of the redeem list, read in debug builds only (RedeemService).
+    - redeem-codes.json
 
   fonts:
     - family: Inter
