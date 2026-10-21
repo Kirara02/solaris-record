@@ -4,6 +4,22 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.5.0
+
+A new Explore tab with a guide to resonators, weapons and echoes, redeem codes and the game's recurring challenge modes.
+
+### What's new
+- **Explore tab.** A new tab between Convene and Settings. On wide screens it is a collapsible *Explore* group in the sidebar instead.
+- **Guide.** Browse every resonator, weapon and echo as cards. Search by name, filter by element, weapon, sonata or rarity, and open a full detail screen with skills, resonance chain, profile and outfit gallery. Tapping a pull in your history or on a 5★ card now opens this screen instead of a dialog.
+- **Redeem codes.** A list of Wuthering Waves codes with a copy button. Codes that no longer work are listed separately, and the list still shows offline.
+- **Tower of Adversity, Whimpering Wastes and Endstate Matrix.** Pick a season (the one running now opens first) and read its buffs, objectives, enemies and their stats, tokens, score targets, bosses and character buffs. The data comes from encore.moe.
+- **Wide screens.** The pull types and the Explore tools are folded in the sidebar until you open them, and the tool screens no longer show a back arrow there.
+
+### Notes
+- The guide and the challenge modes read community data from encore.moe, an unofficial source, and need a connection the first time. Opened pages are cached on this device.
+- The new translations were machine-made and have not been reviewed by native speakers.
+- Some game names and terms in Japanese and Chinese (the mode names, *Tokens*, *Escalation*) are best guesses.
+
 ## 1.4.0
 
 A second look for the app, Mornye, and notifications while an update downloads on Android.
