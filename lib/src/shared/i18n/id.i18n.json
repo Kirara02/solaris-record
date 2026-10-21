@@ -477,7 +477,14 @@
     "guide": "Panduan",
     "redeem": "Kode Tukar",
     "guideDesc": "Resonator, senjata, dan echo",
-    "redeemDesc": "Kode aktif dan cara memakainya"
+    "redeemDesc": "Kode aktif dan cara memakainya",
+    "tower": "Tower of Adversity",
+    "towerDesc": "Lantai, musuh, dan modifier per season",
+    "whiwa": "Whimpering Wastes",
+    "whiwaDesc": "Stage, aturan, dan buff per season",
+    "toggleGroup": "Tampilkan atau sembunyikan Jelajahi",
+    "matrix": "Endstate Matrix",
+    "matrixDesc": "Buff, boss, dan target skor per siklus"
   },
   "guide": {
     "title": "Panduan",
@@ -520,5 +527,36 @@
     "copy": "Salin kode",
     "copied": "{code} disalin",
     "howTo": "Masukkan kode di dalam game lewat Pengaturan > Kode Tukar."
+  },
+  "challenges": {
+    "tower": "Tower of Adversity",
+    "whiwa": "Whimpering Wastes",
+    "current": "Berjalan",
+    "upcoming": "Akan datang",
+    "changeSeason": "Ganti",
+    "selectSeason": "Pilih season",
+    "error": "Data tidak dapat dimuat. Periksa koneksi lalu coba lagi.",
+    "empty": "Tidak ada data untuk season ini.",
+    "floor": "Lantai {n}",
+    "cost": "Cost {n}",
+    "level": "Lv. {n}",
+    "stage": "Stage {n}",
+    "towerBuffs": "Buff Tower",
+    "targets": "Target",
+    "floors": "Lantai: {range}",
+    "attribute": "Atribut",
+    "value": "Nilai",
+    "showStats": "Tampilkan stat",
+    "hideStats": "Sembunyikan stat",
+    "tokens": "Token",
+    "targetScores": "Skor Target",
+    "matrix": "Endstate Matrix",
+    "endsVersion": "Berakhir: {version}",
+    "matrixBuffs": "Buff",
+    "info": "Info",
+    "round": "Ronde {n}",
+    "escalation": "Eskalasi",
+    "suggestedBuff": "Buff Disarankan",
+    "characterBuffs": "Buff Karakter"
   }
 }

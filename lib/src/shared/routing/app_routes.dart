@@ -3,6 +3,9 @@ abstract final class AppRoutes {
   static const explore = '/explore';
   static const guide = '/explore/guide';
   static const redeem = '/explore/redeem';
+  static const tower = '/explore/tower';
+  static const whiwa = '/explore/whiwa';
+  static const matrix = '/explore/matrix';
   static const settings = '/settings';
   static const appearance = '/settings/appearance';
   static const accounts = '/settings/accounts';

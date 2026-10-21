@@ -3,6 +3,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/accounts/presentation/accounts_screen.dart';
+import '../../features/challenges/presentation/matrix_screen.dart';
+import '../../features/challenges/presentation/tower_screen.dart';
+import '../../features/challenges/presentation/whiwa_screen.dart';
 import '../../features/explore/presentation/explore_screen.dart';
 import '../../features/guide/domain/guide_entry.dart';
 import '../../features/guide/presentation/guide_detail_screen.dart';
@@ -119,6 +122,18 @@ GoRouter appRouter(Ref ref) {
                         },
                       ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'tower',
+                    pageBuilder: (c, s) => _subPage(s, const TowerScreen()),
+                  ),
+                  GoRoute(
+                    path: 'whiwa',
+                    pageBuilder: (c, s) => _subPage(s, const WhiwaScreen()),
+                  ),
+                  GoRoute(
+                    path: 'matrix',
+                    pageBuilder: (c, s) => _subPage(s, const MatrixScreen()),
                   ),
                   GoRoute(
                     path: 'redeem',

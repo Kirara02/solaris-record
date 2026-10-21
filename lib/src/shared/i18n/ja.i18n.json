@@ -477,7 +477,14 @@
     "guide": "ガイド",
     "redeem": "引き換えコード",
     "guideDesc": "共鳴者・武器・音骸",
-    "redeemDesc": "有効なコードと使い方"
+    "redeemDesc": "有効なコードと使い方",
+    "tower": "逆境深塔",
+    "towerDesc": "シーズンごとの階層・敵・効果",
+    "whiwa": "千道の扉の幻想",
+    "whiwaDesc": "シーズンごとのステージ・ルール・バフ",
+    "toggleGroup": "探索の表示を切り替え",
+    "matrix": "Endstate Matrix",
+    "matrixDesc": "サイクルごとのバフ・ボス・目標スコア"
   },
   "guide": {
     "title": "ガイド",
@@ -520,5 +527,36 @@
     "copy": "コードをコピー",
     "copied": "{code} をコピーしました",
     "howTo": "ゲーム内の設定 > 引き換えコードで入力してください。"
+  },
+  "challenges": {
+    "tower": "逆境深塔",
+    "whiwa": "千道の扉の幻想",
+    "current": "開催中",
+    "upcoming": "開催予定",
+    "changeSeason": "変更",
+    "selectSeason": "シーズンを選択",
+    "error": "データを読み込めませんでした。接続を確認して再試行してください。",
+    "empty": "このシーズンの情報はありません。",
+    "floor": "{n}階",
+    "cost": "コスト {n}",
+    "level": "Lv.{n}",
+    "stage": "ステージ {n}",
+    "towerBuffs": "塔の効果",
+    "targets": "目標",
+    "floors": "階層: {range}",
+    "attribute": "属性",
+    "value": "値",
+    "showStats": "ステータスを表示",
+    "hideStats": "ステータスを隠す",
+    "tokens": "トークン",
+    "targetScores": "目標スコア",
+    "matrix": "Endstate Matrix",
+    "endsVersion": "終了: {version}",
+    "matrixBuffs": "バフ",
+    "info": "情報",
+    "round": "ラウンド {n}",
+    "escalation": "エスカレーション",
+    "suggestedBuff": "おすすめバフ",
+    "characterBuffs": "キャラクターバフ"
   }
 }
