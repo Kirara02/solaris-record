@@ -28,7 +28,7 @@ dependencies:
   logging: ^1.3.0
   material_3_expressive: ^1.1.6
   material_color_utilities: ^0.13.0
-  material_ui: ^1.7.0
+  material_ui: ">=1.7.0 <1.8.0" # 1.8.0 clashes with material_3_expressive 1.1.7 (RoundedPolygon)
   open_filex: ^5.0.0
   package_info_plus: ^10.2.2
   path: ^1.9.1
