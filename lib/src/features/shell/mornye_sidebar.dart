@@ -24,6 +24,11 @@ class MornyeSidebar extends StatelessWidget {
     required this.groupOpen,
     required this.onSelected,
     required this.onPinnedTap,
+    this.extraHeader,
+    this.extraLabels = const [],
+    this.extraOpen = false,
+    this.extraSelected = -1,
+    this.onExtraSelected,
   });
 
   final List<NavDestination> main;
@@ -43,6 +48,15 @@ class MornyeSidebar extends StatelessWidget {
   final bool groupOpen;
   final ValueChanged<int> onSelected;
   final ValueChanged<int> onPinnedTap;
+
+  /// A second collapsible group under the pull types (the Explore tools):
+  /// its header, row labels, whether it is open, the highlighted row (-1 for
+  /// none) and the tap callback.
+  final Widget? extraHeader;
+  final List<String> extraLabels;
+  final bool extraOpen;
+  final int extraSelected;
+  final ValueChanged<int>? onExtraSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +92,15 @@ class MornyeSidebar extends StatelessWidget {
                     selected: main.length + i == selectedIndex,
                     short: true,
                     onTap: () => onSelected(main.length + i),
+                  ),
+              ?extraHeader,
+              if (extraHeader != null && extraOpen)
+                for (final (i, label) in extraLabels.indexed)
+                  MornyeSidebarItem(
+                    label: label,
+                    selected: i == extraSelected,
+                    short: true,
+                    onTap: () => onExtraSelected?.call(i),
                   ),
             ],
           ),

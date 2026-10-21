@@ -41,7 +41,7 @@ class RedeemScreen extends ConsumerWidget {
           slivers: [
             AppSliverHeader(
               title: t.redeem.title,
-              showBack: true,
+              showBack: context.windowSize == WindowSize.compact,
               actions: [
                 IconButton(
                   tooltip: t.redeem.refresh,

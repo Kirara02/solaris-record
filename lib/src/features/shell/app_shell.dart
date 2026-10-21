@@ -10,7 +10,7 @@ import 'nav_destination.dart';
 import 'wide_shell.dart';
 
 /// Picks the base layout for the window size: [CompactShell] (bottom bar) on
-/// phones, [WideShell] (rail, Explore and Settings at the bottom) on tablets and desktops.
+/// phones, [WideShell] (rail, Settings at the bottom) on tablets and desktops.
 /// The screens inside are the same widgets either way.
 class AppShell extends StatelessWidget {
   const AppShell({
@@ -49,7 +49,7 @@ class AppShell extends StatelessWidget {
     );
     // Phones: Overview, Convene (with its pull-type chips), Explore and
     // Settings. Wide layouts: Overview with the pull types nested under it in
-    // the rail, then Explore and Settings pinned at the bottom.
+    // the rail, an Explore group of tools, and Settings pinned at the bottom.
     final compactDestinations = [
       overview,
       NavDestination(
@@ -60,7 +60,7 @@ class AppShell extends StatelessWidget {
       explore,
       settings,
     ];
-    final wideDestinations = [overview, explore, settings];
+    final wideDestinations = [overview, settings];
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -76,6 +76,7 @@ class AppShell extends StatelessWidget {
           navigationShell: navigationShell,
           destinations: wideDestinations,
           size: size,
+          location: location,
         );
       },
     );

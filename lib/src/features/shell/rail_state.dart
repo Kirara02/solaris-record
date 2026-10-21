@@ -5,11 +5,21 @@ import '../stats/domain/pool_type.dart';
 
 part 'rail_state.g.dart';
 
-/// Whether the "Pull types" group in the rail is open (it can be collapsed).
+/// Whether the "Pull types" group in the rail is open. Closed at first, to keep
+/// the rail short.
 @Riverpod(keepAlive: true)
 class PoolGroupExpanded extends _$PoolGroupExpanded {
   @override
-  bool build() => true;
+  bool build() => false;
+
+  void toggle() => state = !state;
+}
+
+/// Whether the "Explore" group in the rail (the guide lists) is open.
+@Riverpod(keepAlive: true)
+class ExploreGroupExpanded extends _$ExploreGroupExpanded {
+  @override
+  bool build() => false;
 
   void toggle() => state = !state;
 }

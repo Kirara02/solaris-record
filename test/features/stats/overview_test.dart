@@ -211,6 +211,10 @@ void main() {
         ProviderScope.containerOf(tester.element(find.byType(Scaffold).first))
             .read(selectedPoolProvider);
 
+    // The pull types start folded; open the group first.
+    await tester.tap(find.byKey(const ValueKey('rail-pool-group-header')));
+    await tester.pump(const Duration(milliseconds: 500));
+
     await tester.tap(inRail('Featured Resonator'));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
