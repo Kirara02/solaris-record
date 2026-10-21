@@ -3,10 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../shared/assets/assets.gen.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/guide_entry.dart';
@@ -25,23 +27,22 @@ class GuideScreen extends ConsumerStatefulWidget {
 
 class _GuideScreenState extends ConsumerState<GuideScreen> {
   GuideKind _kind = GuideKind.resonator;
-  String _query = '';
   bool _searching = false;
-  final _searchController = TextEditingController();
   final _filter = GuideFilter();
+
+  /// The search text. Typing only rebuilds the results (and never the field
+  /// itself), so the field keeps its focus and the IME session between keys.
+  final _query = ValueNotifier('');
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _query.dispose();
     super.dispose();
   }
 
   void _toggleSearch() => setState(() {
     _searching = !_searching;
-    if (!_searching) {
-      _searchController.clear();
-      _query = '';
-    }
+    if (!_searching) _query.value = '';
   });
 
   void _setKind(GuideKind kind) => setState(() {
@@ -49,8 +50,8 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
     _filter.clear();
   });
 
-  List<GuideEntry> _visible(List<GuideEntry> all) {
-    final q = _query.trim().toLowerCase();
+  List<GuideEntry> _visible(List<GuideEntry> all, String query) {
+    final q = query.trim().toLowerCase();
     final out = [
       for (final e in all)
         if ((q.isEmpty || e.name.toLowerCase().contains(q)) &&
@@ -69,19 +70,15 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
   Widget build(BuildContext context) {
     final t = context.t;
     final scheme = Theme.of(context).colorScheme;
-    final tokens = context.tokens;
     final lang =
         ref.watch(dataLanguageProvider) ??
         LocaleSettings.currentLocale.languageTag;
-    final provider = guideEntriesProvider(_kind, lang);
+    final kind = _kind;
+    final compact = context.windowSize == WindowSize.compact;
+    final provider = guideEntriesProvider(kind, lang);
     final entries = ref.watch(provider);
     final inset = WindowSize.sideInset(
       MediaQuery.sizeOf(context).width - MediaQuery.paddingOf(context).left,
-    );
-
-    OutlineInputBorder noBorder() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(tokens.radiusSheet),
-      borderSide: BorderSide.none,
     );
 
     return Scaffold(
@@ -92,29 +89,17 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
             backgroundColor: scheme.surface,
             surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false,
-            titleSpacing: 0,
-            leading: IconButton(
-              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-              icon: AdaptiveIcon(Icons.arrow_back, color: scheme.primary),
-              onPressed: () => context.pop(),
-            ),
-            title: _searching
-                ? TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: t.guide.search,
-                      prefixIcon: const AdaptiveIcon(Icons.search),
-                      filled: true,
-                      fillColor: scheme.surfaceContainerHigh,
-                      border: noBorder(),
-                      enabledBorder: noBorder(),
-                      focusedBorder: noBorder(),
-                      isDense: true,
-                    ),
-                    onChanged: (v) => setState(() => _query = v),
+            // The wide layout's sidebar already leads back.
+            titleSpacing: compact ? 0 : inset + 8,
+            leading: compact
+                ? IconButton(
+                    tooltip: MaterialLocalizations.of(context)
+                        .backButtonTooltip,
+                    icon: AdaptiveIcon(Icons.arrow_back, color: scheme.primary),
+                    onPressed: () => context.pop(),
                   )
-                : Text(t.guide.title),
+                : null,
+            title: Text(t.guide.title),
             actionsPadding: EdgeInsets.only(right: inset),
             actions: [
               IconButton(
@@ -133,7 +118,7 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
                     ? null
                     : () => showGuideFilterSheet(
                         context,
-                        kind: _kind,
+                        kind: kind,
                         entries: entries.value!,
                         filter: _filter,
                         onChanged: () => setState(() {}),
@@ -141,6 +126,19 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
               ),
             ],
           ),
+          if (_searching)
+            SliverAdaptivePadding(
+              clearBottomInset: false,
+              sliver: SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4, bottom: 8),
+                  child: _SearchField(
+                    hint: t.guide.search,
+                    onChanged: (v) => _query.value = v,
+                  ),
+                ),
+              ),
+            ),
           SliverAdaptivePadding(
             clearBottomInset: false,
             bottom: 12,
@@ -152,23 +150,23 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
                   child: Row(
                     children: [
                       _KindChip(
-                        icon: Icons.person,
+                        art: Assets.images.guideResonator,
                         label: t.guide.resonators,
-                        selected: _kind == GuideKind.resonator,
+                        selected: kind == GuideKind.resonator,
                         onTap: () => _setKind(GuideKind.resonator),
                       ),
                       const SizedBox(width: 8),
                       _KindChip(
-                        icon: Icons.gavel,
+                        art: Assets.images.guideWeapon,
                         label: t.guide.weapons,
-                        selected: _kind == GuideKind.weapon,
+                        selected: kind == GuideKind.weapon,
                         onTap: () => _setKind(GuideKind.weapon),
                       ),
                       const SizedBox(width: 8),
                       _KindChip(
-                        icon: Icons.graphic_eq,
+                        art: Assets.images.guideEcho,
                         label: t.guide.echoes,
-                        selected: _kind == GuideKind.echo,
+                        selected: kind == GuideKind.echo,
                         onTap: () => _setKind(GuideKind.echo),
                       ),
                     ],
@@ -177,50 +175,55 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
               ),
             ),
           ),
-          ...entries.when(
-            loading: () => [
-              const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(child: M3ELoadingIndicator()),
-              ),
-            ],
-            error: (_, _) => [
-              SliverAdaptivePadding(
-                sliver: SliverToBoxAdapter(
-                  child: ErrorCard(
-                    message: t.guide.error,
-                    retryLabel: t.import.retry,
-                    onRetry: () => ref.invalidate(provider),
-                  ),
-                ),
-              ),
-            ],
-            data: (all) {
-              final shown = _visible(all);
-              if (shown.isEmpty) {
-                return [
-                  SliverFillRemaining(
+          ValueListenableBuilder<String>(
+            valueListenable: _query,
+            builder: (context, query, _) => SliverMainAxisGroup(
+              slivers: entries.when(
+                loading: () => [
+                  const SliverFillRemaining(
                     hasScrollBody: false,
-                    child: Center(child: Text(t.guide.noResults)),
+                    child: Center(child: M3ELoadingIndicator()),
                   ),
-                ];
-              }
-              return [
-                SliverAdaptivePadding(
-                  sliver: SliverGrid.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 170,
-                          childAspectRatio: 0.72,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                        ),
-                    itemCount: shown.length,
-                    itemBuilder: (context, i) => GuideCard(entry: shown[i]),
+                ],
+                error: (_, _) => [
+                  SliverAdaptivePadding(
+                    sliver: SliverToBoxAdapter(
+                      child: ErrorCard(
+                        message: t.guide.error,
+                        retryLabel: t.import.retry,
+                        onRetry: () => ref.invalidate(provider),
+                      ),
+                    ),
                   ),
-                ),
-              ];
-            },
+                ],
+                data: (all) {
+                  final shown = _visible(all, query);
+                  if (shown.isEmpty) {
+                    return [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(child: Text(t.guide.noResults)),
+                      ),
+                    ];
+                  }
+                  return [
+                    SliverAdaptivePadding(
+                      sliver: SliverGrid.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 170,
+                              childAspectRatio: 0.72,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                            ),
+                        itemCount: shown.length,
+                        itemBuilder: (context, i) => GuideCard(entry: shown[i]),
+                      ),
+                    ),
+                  ];
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -231,13 +234,13 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
 /// Pill tab for a guide kind: filled with the primary colour when selected.
 class _KindChip extends StatelessWidget {
   const _KindChip({
-    required this.icon,
+    required this.art,
     required this.label,
     required this.selected,
     required this.onTap,
   });
 
-  final IconData icon;
+  final AssetGenImage art;
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -257,7 +260,14 @@ class _KindChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AdaptiveIcon(icon, size: 18, color: fg),
+              // The art is drawn white; tint it to the chip's text colour.
+              art.image(
+                width: 20,
+                height: 20,
+                color: fg,
+                colorBlendMode: BlendMode.srcIn,
+                filterQuality: FilterQuality.medium,
+              ),
               const SizedBox(width: 8),
               Text(
                 label,
@@ -270,4 +280,39 @@ class _KindChip extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The search box. It owns its controller and focus node so the screen can
+/// rebuild around it without disturbing typing.
+class _SearchField extends StatefulWidget {
+  const _SearchField({required this.hint, required this.onChanged});
+
+  final String hint;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<_SearchField> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AppTextField(
+    controller: _controller,
+    autofocus: true,
+    outlined: true,
+    hint: widget.hint,
+    prefix: const AdaptiveIcon(Icons.search),
+    textInputAction: TextInputAction.search,
+    onChanged: widget.onChanged,
+    // The list already follows every key; submitting just closes the keyboard.
+    onSubmitted: (_) => FocusScope.of(context).unfocus(),
+  );
 }
