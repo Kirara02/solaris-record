@@ -10,6 +10,9 @@ on:
     paths-ignore:
       - '**.md'
       - 'docs/**'
+  # Lets a push that only touched docs (and so was skipped above) be checked
+  # by hand from the Actions tab.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
