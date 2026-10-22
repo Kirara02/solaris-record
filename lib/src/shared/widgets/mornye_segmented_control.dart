@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_tokens.dart';
+import 'marquee_text.dart';
 
 /// iOS-style segmented control: a rounded track with a thumb that slides
 /// under the selected label.
@@ -74,10 +75,8 @@ class MornyeSegmentedControl extends StatelessWidget {
                         behavior: HitTestBehavior.opaque,
                         onTap: () => onChanged(i),
                         child: Center(
-                          child: Text(
+                          child: MarqueeText(
                             label,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelLarge?.copyWith(
                               fontWeight: i == selectedIndex
                                   ? FontWeight.w600

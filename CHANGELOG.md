@@ -4,6 +4,21 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.5.1
+
+A tidier import dialog, running text for long labels, and a small fix on wide screens.
+
+### What's new
+- **Import dialog.** It now has two modes. *From link* lists only the ways that give you a convene link, with the platform picked in a segmented control and the method as chips. *From file* takes a Solaris Record backup or a WuWa Tracker export.
+- **Long labels slide.** Long labels in segmented controls, such as the Tower of Adversity seasons, now run back and forth instead of being cut with an ellipsis. Short ones stay centered.
+
+### Fixes
+- Opening an item from your history on a wide screen keeps the sidebar.
+
+### Notes
+- Client.log files and iOS exports can't be read by the app. Upload them on WuWa Tracker, choose *Export Pull History*, then import that JSON file with *From file*.
+- The new translations were machine-made and have not been reviewed by native speakers.
+
 ## 1.5.0
 
 A new Explore tab with a guide to resonators, weapons and echoes, redeem codes and the game's recurring challenge modes.

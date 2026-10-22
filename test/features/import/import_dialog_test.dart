@@ -150,29 +150,19 @@ void main() {
       await openDialog(tester);
       await choose(tester, 'Android');
       expect(find.text('Airplane mode'), findsOneWidget);
-      expect(find.text('Client.log'), findsOneWidget);
       expect(find.text('Ascent'), findsOneWidget);
       expect(
         find.text('Paste it below and tap Update records.'),
         findsOneWidget,
       );
-
-      // A Client.log method ends with a file import instead of a paste.
-      await choose(tester, 'Client.log');
-      expect(
-        find.text(
-          'Import the file with the Import from JSON file button below.',
-        ),
-        findsOneWidget,
-      );
-      expect(find.text('Paste it below and tap Update records.'), findsNothing);
       await disposeApp(tester);
     });
 
     testWidgets('the file guide names the tracker export', (tester) async {
       await openDialog(tester);
+      await choose(tester, 'From file');
       await choose(tester, 'WuWa Tracker');
-      expect(find.textContaining('Export Pull History'), findsOneWidget);
+      expect(find.textContaining('Export Pull History'), findsWidgets);
       await choose(tester, 'Solaris Record');
       expect(find.textContaining('Export backup'), findsOneWidget);
       await disposeApp(tester);

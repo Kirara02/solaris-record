@@ -123,7 +123,6 @@
   },
   "import": {
     "title": "喚取履歴をインポート",
-    "instructions": "ゲーム内で喚取履歴を開き、履歴のURLをコピーしてここに貼り付けてください。",
     "urlLabel": "喚取履歴のURL",
     "paste": "貼り付け",
     "update": "記録を更新",
@@ -138,25 +137,16 @@
     "stepsTitle": "URLの取得方法",
     "guide": {
       "openGame": "鳴潮を起動し、喚取履歴を開いてページを読み込みます。",
-      "logUpload": "WuWa Trackerのインポートページで Client.log をアップロードします。喚取履歴が自動で見つかります。",
-      "logExport": "WuWa Trackerのデータ設定を開き、「ガチャ履歴をエクスポート」を選んで、そのファイルをここの「JSONファイルからインポート」で取り込みます。",
-      "finalFile": "下の「JSONファイルからインポート」ボタンでファイルをインポートします。",
       "windows": {
         "auto": {
           "step2": "Windows PowerShellを開き、下のコマンドを実行します。リンクを探すためにゲームのログを読み取るだけです。",
           "step3": "リンクが見つかるとクリップボードにコピーされます。"
-        },
-        "manual": {
-          "step1": "Firu氏の動画チュートリアルを見て、ゲームフォルダ内の Client.log を探します。"
         }
       },
       "macos": {
         "auto": {
           "step2": "ターミナルを開き、下のコマンドを実行します。リンクを探すためにゲームのログを読み取るだけです。",
           "step3": "リンクが見つかると pbcopy でクリップボードにコピーされます。"
-        },
-        "manual": {
-          "step1": "このフォルダ内の Client.log を探します（Finderで「移動」>「フォルダへ移動」を選び、パスを貼り付けます）。"
         }
       },
       "linux": {
@@ -165,20 +155,14 @@
       },
       "android": {
         "airplane": "yukio36氏の動画チュートリアルに従ってください。リンクの取得方法を案内しています。",
-        "log": "Firu氏の動画チュートリアルを見て、端末から Client.log を取得します。",
         "ascent1": "Ascent v2.1.6 をダウンロードします。この方法にはAndroid 11以降が必要です。",
         "ascent2": "Mirai0009氏のガイドに従い、Ascentで喚取リンクを取得します。"
-      },
-      "ios": {
-        "step1": "Chario氏の動画チュートリアルを見てデータを取得します。証明書はSafariでダウンロードしてください。Chromeなど他のブラウザでは動作しない場合があります。"
       }
     },
     "copyCommand": "コマンドをコピー",
     "openLink": "リンクを開く",
     "methodAutomatic": "自動",
-    "methodManual": "手動",
     "methodAirplane": "機内モード",
-    "methodClientLog": "Client.log",
     "guideFull": "WuWa Trackerの詳細ガイド",
     "finalStep": "下に貼り付けて「記録を更新」をタップします。",
     "clear": "クリア",
@@ -191,6 +175,9 @@
     "fromFile": "JSONファイルからインポート",
     "fromFileHint": "Solaris Recordのバックアップと、WuWa Trackerのエクスポート（wuwatracker-pulls.json）に対応しています。新しい記録は追加され、既存の記録は上書きされません。",
     "fileGuideTitle": "ファイルの入手方法",
+    "modeLink": "リンクから",
+    "modeFile": "ファイルから",
+    "trackerNote": "Client.logファイルとiOSのエクスポートはここでは読み込めません。WuWa Trackerにアップロードし、Export Pull Historyを選んで、そのJSONファイルをインポートしてください。",
     "fileGuide": {
       "solaris": {
         "step1": "データのある端末で、設定 > データとストレージ を開き、「バックアップをエクスポート」をタップします。",
