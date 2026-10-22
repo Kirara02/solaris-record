@@ -95,7 +95,7 @@ Issues and pull requests are welcome. Please run `flutter analyze` before sendin
 ## Acknowledgements
 
 - Feature ideas from [WuWa Analyzer](https://github.com/GoneTone/wuthering-waves-convene-gacha-analyzer) (MIT) by GoneTone.
-- Theming inspiration from [SpotiFLAC-Mobile](https://github.com/spotiflacapp/SpotiFLAC-Mobile).
+- Theming inspiration from [Mornye](https://github.com/mornyeapp/Mornye).
 - Item data and images from [encore.moe](https://encore.moe/) and Kuro's guide server, loaded at runtime and not bundled with the app.
 - [Inter](https://github.com/rsms/inter) typeface (SIL Open Font License).
 

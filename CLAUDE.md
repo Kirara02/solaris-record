@@ -9,7 +9,7 @@ Solaris Record: a cross-platform Flutter tracker for Wuthering Waves convene (ga
 ## Reference projects
 
 - Features: [GoneTone/wuthering-waves-convene-gacha-analyzer](https://github.com/GoneTone/wuthering-waves-convene-gacha-analyzer) (default branch is `master`). Use it as the guide for what the app should do (export/import JSON, WuWa Tracker import, quick update, banner types). Take the format and structure as inspiration; don't copy its code.
-- Theming: [spotiflacapp/SpotiFLAC-Mobile](https://github.com/spotiflacapp/SpotiFLAC-Mobile). Use it as the guide for the strong Material 3 look (dynamic color, expressive surfaces and shapes).
+- Theming: [mornyeapp/Mornye](https://github.com/mornyeapp/Mornye). Use it as the guide for the strong Material 3 look (dynamic color, expressive surfaces and shapes).
 
 ## Commands
 
