@@ -41,6 +41,28 @@ class _MarqueeTextState extends State<MarqueeText>
   @override
   Widget build(BuildContext context) {
     final style = DefaultTextStyle.of(context).style.merge(widget.style);
+    // LayoutBuilder has no intrinsic sizes, which parents like SegmentedButton
+    // ask for. A Stack skips positioned children when measuring, so an
+    // invisible Text supplies the intrinsics and the marquee fills it.
+    return Stack(
+      children: [
+        ExcludeSemantics(
+          child: Opacity(
+            opacity: 0,
+            child: Text(
+              widget.text,
+              style: style,
+              maxLines: 1,
+              softWrap: false,
+            ),
+          ),
+        ),
+        Positioned.fill(child: _buildMarquee(style)),
+      ],
+    );
+  }
+
+  Widget _buildMarquee(TextStyle style) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final painter = TextPainter(

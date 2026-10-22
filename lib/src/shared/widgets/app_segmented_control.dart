@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/mornye_theme.dart';
+import 'marquee_text.dart';
 import 'mornye_segmented_control.dart';
 
 /// One choice of an [AppSegmentedControl]. The [icon] shows in Material only;
@@ -45,7 +46,7 @@ class AppSegmentedControl<T> extends StatelessWidget {
           ButtonSegment(
             value: s.value,
             icon: s.icon,
-            label: Text(s.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            label: MarqueeText(s.label),
           ),
       ],
       selected: {selected},
