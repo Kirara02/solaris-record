@@ -123,7 +123,6 @@
   },
   "import": {
     "title": "导入唤取记录",
-    "instructions": "在游戏中打开唤取记录，然后复制记录 URL 并粘贴到此处。",
     "urlLabel": "唤取记录 URL",
     "paste": "粘贴",
     "update": "更新记录",
@@ -138,25 +137,16 @@
     "stepsTitle": "如何获取 URL",
     "guide": {
       "openGame": "启动鸣潮并打开唤取记录，使页面加载完成。",
-      "logUpload": "在 WuWa Tracker 的导入页面上传 Client.log，它会自动找到你的唤取记录。",
-      "logExport": "打开 WuWa Tracker 的数据设置，选择导出唤取历史，然后在此处通过“从 JSON 文件导入”导入该文件。",
-      "finalFile": "使用下方的“从 JSON 文件导入”按钮导入文件。",
       "windows": {
         "auto": {
           "step2": "打开 Windows PowerShell 并运行下方命令。它只会读取游戏日志来查找链接。",
           "step3": "找到链接后会自动复制到剪贴板。"
-        },
-        "manual": {
-          "step1": "观看 Firu 的视频教程，在游戏文件夹中找到 Client.log。"
         }
       },
       "macos": {
         "auto": {
           "step2": "打开终端并运行下方命令。它只会读取游戏日志来查找链接。",
           "step3": "找到链接后会通过 pbcopy 复制到剪贴板。"
-        },
-        "manual": {
-          "step1": "在此文件夹中找到 Client.log（在访达中选择“前往 > 前往文件夹”并粘贴路径）。"
         }
       },
       "linux": {
@@ -165,20 +155,14 @@
       },
       "android": {
         "airplane": "请按照 yukio36 的视频教程操作，它会指导你获取链接。",
-        "log": "观看 Firu 的视频教程，从设备中获取 Client.log。",
         "ascent1": "下载 Ascent v2.1.6。此方法需要 Android 11 或更高版本。",
         "ascent2": "按照 Mirai0009 的指南，使用 Ascent 获取你的唤取链接。"
-      },
-      "ios": {
-        "step1": "观看 Chario 的视频教程来抓取数据。请使用 Safari 下载证书，Chrome 等其他浏览器可能无法使用。"
       }
     },
     "copyCommand": "复制命令",
     "openLink": "打开链接",
     "methodAutomatic": "自动",
-    "methodManual": "手动",
     "methodAirplane": "飞行模式",
-    "methodClientLog": "Client.log",
     "guideFull": "WuWa Tracker 完整指南",
     "finalStep": "粘贴到下方并点按“更新记录”。",
     "clear": "清除",
@@ -191,6 +175,9 @@
     "fromFile": "从 JSON 文件导入",
     "fromFileHint": "支持 Solaris Record 备份和 WuWa Tracker 导出文件（wuwatracker-pulls.json）。只会添加新记录，不会覆盖已有记录。",
     "fileGuideTitle": "从哪里获取文件",
+    "modeLink": "通过链接",
+    "modeFile": "通过文件",
+    "trackerNote": "这里无法读取 Client.log 文件和 iOS 导出数据。请先上传到 WuWa Tracker，选择 Export Pull History，再导入该 JSON 文件。",
     "fileGuide": {
       "solaris": {
         "step1": "在保存有数据的设备上，打开“设置 > 数据与存储”并点按“导出备份”。",

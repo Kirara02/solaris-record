@@ -123,7 +123,6 @@
   },
   "import": {
     "title": "Impor record convene",
-    "instructions": "Buka Riwayat Convene di game, salin URL record, lalu tempel di sini.",
     "urlLabel": "URL riwayat convene",
     "paste": "Tempel",
     "update": "Perbarui record",
@@ -138,25 +137,16 @@
     "stepsTitle": "Cara mendapatkan URL",
     "guide": {
       "openGame": "Jalankan Wuthering Waves dan buka Riwayat Convene sampai halaman termuat.",
-      "logUpload": "Unggah Client.log Anda di halaman import WuWa Tracker. Situs itu yang menemukan riwayat convene Anda.",
-      "logExport": "Buka Data Settings di WuWa Tracker, pilih Export Pull History, lalu impor file itu di sini dengan Impor dari file JSON.",
-      "finalFile": "Impor file itu dengan tombol Impor dari file JSON di bawah.",
       "windows": {
         "auto": {
           "step2": "Buka Windows PowerShell lalu jalankan perintah di bawah. Perintah ini hanya membaca log game untuk menemukan tautannya.",
           "step3": "Setelah ketemu, tautan disalin ke clipboard."
-        },
-        "manual": {
-          "step1": "Tonton video tutorial dari Firu untuk menemukan Client.log di folder game."
         }
       },
       "macos": {
         "auto": {
           "step2": "Buka terminal lalu jalankan perintah di bawah. Perintah ini hanya membaca log game untuk menemukan tautannya.",
           "step3": "Setelah ketemu, tautan disalin ke clipboard dengan pbcopy."
-        },
-        "manual": {
-          "step1": "Cari Client.log di folder ini (di Finder, pilih Go > Go to Folder lalu tempel path-nya)."
         }
       },
       "linux": {
@@ -165,20 +155,14 @@
       },
       "android": {
         "airplane": "Ikuti video tutorial dari yukio36. Video ini memandu Anda mengambil tautannya.",
-        "log": "Tonton video tutorial dari Firu untuk mengambil Client.log dari perangkat Anda.",
         "ascent1": "Unduh Ascent v2.1.6. Cara ini butuh Android 11 atau lebih baru.",
         "ascent2": "Ikuti panduan dari Mirai0009 untuk mengambil tautan convene dengan Ascent."
-      },
-      "ios": {
-        "step1": "Tonton video tutorial dari Chario untuk mengambil data Anda. Unduh sertifikat dengan Safari; browser lain seperti Chrome mungkin tidak bisa."
       }
     },
     "copyCommand": "Salin perintah",
     "openLink": "Buka tautan",
     "methodAutomatic": "Otomatis",
-    "methodManual": "Manual",
     "methodAirplane": "Mode pesawat",
-    "methodClientLog": "Client.log",
     "guideFull": "Panduan lengkap di WuWa Tracker",
     "finalStep": "Tempel di bawah lalu ketuk Perbarui record.",
     "clear": "Hapus",
@@ -191,6 +175,9 @@
     "fromFile": "Impor dari file JSON",
     "fromFileHint": "Mendukung cadangan Solaris Record dan ekspor WuWa Tracker (wuwatracker-pulls.json). Record baru ditambahkan, yang sudah ada tidak pernah ditimpa.",
     "fileGuideTitle": "Dari mana file-nya",
+    "modeLink": "Dari tautan",
+    "modeFile": "Dari file",
+    "trackerNote": "File Client.log dan data iOS tidak bisa dibaca di sini. Unggah di WuWa Tracker, pilih Export Pull History, lalu impor file JSON-nya.",
     "fileGuide": {
       "solaris": {
         "step1": "Di perangkat yang menyimpan data Anda, buka Pengaturan > Data & penyimpanan lalu ketuk Ekspor cadangan.",

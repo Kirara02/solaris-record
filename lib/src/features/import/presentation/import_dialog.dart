@@ -12,6 +12,7 @@ import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_segmented_control.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -53,6 +54,9 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
   /// being read.
   BackupImportOutcome? _fileOutcome;
   bool _fileBusy = false;
+
+  /// Whether the dialog shows the JSON file import instead of the link one.
+  bool _fileMode = false;
 
   /// Where the field's starting text came from, to say so under it.
   _Prefill? _prefill;
@@ -155,6 +159,25 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
     final usingSaved =
         _saved != null && _controller.text.trim() == _saved && !state.hasError;
 
+    final fileImport = <Widget>[
+      M3EButton(
+        style: M3EButtonStyle.outlined,
+        size: M3EButtonSize.md,
+        icon: const AdaptiveIcon(Icons.file_open_outlined),
+        label: Text(t.import.fromFile),
+        onPressed: loading || _fileBusy ? null : _importFile,
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+        child: Text(
+          t.import.fromFileHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    ];
+
     return PopScope(
       // A running import can't be dismissed (back button / barrier tap).
       canPop: !loading && !_fileBusy,
@@ -192,56 +215,189 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (usingSaved)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Text(
-                            t.import.savedHint,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: scheme.onSurfaceVariant,
+                      AppSegmentedControl<bool>(
+                        segments: [
+                          AppSegment(
+                            value: false,
+                            label: t.import.modeLink,
+                            icon: const AdaptiveIcon(Icons.link),
+                          ),
+                          AppSegment(
+                            value: true,
+                            label: t.import.modeFile,
+                            icon: const AdaptiveIcon(Icons.file_open_outlined),
+                          ),
+                        ],
+                        selected: _fileMode,
+                        onChanged: loading || _fileBusy
+                            ? (_) {}
+                            : (v) => setState(() => _fileMode = v),
+                      ),
+                      const SizedBox(height: 16),
+                      if (!_fileMode) ...[
+                        if (usingSaved)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              t.import.savedHint,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          )
+                        else ...[
+                          SettingsSectionHeader(title: t.import.stepsTitle),
+                          AppSegmentedControl<_Guide>(
+                            segments: [
+                              for (final g in _Guide.values)
+                                AppSegment(value: g, label: g.label),
+                            ],
+                            selected: _guide,
+                            onChanged: (g) => setState(() {
+                              _guide = g;
+                              _method = 0;
+                            }),
+                          ),
+                          if (methods.length > 1) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              children: [
+                                for (final (i, m) in methods.indexed)
+                                  SettingsChoiceChip(
+                                    label: m.label,
+                                    isSelected: i == _method,
+                                    onTap: () => setState(() => _method = i),
+                                  ),
+                              ],
+                            ),
+                          ],
+                          const SizedBox(height: 12),
+                          SettingsGroup(
+                            children: [
+                              for (final (i, step) in steps.indexed)
+                                _Step(
+                                  i + 1,
+                                  step.text,
+                                  command: step.command,
+                                  onOpenLink: step.url == null
+                                      ? null
+                                      : () => ref
+                                            .read(urlOpenerProvider)
+                                            .open(Uri.parse(step.url!)),
+                                ),
+                              _Step(
+                                steps.length + 1,
+                                t.import.finalStep,
+                                last: true,
+                              ),
+                            ],
+                          ),
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: TextButton.icon(
+                              icon: const AdaptiveIcon(
+                                Icons.open_in_new,
+                                size: 18,
+                              ),
+                              label: Text(t.import.guideFull),
+                              onPressed: _openFullGuide,
                             ),
                           ),
-                        )
-                      else ...[
-                        SettingsSectionHeader(title: t.import.stepsTitle),
+                          const SizedBox(height: 8),
+                        ],
+                        AppTextField(
+                          controller: _controller,
+                          minLines: 3,
+                          maxLines: 5,
+                          enabled: !loading,
+                          label: t.import.urlLabel,
+                          keyboardType: TextInputType.url,
+                          suffix: hasText
+                              ? IconButton(
+                                  tooltip: t.import.clear,
+                                  icon: const AdaptiveIcon(Icons.close),
+                                  onPressed: loading ? null : _controller.clear,
+                                )
+                              : null,
+                        ),
+                        if (_prefill != null &&
+                            _controller.text.trim().isNotEmpty &&
+                            !usingSaved)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+                            child: Text(
+                              switch (_prefill!) {
+                                _Prefill.clipboard =>
+                                  t.import.prefilledClipboard,
+                                _Prefill.shared => t.import.prefilledShared,
+                              },
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.primary,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final paste = M3EButton(
+                              style: M3EButtonStyle.tonal,
+                              size: M3EButtonSize.md,
+                              icon: const AdaptiveIcon(Icons.content_paste),
+                              label: Text(t.import.paste),
+                              onPressed: loading ? null : _paste,
+                            );
+                            final update = M3EButton(
+                              size: M3EButtonSize.md,
+                              icon: const AdaptiveIcon(Icons.sync),
+                              label: Text(t.import.update),
+                              onPressed: loading || !hasText ? null : _run,
+                            );
+                            // Side by side only when both labels fit.
+                            if (constraints.maxWidth < 420) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  update,
+                                  const SizedBox(height: 8),
+                                  paste,
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                Expanded(child: paste),
+                                const SizedBox(width: 12),
+                                Expanded(flex: 2, child: update),
+                              ],
+                            );
+                          },
+                        ),
+                      ] else ...[
+                        ...fileImport,
+                        SettingsSectionHeader(title: t.import.fileGuideTitle),
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
                           children: [
-                            for (final g in _Guide.values)
+                            for (final source in _FileSource.values)
                               SettingsChoiceChip(
-                                label: g.label,
-                                isSelected: g == _guide,
-                                onTap: () => setState(() {
-                                  _guide = g;
-                                  _method = 0;
-                                }),
+                                label: source.label,
+                                isSelected: source == _fileSource,
+                                onTap: () =>
+                                    setState(() => _fileSource = source),
                               ),
                           ],
                         ),
-                        if (methods.length > 1) ...[
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            children: [
-                              for (final (i, m) in methods.indexed)
-                                SettingsChoiceChip(
-                                  label: m.label,
-                                  isSelected: i == _method,
-                                  onTap: () => setState(() => _method = i),
-                                ),
-                            ],
-                          ),
-                        ],
                         const SizedBox(height: 12),
                         SettingsGroup(
                           children: [
-                            for (final (i, step) in steps.indexed)
+                            for (final (i, step)
+                                in _fileSource.steps(t).indexed)
                               _Step(
                                 i + 1,
                                 step.text,
-                                command: step.command,
                                 onOpenLink: step.url == null
                                     ? null
                                     : () => ref
@@ -249,13 +405,20 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                                           .open(Uri.parse(step.url!)),
                               ),
                             _Step(
-                              steps.length + 1,
-                              method.fileFinal
-                                  ? t.import.guide.finalFile
-                                  : t.import.finalStep,
+                              _fileSource.steps(t).length + 1,
+                              t.import.fileGuide.last,
                               last: true,
                             ),
                           ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+                          child: Text(
+                            t.import.trackerNote,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
                         ),
                         Align(
                           alignment: AlignmentDirectional.centerStart,
@@ -268,124 +431,7 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                             onPressed: _openFullGuide,
                           ),
                         ),
-                        const SizedBox(height: 8),
                       ],
-                      AppTextField(
-                        controller: _controller,
-                        minLines: 3,
-                        maxLines: 5,
-                        enabled: !loading,
-                        label: t.import.urlLabel,
-                        keyboardType: TextInputType.url,
-                        suffix: hasText
-                            ? IconButton(
-                                tooltip: t.import.clear,
-                                icon: const AdaptiveIcon(Icons.close),
-                                onPressed: loading ? null : _controller.clear,
-                              )
-                            : null,
-                      ),
-                      if (_prefill != null &&
-                          _controller.text.trim().isNotEmpty &&
-                          !usingSaved)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
-                          child: Text(
-                            switch (_prefill!) {
-                              _Prefill.clipboard => t.import.prefilledClipboard,
-                              _Prefill.shared => t.import.prefilledShared,
-                            },
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.primary,
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 12),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final paste = M3EButton(
-                            style: M3EButtonStyle.tonal,
-                            size: M3EButtonSize.md,
-                            icon: const AdaptiveIcon(Icons.content_paste),
-                            label: Text(t.import.paste),
-                            onPressed: loading ? null : _paste,
-                          );
-                          final update = M3EButton(
-                            size: M3EButtonSize.md,
-                            icon: const AdaptiveIcon(Icons.sync),
-                            label: Text(t.import.update),
-                            onPressed: loading || !hasText ? null : _run,
-                          );
-                          // Side by side only when both labels fit.
-                          if (constraints.maxWidth < 420) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                update,
-                                const SizedBox(height: 8),
-                                paste,
-                              ],
-                            );
-                          }
-                          return Row(
-                            children: [
-                              Expanded(child: paste),
-                              const SizedBox(width: 12),
-                              Expanded(flex: 2, child: update),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      M3EButton(
-                        style: M3EButtonStyle.outlined,
-                        size: M3EButtonSize.md,
-                        icon: const AdaptiveIcon(Icons.file_open_outlined),
-                        label: Text(t.import.fromFile),
-                        onPressed: loading || _fileBusy ? null : _importFile,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                        child: Text(
-                          t.import.fromFileHint,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                      SettingsSectionHeader(title: t.import.fileGuideTitle),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          for (final source in _FileSource.values)
-                            SettingsChoiceChip(
-                              label: source.label,
-                              isSelected: source == _fileSource,
-                              onTap: () => setState(() => _fileSource = source),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SettingsGroup(
-                        children: [
-                          for (final (i, step) in _fileSource.steps(t).indexed)
-                            _Step(
-                              i + 1,
-                              step.text,
-                              onOpenLink: step.url == null
-                                  ? null
-                                  : () => ref
-                                        .read(urlOpenerProvider)
-                                        .open(Uri.parse(step.url!)),
-                            ),
-                          _Step(
-                            _fileSource.steps(t).length + 1,
-                            t.import.fileGuide.last,
-                            last: true,
-                          ),
-                        ],
-                      ),
                       if (_fileOutcome case final outcome?) ...[
                         const SizedBox(height: 16),
                         if (outcome.ok)
@@ -458,7 +504,6 @@ enum _FileSource {
 enum _Guide {
   windows('Windows'),
   android('Android'),
-  ios('iOS'),
   macos('macOS'),
   linux('Linux');
 
@@ -468,8 +513,7 @@ enum _Guide {
 
   static _Guide forPlatform(TargetPlatform p) => switch (p) {
     TargetPlatform.windows => windows,
-    TargetPlatform.android => android,
-    TargetPlatform.iOS => ios,
+    TargetPlatform.iOS || TargetPlatform.android => android,
     TargetPlatform.macOS => macos,
     _ => linux,
   };
@@ -478,12 +522,6 @@ enum _Guide {
   List<_Method> methods(Translations t) {
     final g = t.import.guide;
     final i = t.import;
-    // Methods that end in WuWa Tracker's own import (a Client.log upload) give
-    // a file to import here instead of a link to paste.
-    final logSteps = [
-      _GuideStep(g.logUpload, url: _trackerImportUrl),
-      _GuideStep(g.logExport),
-    ];
     return switch (this) {
       windows => [
         _Method(i.methodAutomatic, [
@@ -491,28 +529,15 @@ enum _Guide {
           _GuideStep(g.windows.auto.step2, command: _windowsCommand),
           _GuideStep(g.windows.auto.step3),
         ]),
-        _Method(i.methodManual, [
-          _GuideStep(g.windows.manual.step1, url: _windowsLogVideoUrl),
-          ...logSteps,
-        ], fileFinal: true),
       ],
       android => [
         _Method(i.methodAirplane, [
           _GuideStep(g.android.airplane, url: _airplaneVideoUrl),
         ]),
-        _Method(i.methodClientLog, [
-          _GuideStep(g.android.log, url: _androidLogVideoUrl),
-          ...logSteps,
-        ], fileFinal: true),
         _Method('Ascent', [
           _GuideStep(g.android.ascent1, url: _ascentUrl),
           _GuideStep(g.android.ascent2, url: _ascentGuideUrl),
         ]),
-      ],
-      ios => [
-        _Method(i.methodAutomatic, [
-          _GuideStep(g.ios.step1, url: _iosVideoUrl),
-        ], fileFinal: true),
       ],
       macos => [
         _Method(i.methodAutomatic, [
@@ -520,10 +545,6 @@ enum _Guide {
           _GuideStep(g.macos.auto.step2, command: _macosCommand),
           _GuideStep(g.macos.auto.step3),
         ]),
-        _Method(i.methodManual, [
-          _GuideStep(g.macos.manual.step1, command: _macLogDir),
-          ...logSteps,
-        ], fileFinal: true),
       ],
       linux => [
         _Method(i.methodAutomatic, [
@@ -547,29 +568,20 @@ const _windowsCommand =
 const _desktopCommand = 'curl -sSL "$_trackerRaw/import.sh" | bash';
 // macOS keeps the log in the game's sandbox container, so it has its own
 // command (it decodes the obfuscated Client.log before searching it).
-const _macLogDir =
-    '~/Library/Containers/com.kurogame.wutheringwaves.global/Data/Library/Logs/Client';
 const _macosCommand =
     r'''log="$HOME/Library/Containers/com.kurogame.wutheringwaves.global/Data/Library/Logs/Client/Client.log"; pattern='https://aki-gm-resources(-oversea)?\.aki-game\.(net|com)/aki/gacha/index\.html#/record[^"[:space:]]*'; decode_client_log() { if command -v python3 >/dev/null 2>&1; then python3 -c 'import sys; data = sys.stdin.buffer.read(); sys.stdout.buffer.write(bytes(byte ^ (0xA5 if (byte & 0x0F) % 2 == 1 else 0xEF) for byte in data))'; elif command -v perl >/dev/null 2>&1; then perl -0777 -pe 's/(.)/chr((ord($1) & 0x0f) % 2 == 1 ? ord($1) ^ 0xa5 : ord($1) ^ 0xef)/gse'; else return 1; fi; }; url=$(decode_client_log < "$log" | grep -aEo "$pattern" | tail -n 1); [ -z "$url" ] && url=$(grep -aEo "$pattern" "$log" | tail -n 1); [ -n "$url" ] && echo "$url" | pbcopy && echo "Link copied to clipboard, paste it in wuwatracker.com and click the Import Data button." || echo "Cannot find the convene history URL in your Client.log! Please try another import method."''';
 const _ascentUrl = 'https://github.com/4o3F/Ascent/releases/tag/2.1.6';
 const _ascentGuideUrl =
     'https://gist.github.com/Mirai0009/8615e52e09083de9c0ea2dc00dc62ea8';
 const _trackerDataUrl = 'https://wuwatracker.com/settings/data';
-const _trackerImportUrl = 'https://wuwatracker.com/import';
 const _airplaneVideoUrl = 'https://www.youtube.com/watch?v=EP6ib3POGKE';
-const _androidLogVideoUrl = 'https://www.youtube.com/watch?v=G4CPyU0t-pA';
-const _windowsLogVideoUrl = 'https://www.youtube.com/watch?v=yESLWS5dDdw';
-const _iosVideoUrl = 'https://www.youtube.com/watch?v=w--3SkszE60';
 
 /// One way to get the data in, with its own steps.
 class _Method {
-  const _Method(this.label, this.steps, {this.fileFinal = false});
+  const _Method(this.label, this.steps);
 
   final String label;
   final List<_GuideStep> steps;
-
-  /// Ends with importing a file instead of pasting a link.
-  final bool fileFinal;
 }
 
 /// One guide step, optionally with a shell command or a link under it.

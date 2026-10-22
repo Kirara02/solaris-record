@@ -127,7 +127,6 @@
   },
   "import": {
     "title": "Import convene records",
-    "instructions": "Open Convene History in the game, then copy the record URL and paste it here.",
     "urlLabel": "Convene record URL",
     "paste": "Paste",
     "update": "Update records",
@@ -142,25 +141,16 @@
     "stepsTitle": "How to get your URL",
     "guide": {
       "openGame": "Launch Wuthering Waves and open your Convene History so the page loads.",
-      "logUpload": "Upload your Client.log on WuWa Tracker's import page. It finds your convene history for you.",
-      "logExport": "Open WuWa Tracker's Data Settings, choose Export Pull History, then import that file here with Import from JSON file.",
-      "finalFile": "Import the file with the Import from JSON file button below.",
       "windows": {
         "auto": {
           "step2": "Open Windows PowerShell and run the command below. It only reads your game logs to find the link.",
           "step3": "When it finds the link it copies it to your clipboard."
-        },
-        "manual": {
-          "step1": "Watch the video tutorial by Firu to find Client.log in your game folder."
         }
       },
       "macos": {
         "auto": {
           "step2": "Open a terminal and run the command below. It only reads your game logs to find the link.",
           "step3": "When it finds the link it copies it to your clipboard with pbcopy."
-        },
-        "manual": {
-          "step1": "Find Client.log in this folder (in Finder, choose Go > Go to Folder and paste the path)."
         }
       },
       "linux": {
@@ -169,20 +159,14 @@
       },
       "android": {
         "airplane": "Follow the video tutorial by yukio36. It walks you through getting your link.",
-        "log": "Watch the video tutorial by Firu to get Client.log from your device.",
         "ascent1": "Download Ascent v2.1.6. This method needs Android 11 or newer.",
         "ascent2": "Follow the guide by Mirai0009 to get your convene link with Ascent."
-      },
-      "ios": {
-        "step1": "Watch the video tutorial by Chario to capture your data. Download the certificate with Safari; other browsers like Chrome may not work."
       }
     },
     "copyCommand": "Copy command",
     "openLink": "Open link",
     "methodAutomatic": "Automatic",
-    "methodManual": "Manual",
     "methodAirplane": "Airplane mode",
-    "methodClientLog": "Client.log",
     "guideFull": "Full guide on WuWa Tracker",
     "finalStep": "Paste it below and tap Update records.",
     "clear": "Clear",
@@ -195,6 +179,9 @@
     "fromFile": "Import from JSON file",
     "fromFileHint": "Supports Solaris Record backups and WuWa Tracker exports (wuwatracker-pulls.json). New records are added; existing ones are never overwritten.",
     "fileGuideTitle": "Where to get the file",
+    "modeLink": "From link",
+    "modeFile": "From file",
+    "trackerNote": "Client.log files and iOS exports can't be read here. Upload them on WuWa Tracker, choose Export Pull History, then import that JSON file.",
     "fileGuide": {
       "solaris": {
         "step1": "On the device that has your data, open Settings > Data & storage and tap Export backup.",
