@@ -107,6 +107,51 @@ class StatCardsRow extends StatelessWidget {
   static String percent(int count, int total) =>
       total == 0 ? '0' : (count * 100 / total).toStringAsFixed(2);
 
+  String fiftyFiftyDetail(BuildContext context) {
+    final t = context.t;
+    final won = stats.fiftyFiftyWon;
+    final lost = stats.fiftyFiftyLost;
+    final rate = stats.fiftyFiftyWinRate;
+    final record = t.stats.fiftyFiftyRecord(won: won, lost: lost);
+    if (rate == null) return record;
+    final longest = t.stats.longestStreaks(
+      win: stats.longestWinStreak,
+      loss: stats.longestLossStreak,
+    );
+    return '$record · ${t.stats.fiftyFiftyRate(pct: percent(won, won + lost))}'
+        '\n$longest';
+  }
+
+  Widget? fiftyFiftyBadges(BuildContext context) {
+    final t = context.t;
+    final scheme = Theme.of(context).colorScheme;
+    final streak = stats.currentStreak;
+    final badges = <Widget>[
+      if (stats.nextFiveStarGuaranteed)
+        StatusBadge(
+          label: t.stats.nextGuaranteed,
+          background: scheme.tertiaryContainer,
+          foreground: scheme.onTertiaryContainer,
+        ),
+      if (streak != null)
+        if (streak.result == FiftyFiftyResult.won)
+          StatusBadge(
+            label: t.stats.winStreak(n: streak.length),
+            background: scheme.tertiaryContainer,
+            foreground: scheme.onTertiaryContainer,
+          )
+        else
+          StatusBadge(
+            label: t.stats.lossStreak(n: streak.length),
+            background: scheme.errorContainer,
+            foreground: scheme.onErrorContainer,
+          ),
+    ];
+    return badges.isEmpty
+        ? null
+        : Wrap(spacing: 6, runSpacing: 6, children: badges);
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
@@ -144,17 +189,8 @@ class StatCardsRow extends StatelessWidget {
           label: t.stats.fiftyFifty,
           value: '${stats.fiftyFiftyWon} / ${stats.fiftyFiftyLost}',
           accent: scheme.tertiary,
-          detail: t.stats.fiftyFiftyRecord(
-            won: stats.fiftyFiftyWon,
-            lost: stats.fiftyFiftyLost,
-          ),
-          extra: stats.nextFiveStarGuaranteed
-              ? StatusBadge(
-                  label: t.stats.nextGuaranteed,
-                  background: scheme.tertiaryContainer,
-                  foreground: scheme.onTertiaryContainer,
-                )
-              : null,
+          detail: fiftyFiftyDetail(context),
+          extra: fiftyFiftyBadges(context),
         ),
     ];
 

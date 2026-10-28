@@ -93,6 +93,45 @@ class PoolStats {
       fiveStarHistory.where((e) => e.result == FiftyFiftyResult.won).length;
   int get fiftyFiftyLost =>
       fiveStarHistory.where((e) => e.result == FiftyFiftyResult.lost).length;
+
+  /// Share of decided 50/50s that were won; null before any is decided.
+  /// `guaranteed` entries are not a 50/50 and are left out.
+  double? get fiftyFiftyWinRate {
+    final decided = fiftyFiftyWon + fiftyFiftyLost;
+    return decided == 0 ? null : fiftyFiftyWon / decided;
+  }
+
+  int get longestWinStreak => _longestStreak(FiftyFiftyResult.won);
+  int get longestLossStreak => _longestStreak(FiftyFiftyResult.lost);
+
+  /// The run of equal 50/50 results at the end of the history. `guaranteed`
+  /// entries always follow a loss, so they do not break a streak.
+  ({FiftyFiftyResult result, int length})? get currentStreak {
+    FiftyFiftyResult? last;
+    var length = 0;
+    for (final result in _decided) {
+      if (result == last) {
+        length++;
+      } else {
+        last = result;
+        length = 1;
+      }
+    }
+    return last == null ? null : (result: last, length: length);
+  }
+
+  Iterable<FiftyFiftyResult> get _decided => fiveStarHistory
+      .map((e) => e.result)
+      .where((r) => r == FiftyFiftyResult.won || r == FiftyFiftyResult.lost);
+
+  int _longestStreak(FiftyFiftyResult target) {
+    var best = 0, run = 0;
+    for (final result in _decided) {
+      run = result == target ? run + 1 : 0;
+      if (run > best) best = run;
+    }
+    return best;
+  }
 }
 
 /// [pulls] must be in chronological order (oldest first).
