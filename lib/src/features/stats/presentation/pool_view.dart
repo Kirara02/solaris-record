@@ -20,6 +20,7 @@ import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/table_pager.dart';
 import '../../info/presentation/open_item_info.dart';
 import '../domain/history_view.dart';
+import '../domain/overview_stats.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 import '../item_names.dart';
@@ -103,10 +104,8 @@ class _OverviewBlock extends StatelessWidget {
         StatCardsRow(stats: stats, pool: pool),
         const SizedBox(height: 16),
         FiveStarTimeline(
-          entries: newestFirst,
+          items: [for (final e in newestFirst) TimelineItem(e, pool)],
           pullsSinceLast: stats.pity5,
-          threshold: pool.hardPity5,
-          pool: pool,
         ),
         if (hasFives) ...[
           SettingsSectionHeader(title: t.stats.fiveStarTimeline),

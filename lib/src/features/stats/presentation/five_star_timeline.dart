@@ -9,8 +9,6 @@ import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/overview_stats.dart';
-import '../domain/pity_calculator.dart';
-import '../domain/pool_type.dart';
 import 'five_star_bubbles.dart';
 import 'five_star_vertical_timeline.dart';
 
@@ -28,21 +26,27 @@ String shortDate(String time) {
 class FiveStarTimeline extends StatefulWidget {
   const FiveStarTimeline({
     super.key,
-    required this.entries,
+    required this.items,
     required this.pullsSinceLast,
-    this.threshold = hardPity5,
-    this.pool,
+    this.title,
+    this.nowText,
+    this.showPool = false,
   });
 
-  /// Newest first.
-  final List<FiveStarEntry> entries;
+  /// Newest first. Each item carries its pull type, whose hard pity scales the
+  /// luck colours.
+  final List<TimelineItem> items;
   final int pullsSinceLast;
 
-  /// Pulls at which the pool guarantees a 5★ (scales the luck colours).
-  final int threshold;
+  /// Card title; defaults to the 5★ count.
+  final String? title;
 
-  /// Pull type of [entries]. When set, the card can switch to a vertical view.
-  final PoolType? pool;
+  /// Text of the "Now" row in the vertical view; defaults to the pulls since
+  /// the last 5★.
+  final String? nowText;
+
+  /// Names the pull type on each vertical row (for several pull types).
+  final bool showPool;
 
   @override
   State<FiveStarTimeline> createState() => _FiveStarTimelineState();
@@ -76,32 +80,32 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  t.stats.timelineTitle(n: widget.entries.length),
+                  widget.title ?? t.stats.timelineTitle(n: widget.items.length),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              if (widget.pool != null)
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  tooltip: _vertical
-                      ? t.stats.timelineHorizontal
-                      : t.stats.timelineVertical,
-                  icon: AdaptiveIcon(
-                    _vertical ? Icons.view_week_outlined : Icons.view_list,
-                  ),
-                  onPressed: () => setState(() => _vertical = !_vertical),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: _vertical
+                    ? t.stats.timelineHorizontal
+                    : t.stats.timelineVertical,
+                icon: AdaptiveIcon(
+                  _vertical ? Icons.view_week_outlined : Icons.view_list,
                 ),
+                onPressed: () => setState(() => _vertical = !_vertical),
+              ),
             ],
           ),
           const SizedBox(height: 16),
-          if (_vertical && widget.pool != null)
+          if (_vertical)
             FiveStarVerticalTimeline(
-              items: [
-                for (final e in widget.entries) TimelineItem(e, widget.pool!),
-              ],
-              nowText: t.stats.sinceLastFive(n: widget.pullsSinceLast),
+              items: widget.items,
+              nowText:
+                  widget.nowText ??
+                  t.stats.sinceLastFive(n: widget.pullsSinceLast),
+              showPool: widget.showPool,
             )
           else
             SizedBox(
@@ -117,7 +121,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                     _TimelineNode(
                       width: _nodeWidth,
                       isFirst: true,
-                      isLast: widget.entries.isEmpty,
+                      isLast: widget.items.isEmpty,
                       nodeColor: scheme.outline,
                       hollow: true,
                       top: Text(
@@ -129,43 +133,46 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                       ),
                       bottom: t.stats.pullsUsed(n: widget.pullsSinceLast),
                     ),
-                    for (final (i, e) in widget.entries.indexed)
+                    for (final (i, item) in widget.items.indexed)
                       _TimelineNode(
                         width: _nodeWidth,
                         onTap: () => showFiveStarDetail(
                           context,
-                          e,
-                          threshold: widget.threshold,
+                          item.entry,
+                          threshold: item.pool.hardPity5,
                         ),
                         isFirst: false,
-                        isLast: i == widget.entries.length - 1,
+                        isLast: i == widget.items.length - 1,
                         nodeColor: luckNodeColor(
                           context,
-                          luckTier(e.pullsUsed, threshold: widget.threshold),
+                          luckTier(
+                            item.entry.pullsUsed,
+                            threshold: item.pool.hardPity5,
+                          ),
                         ),
                         top: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ItemIcon(
-                              resourceId: e.resourceId,
-                              resourceType: e.resourceType,
+                              resourceId: item.entry.resourceId,
+                              resourceType: item.entry.resourceType,
                               rarity: 5,
                               size: 40,
                               circular: true,
-                              ringColor: ringFor(context, e.result),
+                              ringColor: ringFor(context, item.entry.result),
                             ),
                             const SizedBox(height: 4),
                             ItemName(
-                              resourceId: e.resourceId,
-                              fallback: e.name,
+                              resourceId: item.entry.resourceId,
+                              fallback: item.entry.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: luckNodeColor(
                                   context,
                                   luckTier(
-                                    e.pullsUsed,
-                                    threshold: widget.threshold,
+                                    item.entry.pullsUsed,
+                                    threshold: item.pool.hardPity5,
                                   ),
                                 ),
                                 fontWeight: FontWeight.w700,
@@ -175,7 +182,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
                         ),
                         // Date and pulls on separate lines so neighbours don't touch.
                         bottom:
-                            '${shortDate(e.time)}\n${t.stats.pullsUsed(n: e.pullsUsed)}',
+                            '${shortDate(item.entry.time)}\n${t.stats.pullsUsed(n: item.entry.pullsUsed)}',
                       ),
                   ],
                 ),

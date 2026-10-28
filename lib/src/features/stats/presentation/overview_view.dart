@@ -15,7 +15,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/overview_stats.dart';
 import '../stats_providers.dart';
-import 'five_star_vertical_timeline.dart';
+import 'five_star_timeline.dart';
 import 'stat_cards.dart';
 
 /// Slivers of the global overview: totals, rarity and type distributions, and
@@ -177,15 +177,12 @@ class _OverviewBody extends StatelessWidget {
         ),
         if (stats.timeline.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _ChartCard(
+          FiveStarTimeline(
+            items: stats.timeline,
+            pullsSinceLast: stats.pullsSinceLastFive,
             title: t.stats.timelineAllTitle,
-            icon: Icons.timeline,
-            stretch: true,
-            child: FiveStarVerticalTimeline(
-              items: stats.timeline,
-              nowText: t.stats.timelineNowAll(n: stats.pullsSinceLastFive),
-              showPool: true,
-            ),
+            nowText: t.stats.timelineNowAll(n: stats.pullsSinceLastFive),
+            showPool: true,
           ),
         ],
         const SizedBox(height: 12),
@@ -206,15 +203,11 @@ class _ChartCard extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.child,
-    this.stretch = false,
   });
 
   final String title;
   final IconData icon;
   final Widget child;
-
-  /// Gives [child] the full card width instead of centering it.
-  final bool stretch;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +237,7 @@ class _ChartCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          stretch ? child : Center(child: child),
+          Center(child: child),
         ],
       ),
     );
