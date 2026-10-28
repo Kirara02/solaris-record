@@ -8,7 +8,28 @@ import '../../../shared/widgets/settings_group.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 
-/// Label, big number and a detail line, with a coloured accent edge.
+/// Card surface washed with a soft [accent] tint and a matching hairline.
+BoxDecoration accentCardDecoration(BuildContext context, Color accent) {
+  final scheme = Theme.of(context).colorScheme;
+  return BoxDecoration(
+    color: Color.alphaBlend(
+      accent.withValues(alpha: 0.10),
+      groupColor(context),
+    ),
+    borderRadius: context.tokens.borderRadiusCard,
+    border: Border.all(color: accent.withValues(alpha: 0.28)),
+    boxShadow: [
+      BoxShadow(
+        color: scheme.shadow.withValues(alpha: 0.05),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
+}
+
+/// Label with an accent dot, big number and a detail line, on an accent-tinted
+/// surface.
 class StatCard extends StatelessWidget {
   const StatCard({
     super.key,
@@ -36,60 +57,58 @@ class StatCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return Container(
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: context.tokens.borderRadiusCard,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: accentCardDecoration(context, accent),
       clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Padding(
+        padding: dense
+            ? const EdgeInsets.fromLTRB(12, 12, 10, 12)
+            : const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 4, color: accent),
-            Expanded(
-              child: Padding(
-                padding: dense
-                    ? const EdgeInsets.fromLTRB(10, 12, 8, 12)
-                    : const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label.toUpperCase(),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        letterSpacing: 0.8,
-                        fontWeight: FontWeight.w600,
-                      ),
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    label.toUpperCase(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      letterSpacing: 0.8,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      value,
-                      style:
-                          (dense
-                                  ? theme.textTheme.headlineSmall
-                                  : theme.textTheme.headlineMedium)
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.1,
-                              ),
-                    ),
-                    if (detail != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        detail!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                    if (extra != null) ...[const SizedBox(height: 8), extra!],
-                  ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style:
+                  (dense
+                          ? theme.textTheme.headlineSmall
+                          : theme.textTheme.headlineMedium)
+                      ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
+            ),
+            if (detail != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                detail!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
-            ),
+            ],
+            if (extra != null) ...[const SizedBox(height: 8), extra!],
           ],
         ),
       ),

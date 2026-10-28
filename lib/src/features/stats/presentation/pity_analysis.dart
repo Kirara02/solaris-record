@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/number_format.dart';
 import '../../../shared/theme/app_colors.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 import 'stat_cards.dart';
@@ -75,7 +74,9 @@ class _Histogram extends StatelessWidget {
     const countHeight = 20.0;
     final peak = buckets.fold<int>(1, (m, c) => c > m ? c : m);
     final gold = rarityColor(scheme, 5);
-    return AppCard(
+    return Container(
+      width: double.infinity,
+      decoration: accentCardDecoration(context, gold),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
