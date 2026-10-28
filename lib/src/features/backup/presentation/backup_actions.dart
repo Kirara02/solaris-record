@@ -36,8 +36,6 @@ Future<void> exportBackup(BuildContext context, WidgetRef ref) async {
       fileName: 'solaris-record-backup-${_stamp(now)}.json',
       bytes: utf8.encode(bundle.encode()),
       mimeType: 'application/json',
-      type: FileType.custom,
-      allowedExtensions: const ['json'],
     );
     if (saved == null) return;
     _log.info(
@@ -68,8 +66,6 @@ Future<BackupImportOutcome?> pickAndImportBackup(
   final PlatformFile? file;
   try {
     file = await FilePicker.pickFile(
-      type: FileType.custom,
-      allowedExtensions: const ['json'],
     );
   } on Object catch (e, st) {
     _log.warning('File picker failed', e, st);

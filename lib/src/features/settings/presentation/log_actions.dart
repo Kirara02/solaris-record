@@ -44,8 +44,6 @@ Future<void> exportLogs(BuildContext context, WidgetRef ref) async {
       fileName: 'solaris-record-logs-${_stamp(now)}.txt',
       bytes: utf8.encode(text),
       mimeType: 'text/plain',
-      type: FileType.custom,
-      allowedExtensions: const ['txt', 'log'],
     );
     if (saved == null) return;
     _log.info('Logs exported bytes=${text.length}');
