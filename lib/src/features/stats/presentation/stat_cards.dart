@@ -1,13 +1,35 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/i18n/number_format.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 
-/// Label, big number and a detail line, with a coloured accent edge.
+/// Card surface washed with a soft [accent] tint and a matching hairline.
+BoxDecoration accentCardDecoration(BuildContext context, Color accent) {
+  final scheme = Theme.of(context).colorScheme;
+  return BoxDecoration(
+    color: Color.alphaBlend(
+      accent.withValues(alpha: 0.10),
+      groupColor(context),
+    ),
+    borderRadius: context.tokens.borderRadiusCard,
+    border: Border.all(color: accent.withValues(alpha: 0.28)),
+    boxShadow: [
+      BoxShadow(
+        color: scheme.shadow.withValues(alpha: 0.05),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
+}
+
+/// Label with an accent dot, big number and a detail line, on an accent-tinted
+/// surface.
 class StatCard extends StatelessWidget {
   const StatCard({
     super.key,
@@ -35,60 +57,58 @@ class StatCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return Container(
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: context.tokens.borderRadiusCard,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: accentCardDecoration(context, accent),
       clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Padding(
+        padding: dense
+            ? const EdgeInsets.fromLTRB(12, 12, 10, 12)
+            : const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 4, color: accent),
-            Expanded(
-              child: Padding(
-                padding: dense
-                    ? const EdgeInsets.fromLTRB(10, 12, 8, 12)
-                    : const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label.toUpperCase(),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        letterSpacing: 0.8,
-                        fontWeight: FontWeight.w600,
-                      ),
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    label.toUpperCase(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      letterSpacing: 0.8,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      value,
-                      style:
-                          (dense
-                                  ? theme.textTheme.headlineSmall
-                                  : theme.textTheme.headlineMedium)
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.1,
-                              ),
-                    ),
-                    if (detail != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        detail!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                    if (extra != null) ...[const SizedBox(height: 8), extra!],
-                  ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style:
+                  (dense
+                          ? theme.textTheme.headlineSmall
+                          : theme.textTheme.headlineMedium)
+                      ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
+            ),
+            if (detail != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                detail!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
-            ),
+            ],
+            if (extra != null) ...[const SizedBox(height: 8), extra!],
           ],
         ),
       ),
@@ -107,6 +127,51 @@ class StatCardsRow extends StatelessWidget {
   static String percent(int count, int total) =>
       total == 0 ? '0' : (count * 100 / total).toStringAsFixed(2);
 
+  String fiftyFiftyDetail(BuildContext context) {
+    final t = context.t;
+    final won = stats.fiftyFiftyWon;
+    final lost = stats.fiftyFiftyLost;
+    final rate = stats.fiftyFiftyWinRate;
+    final record = t.stats.fiftyFiftyRecord(won: won, lost: lost);
+    if (rate == null) return record;
+    final longest = t.stats.longestStreaks(
+      win: stats.longestWinStreak,
+      loss: stats.longestLossStreak,
+    );
+    return '$record · ${t.stats.fiftyFiftyRate(pct: percent(won, won + lost))}'
+        '\n$longest';
+  }
+
+  Widget? fiftyFiftyBadges(BuildContext context) {
+    final t = context.t;
+    final scheme = Theme.of(context).colorScheme;
+    final streak = stats.currentStreak;
+    final badges = <Widget>[
+      if (stats.nextFiveStarGuaranteed)
+        StatusBadge(
+          label: t.stats.nextGuaranteed,
+          background: scheme.tertiaryContainer,
+          foreground: scheme.onTertiaryContainer,
+        ),
+      if (streak != null)
+        if (streak.result == FiftyFiftyResult.won)
+          StatusBadge(
+            label: t.stats.winStreak(n: streak.length),
+            background: scheme.tertiaryContainer,
+            foreground: scheme.onTertiaryContainer,
+          )
+        else
+          StatusBadge(
+            label: t.stats.lossStreak(n: streak.length),
+            background: scheme.errorContainer,
+            foreground: scheme.onErrorContainer,
+          ),
+    ];
+    return badges.isEmpty
+        ? null
+        : Wrap(spacing: 6, runSpacing: 6, children: badges);
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
@@ -123,19 +188,19 @@ class StatCardsRow extends StatelessWidget {
     final cards = <Widget>[
       StatCard(
         label: t.stats.total,
-        value: '$total',
+        value: formatNumber(total),
         accent: scheme.primary,
-        detail: t.stats.totalDetail(n: stats.threeStars),
+        detail: t.stats.totalDetail(n: formatNumber(stats.threeStars)),
       ),
       StatCard(
         label: t.stats.countFive,
-        value: '${stats.fiveStars}',
+        value: formatNumber(stats.fiveStars),
         accent: rarityColor(scheme, 5),
         detail: detail(stats.fiveStars, stats.averagePullsPerFiveStar),
       ),
       StatCard(
         label: t.stats.countFour,
-        value: '${stats.fourStars}',
+        value: formatNumber(stats.fourStars),
         accent: rarityColor(scheme, 4),
         detail: detail(stats.fourStars, stats.averagePullsPerFourStar),
       ),
@@ -144,17 +209,8 @@ class StatCardsRow extends StatelessWidget {
           label: t.stats.fiftyFifty,
           value: '${stats.fiftyFiftyWon} / ${stats.fiftyFiftyLost}',
           accent: scheme.tertiary,
-          detail: t.stats.fiftyFiftyRecord(
-            won: stats.fiftyFiftyWon,
-            lost: stats.fiftyFiftyLost,
-          ),
-          extra: stats.nextFiveStarGuaranteed
-              ? StatusBadge(
-                  label: t.stats.nextGuaranteed,
-                  background: scheme.tertiaryContainer,
-                  foreground: scheme.onTertiaryContainer,
-                )
-              : null,
+          detail: fiftyFiftyDetail(context),
+          extra: fiftyFiftyBadges(context),
         ),
     ];
 

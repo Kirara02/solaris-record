@@ -4,6 +4,7 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/i18n/number_format.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
@@ -19,6 +20,7 @@ import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/table_pager.dart';
 import '../../info/presentation/open_item_info.dart';
 import '../domain/history_view.dart';
+import '../domain/overview_stats.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 import '../item_names.dart';
@@ -26,6 +28,7 @@ import '../stats_providers.dart';
 import 'five_star_bubbles.dart';
 import 'five_star_timeline.dart';
 import 'history_filter_dialog.dart';
+import 'pity_analysis.dart';
 import 'stat_cards.dart';
 
 /// Slivers for one pool of one account: pity hero, overview, 5★ timeline and a
@@ -101,15 +104,15 @@ class _OverviewBlock extends StatelessWidget {
         StatCardsRow(stats: stats, pool: pool),
         const SizedBox(height: 16),
         FiveStarTimeline(
-          entries: newestFirst,
+          items: [for (final e in newestFirst) TimelineItem(e, pool)],
           pullsSinceLast: stats.pity5,
-          threshold: pool.hardPity5,
-          pool: pool,
         ),
         if (hasFives) ...[
           SettingsSectionHeader(title: t.stats.fiveStarTimeline),
           FiveStarBubbles(entries: newestFirst, pool: pool),
         ],
+        SettingsSectionHeader(title: t.stats.pityDistribution),
+        PityAnalysis(stats: stats, pool: pool),
       ],
     );
   }
@@ -373,7 +376,7 @@ class _HistorySectionState extends ConsumerState<_HistorySection> {
               trailing: Text(
                 page.matching == 1
                     ? t.stats.resultsOne(n: 1)
-                    : t.stats.results(n: page.matching),
+                    : t.stats.results(n: formatNumber(page.matching)),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -589,7 +592,7 @@ class _HistoryRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  t.stats.pullNumber(n: number),
+                  t.stats.pullNumber(n: formatNumber(number)),
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),

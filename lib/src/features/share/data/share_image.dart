@@ -102,8 +102,6 @@ Future<({ShareOutcome outcome, String? name})> deliverPng(
     bytes: png,
     initialDirectory: downloads?.path,
     mimeType: 'image/png',
-    type: FileType.custom,
-    allowedExtensions: const ['png'],
   );
   if (saved == null) return (outcome: ShareOutcome.cancelled, name: null);
   _log.info('Saved image bytes=${png.length}');

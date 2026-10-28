@@ -237,8 +237,6 @@ class _ImageViewerState extends State<_ImageViewer> {
         fileName: name,
         bytes: Uint8List.fromList(bytes),
         mimeType: 'image/webp',
-        type: FileType.custom,
-        allowedExtensions: const ['webp'],
       );
       if (saved == null) return;
       _log.info('Image saved name=$name bytes=${bytes.length}');

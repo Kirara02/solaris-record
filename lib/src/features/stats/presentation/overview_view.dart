@@ -3,6 +3,7 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/i18n/number_format.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
@@ -14,7 +15,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/overview_stats.dart';
 import '../stats_providers.dart';
-import 'five_star_vertical_timeline.dart';
+import 'five_star_timeline.dart';
 import 'stat_cards.dart';
 
 /// Slivers of the global overview: totals, rarity and type distributions, and
@@ -79,21 +80,21 @@ class _OverviewBody extends StatelessWidget {
       StatCard(
         dense: dense,
         label: t.stats.total,
-        value: '${stats.total}',
+        value: formatNumber(stats.total),
         accent: scheme.primary,
         detail: t.stats.overviewAll,
       ),
       StatCard(
         dense: dense,
         label: t.stats.countFive,
-        value: '${stats.fiveStars}',
+        value: formatNumber(stats.fiveStars),
         accent: rarityColor(scheme, 5),
         detail: detail(stats.fiveStars, stats.averagePullsPerFiveStar),
       ),
       StatCard(
         dense: dense,
         label: t.stats.countFour,
-        value: '${stats.fourStars}',
+        value: formatNumber(stats.fourStars),
         accent: rarityColor(scheme, 4),
         detail: detail(stats.fourStars, stats.averagePullsPerFourStar),
       ),
@@ -176,15 +177,12 @@ class _OverviewBody extends StatelessWidget {
         ),
         if (stats.timeline.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _ChartCard(
+          FiveStarTimeline(
+            items: stats.timeline,
+            pullsSinceLast: stats.pullsSinceLastFive,
             title: t.stats.timelineAllTitle,
-            icon: Icons.timeline,
-            stretch: true,
-            child: FiveStarVerticalTimeline(
-              items: stats.timeline,
-              nowText: t.stats.timelineNowAll(n: stats.pullsSinceLastFive),
-              showPool: true,
-            ),
+            nowText: t.stats.timelineNowAll(n: stats.pullsSinceLastFive),
+            showPool: true,
           ),
         ],
         const SizedBox(height: 12),
@@ -205,15 +203,11 @@ class _ChartCard extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.child,
-    this.stretch = false,
   });
 
   final String title;
   final IconData icon;
   final Widget child;
-
-  /// Gives [child] the full card width instead of centering it.
-  final bool stretch;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +237,7 @@ class _ChartCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          stretch ? child : Center(child: child),
+          Center(child: child),
         ],
       ),
     );
@@ -262,40 +256,60 @@ class _PityBar extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final empty = summary.total == 0;
+    final hard = summary.pool.hardPity5;
+    final gold = rarityColor(scheme, 5);
+    final fraction = empty ? 0.0 : (summary.pity5 / hard).clamp(0.0, 1.0);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Expanded(
                 child: Text(
                   summary.pool.label(t),
                   style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: empty ? scheme.onSurfaceVariant : null,
                   ),
                 ),
               ),
-              Text(
-                empty
-                    ? t.stats.noPulls
-                    : summary.fiveStars == 0
-                    ? t.stats.noFiveYet
-                    : t.stats.sinceLastFive(n: summary.pity5),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
+              if (!empty)
+                Text.rich(
+                  TextSpan(
+                    text: '${summary.pity5}',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: gold,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: ' / $hard',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
+          const SizedBox(height: 8),
+          _PillBar(fraction: fraction, color: gold),
           const SizedBox(height: 6),
-          M3EProgressIndicator.linear(
-            value: empty
-                ? 0
-                : (summary.pity5 / summary.pool.hardPity5).clamp(0.0, 1.0),
-            color: rarityColor(scheme, 5),
-            trackColor: scheme.surfaceContainerHighest,
+          Text(
+            empty
+                ? t.stats.noPulls
+                : summary.fiveStars == 0
+                ? t.stats.noFiveYet
+                : t.stats.sinceLastFive(n: summary.pity5),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -338,25 +352,26 @@ class _TopRarityBars extends StatelessWidget {
                       Expanded(
                         child: Text(
                           p.pool.label(t),
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       Text(
-                        '${p.fiveStars} ${t.stats.fiveStars}',
-                        style: theme.textTheme.labelLarge?.copyWith(
+                        '${formatNumber(p.fiveStars)} ${t.stats.fiveStars}',
+                        style: theme.textTheme.titleSmall?.copyWith(
                           color: rarityColor(scheme, 5),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  M3EProgressIndicator.linear(
-                    value: p.fiveStars / most,
+                  const SizedBox(height: 8),
+                  _PillBar(
+                    fraction: p.fiveStars / most,
                     color: rarityColor(scheme, 5),
-                    trackColor: scheme.surfaceContainerHighest,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 6),
                   Text(
                     t.stats.sinceLastFive(n: p.pity5),
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -367,6 +382,45 @@ class _TopRarityBars extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// A rounded track with a gradient fill that grows in, [fraction] of the width.
+class _PillBar extends StatelessWidget {
+  const _PillBar({required this.fraction, required this.color});
+
+  final double fraction;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: fraction),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, _) => Container(
+        height: 12,
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        clipBehavior: Clip.antiAlias,
+        alignment: Alignment.centerLeft,
+        child: FractionallySizedBox(
+          widthFactor: value,
+          heightFactor: 1,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [color.withValues(alpha: 0.55), color],
+              ),
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        ),
       ),
     );
   }

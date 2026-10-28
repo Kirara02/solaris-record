@@ -4,6 +4,23 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.6.0
+
+More to read from your pulls: 50/50 win rate and streaks, a pity distribution chart and a fresher look for the stat cards.
+
+### What's new
+- **50/50 win rate and streaks.** The 50/50 card on the Featured Resonator banner now shows your win rate, your longest win and loss streaks and a badge for the streak you are on. Guaranteed pulls do not break a streak.
+- **Pity analysis.** A bar chart of how many pulls your 5★ took (1-10, 11-20 and so on), the Astrite you have spent, and the most pulls you could still need for the next 5★ (or the featured one on banners with a 50/50).
+- **Overview timeline.** The 5★ timeline in the overview can be switched between horizontal and vertical, like on each pull type.
+- **Fresher cards.** The stat cards and the distribution chart have a soft tint of their accent colour, and the pity and 5★ bars in the overview are rounded and animated.
+- **Readable numbers.** Large numbers are grouped by your app language, for example 10.000 in Indonesian and 10,000 in English.
+
+### Fixes
+- Removed deprecated file picker arguments when saving backups, logs and images.
+
+### Notes
+- The new translations were machine-made and have not been reviewed by native speakers.
+
 ## 1.5.1
 
 A tidier import dialog, running text for long labels, and a small fix on wide screens.
