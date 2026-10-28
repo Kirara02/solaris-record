@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/i18n/number_format.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
@@ -358,7 +359,7 @@ class _OverviewBody extends StatelessWidget {
           cards: [
             StatCard(
               label: t.stats.total,
-              value: '${stats.total}',
+              value: formatNumber(stats.total),
               accent: scheme.primary,
               detail: t.stats.overviewAll,
             ),

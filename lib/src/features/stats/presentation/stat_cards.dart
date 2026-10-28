@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/i18n/number_format.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -168,19 +169,19 @@ class StatCardsRow extends StatelessWidget {
     final cards = <Widget>[
       StatCard(
         label: t.stats.total,
-        value: '$total',
+        value: formatNumber(total),
         accent: scheme.primary,
-        detail: t.stats.totalDetail(n: stats.threeStars),
+        detail: t.stats.totalDetail(n: formatNumber(stats.threeStars)),
       ),
       StatCard(
         label: t.stats.countFive,
-        value: '${stats.fiveStars}',
+        value: formatNumber(stats.fiveStars),
         accent: rarityColor(scheme, 5),
         detail: detail(stats.fiveStars, stats.averagePullsPerFiveStar),
       ),
       StatCard(
         label: t.stats.countFour,
-        value: '${stats.fourStars}',
+        value: formatNumber(stats.fourStars),
         accent: rarityColor(scheme, 4),
         detail: detail(stats.fourStars, stats.averagePullsPerFourStar),
       ),

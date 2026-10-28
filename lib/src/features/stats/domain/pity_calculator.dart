@@ -195,3 +195,29 @@ PoolStats calculatePoolStats(PoolType pool, List<Pull> pulls) {
     nextFiveStarGuaranteed: guaranteed,
   );
 }
+
+const astritePerPull = 160;
+
+/// Counts of 5★ per [bucketSize] pulls (1-10, 11-20, …) up to [hardPity].
+List<int> pityHistogram(
+  List<FiveStarEntry> history,
+  int hardPity, {
+  int bucketSize = 10,
+}) {
+  final buckets = List.filled((hardPity + bucketSize - 1) ~/ bucketSize, 0);
+  for (final e in history) {
+    final i = ((e.pullsUsed - 1) ~/ bucketSize).clamp(0, buckets.length - 1);
+    buckets[i]++;
+  }
+  return buckets;
+}
+
+/// Most pulls still needed for the next 5★, or for the featured one on a pool
+/// with a 50/50 (a lost 50/50 needs a second full pity unless already
+/// guaranteed).
+int maxPullsToNext(PoolType pool, PoolStats stats) {
+  final hard = pool.hardPity5;
+  final toNext = hard - stats.pity5;
+  if (!pool.hasFiftyFifty || stats.nextFiveStarGuaranteed) return toNext;
+  return toNext + hard;
+}
