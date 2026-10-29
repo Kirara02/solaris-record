@@ -24,7 +24,7 @@ dependencies:
   flutter_svg: ^2.3.0
   go_router: ^18.1.0
   intl: ^0.20.3
-  liquid_glass_easy: 5.0.0
+  liquid_glass_easy: ^5.0.0
   logging: ^1.3.0
   material_3_expressive: ^1.1.6
   material_color_utilities: ^0.13.0
