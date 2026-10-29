@@ -125,6 +125,15 @@ class ConveneRepository {
     return (await query.map((r) => r.read(n)).getSingle()) ?? 0;
   }
 
+  /// [countWithoutResourceId] kept up to date, for the warning in the top bar.
+  Stream<int> watchCountWithoutResourceId() {
+    final n = _db.conveneRecords.id.count();
+    final query = _db.selectOnly(_db.conveneRecords)
+      ..addColumns([n])
+      ..where(_db.conveneRecords.resourceId.equals(0));
+    return query.map((r) => r.read(n) ?? 0).watchSingle();
+  }
+
   /// Gives the records named [name] that have no resourceId their [resourceId]
   /// and [resourceType]. Only such records are touched (a known id is never
   /// replaced) and none of the columns of the unique key change, so this is

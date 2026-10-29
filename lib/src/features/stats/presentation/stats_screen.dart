@@ -14,6 +14,7 @@ import '../../../shared/widgets/settings_group.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/presentation/account_widgets.dart';
 import '../../import/presentation/import_dialog.dart';
+import '../../settings/presentation/repair_warning.dart';
 import '../../share/presentation/share_dialog.dart';
 import '../domain/pool_type.dart';
 import '../pool_selection.dart';
@@ -60,6 +61,7 @@ class StatsScreen extends ConsumerWidget {
             actions: wide
                 ? [
                     // Wide top bar: "Update" button and the account pill.
+                    const RepairWarningButton(),
                     IconButton(
                       tooltip: t.share.tooltip,
                       icon: const AdaptiveIcon(Icons.ios_share),
@@ -80,6 +82,7 @@ class StatsScreen extends ConsumerWidget {
                     AccountPill(account: account),
                   ]
                 : [
+                    const RepairWarningButton(),
                     IconButton(
                       tooltip: t.share.tooltip,
                       icon: const AdaptiveIcon(Icons.ios_share),
