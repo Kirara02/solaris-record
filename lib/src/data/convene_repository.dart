@@ -105,6 +105,44 @@ class ConveneRepository {
     );
   }
 
+  /// Distinct names of the records that still lack a resourceId (imported
+  /// without one and never seen again by a URL import).
+  Future<List<String>> namesWithoutResourceId() async {
+    final query = _db.selectOnly(_db.conveneRecords, distinct: true)
+      ..addColumns([_db.conveneRecords.name])
+      ..where(_db.conveneRecords.resourceId.equals(0));
+    return [
+      for (final row in await query.get()) row.read(_db.conveneRecords.name)!,
+    ];
+  }
+
+  /// How many records still lack a resourceId.
+  Future<int> countWithoutResourceId() async {
+    final n = _db.conveneRecords.id.count();
+    final query = _db.selectOnly(_db.conveneRecords)
+      ..addColumns([n])
+      ..where(_db.conveneRecords.resourceId.equals(0));
+    return (await query.map((r) => r.read(n)).getSingle()) ?? 0;
+  }
+
+  /// Gives the records named [name] that have no resourceId their [resourceId]
+  /// and [resourceType]. Only such records are touched (a known id is never
+  /// replaced) and none of the columns of the unique key change, so this is
+  /// safe to repeat. Returns how many records changed.
+  Future<int> fillResourceId({
+    required String name,
+    required int resourceId,
+    required String resourceType,
+  }) =>
+      (_db.update(
+        _db.conveneRecords,
+      )..where((r) => r.name.equals(name) & r.resourceId.equals(0))).write(
+        ConveneRecordsCompanion(
+          resourceId: Value(resourceId),
+          resourceType: Value(resourceType),
+        ),
+      );
+
   Future<void> deleteAllData() => _db.transaction(() async {
     await _db.delete(_db.conveneRecords).go();
     await _db.delete(_db.accounts).go();
