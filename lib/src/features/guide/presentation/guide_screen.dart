@@ -10,6 +10,8 @@ import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
+import '../../../shared/widgets/settings_group.dart';
+import '../../info/presentation/item_sections.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/guide_entry.dart';
 import '../guide_providers.dart';
@@ -204,26 +206,104 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
                       ),
                     ];
                   }
-                  return [
-                    SliverAdaptivePadding(
-                      sliver: SliverGrid.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 170,
-                              childAspectRatio: 0.72,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
-                            ),
-                        itemCount: shown.length,
-                        itemBuilder: (context, i) => GuideCard(entry: shown[i]),
-                      ),
-                    ),
-                  ];
+                  // Echoes are listed per sonata effect, like encore.moe.
+                  if (kind == GuideKind.echo) {
+                    final groups = groupEchoesBySonata(
+                      shown,
+                      only: _filter.sonatas,
+                    );
+                    if (groups.isEmpty) {
+                      return [
+                        SliverFillBody(
+                          child: Center(child: Text(t.guide.noResults)),
+                        ),
+                      ];
+                    }
+                    return [
+                      for (final (i, g) in groups.indexed)
+                        _SonataSection(group: g, last: i == groups.length - 1),
+                    ];
+                  }
+                  return [SliverAdaptivePadding(sliver: _guideGrid(shown))];
                 },
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+SliverGrid _guideGrid(List<GuideEntry> entries) => SliverGrid.builder(
+  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+    maxCrossAxisExtent: 170,
+    childAspectRatio: 0.72,
+    mainAxisSpacing: 10,
+    crossAxisSpacing: 10,
+  ),
+  itemCount: entries.length,
+  itemBuilder: (context, i) => GuideCard(entry: entries[i]),
+);
+
+/// One sonata effect: its icon, name and echo count over the echoes that
+/// belong to it, on a grouped surface.
+class _SonataSection extends StatelessWidget {
+  const _SonataSection({required this.group, required this.last});
+
+  final EchoGroup group;
+
+  /// The last section clears the shell's bottom inset.
+  final bool last;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final theme = Theme.of(context);
+    return SliverAdaptivePadding(
+      bottom: 12,
+      clearBottomInset: last,
+      sliver: DecoratedSliver(
+        decoration: groupDecoration(context),
+        sliver: SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      GameIcon(group.sonata.iconUrl, size: 36),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            text: group.sonata.name,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                            children: [
+                              TextSpan(
+                                text:
+                                    '  (${t.guide.echoCount(n: group.entries.length)})',
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              _guideGrid(group.entries),
+            ],
+          ),
+        ),
       ),
     );
   }

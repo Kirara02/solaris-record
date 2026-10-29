@@ -487,6 +487,9 @@
     "resonators": "共鸣者",
     "weapons": "武器",
     "echoes": "声骸",
+    "echoCount(plural)": {
+      "other": "{n} 个"
+    },
     "echo": "声骸",
     "search": "按名称搜索",
     "noResults": "没有符合搜索的内容。",
@@ -498,6 +501,13 @@
     "location": "地点",
     "echoSkill": "声骸技能",
     "cooldown": "冷却 {n} 秒",
+    "damageInfo": "伤害信息",
+    "colRate": "倍率",
+    "colResonanceEnergy": "共鸣能量",
+    "colConcertoEnergy": "协奏能量",
+    "colHardness": "共振度",
+    "colToughness": "韧性",
+    "colOffTune": "失谐",
     "mainStats": "主属性",
     "sonata": "合鸣效果",
     "pieces": "{n} 件",

@@ -487,6 +487,9 @@
     "resonators": "Resonator",
     "weapons": "Senjata",
     "echoes": "Echo",
+    "echoCount(plural)": {
+      "other": "{n} echo"
+    },
     "echo": "Echo",
     "search": "Cari berdasarkan nama",
     "noResults": "Tidak ada yang cocok dengan pencarian.",
@@ -498,6 +501,13 @@
     "location": "Lokasi",
     "echoSkill": "Skill Echo",
     "cooldown": "Cooldown {n}d",
+    "damageInfo": "Info damage",
+    "colRate": "Rate",
+    "colResonanceEnergy": "Energi Resonansi",
+    "colConcertoEnergy": "Energi Concerto",
+    "colHardness": "Kekerasan",
+    "colToughness": "Ketangguhan",
+    "colOffTune": "Off-tune",
     "mainStats": "Stat utama",
     "sonata": "Efek Sonata",
     "pieces": "{n} bagian",

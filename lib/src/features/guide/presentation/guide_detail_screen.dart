@@ -19,6 +19,8 @@ import '../../info/presentation/item_sections.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/guide_entry.dart';
 import '../guide_providers.dart';
+import 'echo_damage_info.dart';
+import 'echo_skill_level.dart';
 
 /// Full-screen details of one guide entry. Resonators and weapons reuse the
 /// item info body; echoes have their own.
@@ -146,10 +148,21 @@ class GuideDetailScreen extends ConsumerWidget {
   }
 }
 
-class _EchoBody extends StatelessWidget {
+class _EchoBody extends StatefulWidget {
   const _EchoBody({required this.info});
 
   final EchoInfo info;
+
+  @override
+  State<_EchoBody> createState() => _EchoBodyState();
+}
+
+class _EchoBodyState extends State<_EchoBody> {
+  EchoInfo get info => widget.info;
+
+  /// The skill level the text and the damage info are shown at; the text of
+  /// the API is written at the highest one.
+  late int _skillLevel = info.maxSkillLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -233,8 +246,38 @@ class _EchoBody extends StatelessWidget {
             cooldown == null
                 ? t.guide.echoSkill
                 : '${t.guide.echoSkill} · ${t.guide.cooldown(n: _seconds(cooldown))}',
-            textBlock(info.skill!),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (info.maxSkillLevel > 1)
+                    EchoSkillLevel(
+                      level: _skillLevel,
+                      max: info.maxSkillLevel,
+                      onChanged: (v) => setState(() => _skillLevel = v),
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (info.skillIconUrl != null) ...[
+                        GameIcon(info.skillIconUrl, size: 44),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child: Text(
+                          info.skillTextAt(_skillLevel) ?? info.skill!,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
+        if (info.hits.isNotEmpty)
+          EchoDamageInfo(info: info, level: _skillLevel),
         if (info.mainStats != null)
           section(t.guide.mainStats, textBlock(info.mainStats!)),
         if (info.sets.isNotEmpty)

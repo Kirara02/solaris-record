@@ -487,6 +487,9 @@
     "resonators": "共鳴者",
     "weapons": "武器",
     "echoes": "音骸",
+    "echoCount(plural)": {
+      "other": "{n}個"
+    },
     "echo": "音骸",
     "search": "名前で検索",
     "noResults": "検索に一致するものはありません。",
@@ -498,6 +501,13 @@
     "location": "場所",
     "echoSkill": "音骸スキル",
     "cooldown": "クールダウン {n}秒",
+    "damageInfo": "ダメージ情報",
+    "colRate": "倍率",
+    "colResonanceEnergy": "共鳴エネルギー",
+    "colConcertoEnergy": "協奏エネルギー",
+    "colHardness": "共振度",
+    "colToughness": "靭性",
+    "colOffTune": "不協和",
     "mainStats": "メインステータス",
     "sonata": "ソナタ効果",
     "pieces": "{n}セット",
