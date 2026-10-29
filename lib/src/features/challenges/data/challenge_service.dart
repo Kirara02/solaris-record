@@ -7,6 +7,7 @@ import '../../info/domain/encore_links.dart';
 import '../domain/challenge_models.dart';
 import '../domain/challenge_season.dart';
 import '../domain/matrix_models.dart';
+import '../domain/monster_info.dart';
 
 /// Loads Tower of Adversity and Whimpering Wastes data from the community
 /// encore.moe API. Responses are cached on disk for a day (new seasons show up
@@ -60,4 +61,8 @@ class ChallengeService {
       parseMatrixSeason(
         jsonDecode(await _loadJson(_url('dpmatrix', lang, season))),
       );
+
+  /// One enemy's page in [lang]; null when the answer is not a monster.
+  Future<MonsterInfo?> monster(int id, String lang) async =>
+      parseMonsterInfo(jsonDecode(await _loadJson(_url('monster', lang, id))));
 }

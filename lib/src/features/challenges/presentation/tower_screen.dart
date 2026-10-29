@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -365,6 +367,12 @@ class _FloorCard extends StatelessWidget {
                       for (final (i, m) in stage.monsters.indexed)
                         MonsterTile(
                           monster: m,
+                          onTap: m.id == null
+                              ? null
+                              : () => context.push(
+                                  AppRoutes.towerMonster(m.id!),
+                                  extra: m,
+                                ),
                           statsOpen: openStats == '${stage.floor}/$i',
                           onToggleStats: () =>
                               onToggleStats('${stage.floor}/$i'),

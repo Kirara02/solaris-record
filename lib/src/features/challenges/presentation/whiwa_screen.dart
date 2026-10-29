@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
@@ -374,7 +376,16 @@ class _LevelCard extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           alignment: WrapAlignment.center,
-          children: [for (final m in s.monsters) MonsterTile(monster: m)],
+          children: [
+            for (final m in s.monsters)
+              MonsterTile(
+                monster: m,
+                onTap: m.id == null
+                    ? null
+                    : () =>
+                          context.push(AppRoutes.whiwaMonster(m.id!), extra: m),
+              ),
+          ],
         ),
       ],
     );

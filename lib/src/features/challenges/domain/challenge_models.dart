@@ -60,6 +60,7 @@ const _shownStats = {
 class ChallengeMonster {
   const ChallengeMonster({
     required this.name,
+    this.id,
     this.iconUrl,
     this.level,
     this.rarity,
@@ -69,6 +70,9 @@ class ChallengeMonster {
   });
 
   final String name;
+
+  /// encore.moe monster id, which its detail page is addressed by.
+  final int? id;
   final String? iconUrl;
   final int? level;
 
@@ -118,6 +122,7 @@ ChallengeMonster? parseMonster(Object? raw) {
   if (elements.isEmpty && single is Map) elements = _elements([single]);
   return ChallengeMonster(
     name: name,
+    id: raw['id'] is int ? raw['id'] as int : null,
     iconUrl: _url(raw['icon']),
     level: level,
     rarity: rarity is Map ? textOf(rarity['desc']) : null,
