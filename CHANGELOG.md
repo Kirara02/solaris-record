@@ -4,6 +4,29 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.7.0
+
+Enemy details, echoes grouped by sonata with their skill numbers, a repair for old records and the Mornye look carried through the whole app.
+
+### What's new
+- **Enemy details.** Tap an enemy in the Tower of Adversity or Whimpering Wastes to open its page: art, class, element, description and base stats, with a level slider from 1 to 120 that scales the stats.
+- **Echoes by sonata.** The echo list in the Guide is grouped by sonata effect, like on encore.moe, and an echo with several effects is listed under each of them.
+- **Echo skill.** The echo detail shows the skill icon and a level slider (1 to 5) that moves the skill text, and a *Damage info* section with the rate, resonance and concerto energy, hardness, toughness and off-tune of each hit.
+- **Repair records.** Records imported without an item id, which a WuWa Tracker export can leave out, have no icon and no details. A warning icon in the top bar of the Overview and Convene screens offers to repair them, and *Data & storage* has a *Repair records* item too. It looks the item up by name on encore.moe and only fills in what is missing: it never replaces or deletes a record.
+- **Mornye everywhere.** Cards, chips, badges, the update dialog and the share card are flat in the Mornye style, and buttons, sliders and the loading indicator switch to their iOS look.
+- **Connected setting rows.** In the Material style, the rows of a settings group are separate tiles with small gaps instead of one card with dividers, as in Mornye. Rows are tighter on desktop.
+- **Guide details** keep a comfortable reading width on wide windows, and a failed or empty page still offers the link to encore.moe.
+
+### Fixes
+- The echo list no longer shows the same echo several times. The source also lists unfinished copies of real echoes that carry another echo's skill text; they are hidden.
+- Loading, empty and error messages on wide screens are centered in the area beside the sidebar instead of the whole window.
+
+### Notes
+- Enemy stats on the detail page come from encore.moe and follow its level formula. They can differ from the numbers on the challenge screens, because Whimpering Wastes scales its enemies its own way. Endstate Matrix bosses are not in encore.moe's enemy list, so they have no page.
+- For about one echo in ten the skill text cannot be rewritten for a lower level and stays at level 5, while the *Damage info* numbers still follow the slider.
+- The glass effects use liquid_glass_easy 5.1.0.
+- The new translations were machine-made and have not been reviewed by native speakers. The *Damage info* column names (hardness, toughness, off-tune) in Indonesian, Japanese and Chinese are best guesses.
+
 ## 1.6.0
 
 More to read from your pulls: 50/50 win rate and streaks, a pity distribution chart and a fresher look for the stat cards.
