@@ -65,11 +65,7 @@ class _FiveStarTimelineState extends State<FiveStarTimeline> {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: context.tokens.borderRadiusCard,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: groupDecoration(context),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

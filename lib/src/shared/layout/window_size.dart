@@ -65,8 +65,38 @@ class SliverAdaptivePadding extends StatelessWidget {
           bottom +
               (clearBottomInset ? MediaQuery.paddingOf(context).bottom : 0),
         ),
-        sliver: sliver,
+        // The rail is cleared by the padding above; what is inside no longer
+        // sees it (see [SliverFillBody]).
+        sliver: MediaQuery.removePadding(
+          context: context,
+          removeLeft: true,
+          child: sliver,
+        ),
       );
     },
+  );
+}
+
+/// Fills the rest of the viewport with [child], centred in the area that is
+/// actually visible: the wide layout's rail can sit over the page's left edge
+/// (its width arrives as left padding), so the child is inset by it.
+class SliverFillBody extends StatelessWidget {
+  const SliverFillBody({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => SliverFillRemaining(
+    hasScrollBody: false,
+    child: Padding(
+      padding: EdgeInsets.only(left: MediaQuery.paddingOf(context).left),
+      // Used up here, so a child that insets by the rail itself (EmptyState)
+      // does not count it twice.
+      child: MediaQuery.removePadding(
+        context: context,
+        removeLeft: true,
+        child: child,
+      ),
+    ),
   );
 }

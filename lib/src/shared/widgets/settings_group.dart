@@ -19,16 +19,105 @@ Color groupColor(BuildContext context) {
   );
 }
 
-/// Rounded, outlined container for a list of [SettingsItem]s or any content.
+/// Decoration of a content card on the page: the grouped fill with the card
+/// radius. Material adds a hairline outline; Mornye stays flat like an iOS
+/// inset group.
+BoxDecoration groupDecoration(BuildContext context) {
+  final scheme = Theme.of(context).colorScheme;
+  return BoxDecoration(
+    color: groupColor(context),
+    borderRadius: context.tokens.borderRadiusCard,
+    border: context.isMornye
+        ? null
+        : Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+  );
+}
+
+/// Whether the rows below are drawn as separate connected tiles, which have
+/// gaps instead of dividers.
+bool settingsRowsConnected(BuildContext context) =>
+    context.dependOnInheritedWidgetOfExactType<_ConnectedRowsScope>() != null;
+
+/// Corners of one tile in a connected list: the card radius at the [first] and
+/// [last] ends of the run, tight corners between tiles.
+BorderRadius connectedRowRadius(
+  BuildContext context, {
+  required bool first,
+  required bool last,
+}) {
+  final outer = Radius.circular(context.tokens.radiusCard);
+  const inner = Radius.circular(4);
+  return BorderRadius.vertical(
+    top: first ? outer : inner,
+    bottom: last ? outer : inner,
+  );
+}
+
+class _ConnectedRowsScope extends InheritedWidget {
+  const _ConnectedRowsScope({required super.child});
+
+  @override
+  bool updateShouldNotify(_ConnectedRowsScope oldWidget) => false;
+}
+
+/// Rounded container for a list of [SettingsItem]s or any content. In the
+/// Material style a group of plain rows is drawn as connected tiles: one
+/// surface per row, a 2dp gap between them, tight inner corners and no
+/// dividers. Other content keeps a single outlined card.
 class SettingsGroup extends StatelessWidget {
-  const SettingsGroup({super.key, required this.children, this.color});
+  const SettingsGroup({
+    super.key,
+    required this.children,
+    this.color,
+    this.connected = false,
+  });
 
   final List<Widget> children;
   final Color? color;
 
+  /// Connects custom [children] that are each one complete row. Groups made
+  /// only of [SettingsItem] and [SettingsSwitchItem] connect without it.
+  final bool connected;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    // Forms and custom content stay one card, so spacers never become tiles.
+    final standardRows =
+        children.isNotEmpty &&
+        (connected ||
+            children.every(
+              (child) => child is SettingsItem || child is SettingsSwitchItem,
+            ));
+    if (!context.isMornye && standardRows) {
+      final tile = color ?? groupColor(context);
+      final last = children.length - 1;
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: _ConnectedRowsScope(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final (index, row) in children.indexed) ...[
+                if (index > 0) const SizedBox(height: 2),
+                Material(
+                  color: tile,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: connectedRowRadius(
+                      context,
+                      first: index == 0,
+                      last: index == last,
+                    ),
+                  ),
+                  child: row,
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
     final border = context.isMornye
         ? BorderSide.none
         : BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5));
@@ -87,6 +176,8 @@ class SettingsItem extends StatelessWidget {
     this.onTap,
     this.showDivider = true,
     this.dividerIndent,
+    this.selected,
+    this.compact = false,
   });
 
   final IconData? icon;
@@ -108,6 +199,13 @@ class SettingsItem extends StatelessWidget {
   /// Overrides the divider's left inset (defaults to the icon-aligned inset).
   final double? dividerIndent;
 
+  /// Announces a checkmark choice's state to screen readers; null for rows
+  /// that are not choices.
+  final bool? selected;
+
+  /// Tighter vertical padding for rows that carry a tall trailing control.
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -118,92 +216,106 @@ class SettingsItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        InkWell(
-          onTap: onTap,
-          splashColor: scheme.primary.withValues(alpha: 0.12),
-          highlightColor: Colors.transparent,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: tokens.rowPaddingH,
-              vertical: tokens.rowPaddingV,
-            ),
-            child: Row(
-              children: [
-                if (hasLeading) ...[
-                  leading ??
-                      AdaptiveIcon(
-                        icon,
-                        color: iconColor ?? scheme.onSurfaceVariant,
-                        size: 24,
-                      ),
-                  SizedBox(width: tokens.rowIconGap),
-                ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (badge == null)
-                        Text(title, style: titleStyle ?? text.bodyLarge)
-                      else
-                        Wrap(
-                          spacing: 8,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Text(title, style: titleStyle ?? text.bodyLarge),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: scheme.primary.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(
-                                  tokens.radiusBadge,
+        Semantics(
+          selected: selected,
+          inMutuallyExclusiveGroup: selected != null,
+          child: InkWell(
+            onTap: onTap,
+            splashColor: scheme.primary.withValues(alpha: 0.12),
+            highlightColor: Colors.transparent,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.rowPaddingH,
+                vertical: compact
+                    ? tokens.rowPaddingVCompact
+                    : tokens.rowPaddingV,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: tokens.rowMinHeight),
+                child: Row(
+                  children: [
+                    if (hasLeading) ...[
+                      leading ??
+                          AdaptiveIcon(
+                            icon,
+                            color: iconColor ?? scheme.onSurfaceVariant,
+                            size: 24,
+                          ),
+                      SizedBox(width: tokens.rowIconGap),
+                    ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (badge == null)
+                            Text(title, style: titleStyle ?? text.bodyLarge)
+                          else
+                            Wrap(
+                              spacing: 8,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Text(
+                                  title,
+                                  style: titleStyle ?? text.bodyLarge,
                                 ),
-                              ),
-                              child: Text(
-                                badge!,
-                                style: TextStyle(
-                                  color: scheme.primary,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: scheme.primary.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      tokens.radiusBadge,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    badge!,
+                                    style: TextStyle(
+                                      color: scheme.primary,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
+                              ],
+                            ),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              subtitle!,
+                              style: text.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
                               ),
                             ),
                           ],
-                        ),
-                      if (subtitle != null) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle!,
-                          style: text.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                      if (footer != null) ...[
-                        const SizedBox(height: 8),
-                        footer!,
-                      ],
+                          if (footer != null) ...[
+                            const SizedBox(height: 8),
+                            footer!,
+                          ],
+                        ],
+                      ),
+                    ),
+                    if (trailing != null) ...[
+                      const SizedBox(width: 8),
+                      trailing!,
+                    ] else if (onTap != null) ...[
+                      const SizedBox(width: 8),
+                      AdaptiveIcon(
+                        Icons.chevron_right,
+                        size: tokens.rowChevronSize,
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ],
-                  ),
+                  ],
                 ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8),
-                  trailing!,
-                ] else if (onTap != null) ...[
-                  const SizedBox(width: 8),
-                  AdaptiveIcon(
-                    Icons.chevron_right,
-                    size: context.isMornye ? 20 : 24,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ],
-              ],
+              ),
             ),
           ),
         ),
-        if (showDivider)
+        if (showDivider && !settingsRowsConnected(context))
           Divider(
             height: 1,
             indent:
@@ -242,6 +354,7 @@ class SettingsSwitchItem extends StatelessWidget {
     title: title,
     subtitle: subtitle,
     showDivider: showDivider,
+    compact: true,
     onTap: onChanged == null ? null : () => onChanged!(!value),
     trailing: context.isMornye
         ? CupertinoSwitch(
@@ -385,6 +498,27 @@ class SettingsChoiceChip extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Background and text colours for a [StatusBadge] that tells two kinds of
+/// attribute apart (element vs. weapon type). Mornye's container roles are
+/// neutral greys, so there the badge is a wash of the primary or tertiary
+/// colour instead.
+(Color background, Color foreground) attributeBadgeColors(
+  BuildContext context, {
+  required bool primary,
+}) {
+  final scheme = Theme.of(context).colorScheme;
+  if (context.isMornye) {
+    final base = primary ? scheme.primary : scheme.tertiary;
+    return (
+      Color.alphaBlend(base.withValues(alpha: 0.16), scheme.surfaceContainer),
+      base,
+    );
+  }
+  return primary
+      ? (scheme.primaryContainer, scheme.onPrimaryContainer)
+      : (scheme.tertiaryContainer, scheme.onTertiaryContainer);
 }
 
 /// Compact tinted label for statuses (Won 50/50, Active, ...).

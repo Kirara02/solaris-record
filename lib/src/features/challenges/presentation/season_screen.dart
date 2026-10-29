@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../settings/settings_providers.dart';
@@ -58,10 +58,7 @@ class _SeasonScreenState extends ConsumerState<SeasonScreen> {
           ),
           ...seasons.when(
             loading: () => [
-              const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(child: M3ELoadingIndicator()),
-              ),
+              const SliverFillBody(child: Center(child: AppLoadingIndicator())),
             ],
             error: (_, _) => [
               SliverAdaptivePadding(
@@ -80,8 +77,7 @@ class _SeasonScreenState extends ConsumerState<SeasonScreen> {
                   defaultSeason(all, DateTime.now());
               if (selected == null) {
                 return [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
+                  SliverFillBody(
                     child: Center(child: Text(t.challenges.empty)),
                   ),
                 ];

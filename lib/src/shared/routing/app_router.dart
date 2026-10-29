@@ -3,7 +3,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/accounts/presentation/accounts_screen.dart';
+import '../../features/challenges/domain/challenge_models.dart';
 import '../../features/challenges/presentation/matrix_screen.dart';
+import '../../features/challenges/presentation/monster_screen.dart';
 import '../../features/challenges/presentation/tower_screen.dart';
 import '../../features/challenges/presentation/whiwa_screen.dart';
 import '../../features/explore/presentation/explore_screen.dart';
@@ -56,6 +58,21 @@ Page<void> _subPage(GoRouterState state, Widget child) =>
         );
       },
     );
+
+/// An enemy's detail, below the tool it was opened from. The tile that opened
+/// it can pass the enemy as `extra` to title the page while it loads.
+GoRoute _monsterRoute() => GoRoute(
+  path: 'monster/:id',
+  pageBuilder: (c, s) {
+    final id = int.tryParse(s.pathParameters['id'] ?? '');
+    if (id == null) return _page(s, const _NotFound());
+    final extra = s.extra;
+    return _subPage(
+      s,
+      MonsterScreen(id: id, preview: extra is ChallengeMonster ? extra : null),
+    );
+  },
+);
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
@@ -126,10 +143,12 @@ GoRouter appRouter(Ref ref) {
                   GoRoute(
                     path: 'tower',
                     pageBuilder: (c, s) => _subPage(s, const TowerScreen()),
+                    routes: [_monsterRoute()],
                   ),
                   GoRoute(
                     path: 'whiwa',
                     pageBuilder: (c, s) => _subPage(s, const WhiwaScreen()),
+                    routes: [_monsterRoute()],
                   ),
                   GoRoute(
                     path: 'matrix',

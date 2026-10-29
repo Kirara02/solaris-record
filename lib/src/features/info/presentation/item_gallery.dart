@@ -3,12 +3,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/item_info.dart';
 
@@ -53,13 +54,33 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
     setState(() => _index = (_index + delta) % n);
   }
 
-  // Scaling up first keeps the bleed on the right edge from showing a gap.
+  /// Weapon art sits right of center: it is scaled up, then moved left by this
+  /// fraction of its width. Scaling first keeps the bleed on the right edge
+  /// from showing a gap.
+  static const _weaponShift = -0.1;
+  static const _weaponScale = 1.2;
+
   Widget _shifted(Widget image) => widget.shiftLeft
       ? FractionalTranslation(
-          translation: const Offset(-0.1, 0),
-          child: Transform.scale(scale: 1.2, child: image),
+          translation: const Offset(_weaponShift, 0),
+          child: Transform.scale(scale: _weaponScale, child: image),
         )
       : image;
+
+  /// Arrow over the art. Mornye backs it with a soft disc so it reads on any
+  /// picture.
+  Widget _arrow(IconData icon, String tooltip, VoidCallback onPressed) =>
+      IconButton(
+        tooltip: tooltip,
+        icon: AdaptiveIcon(icon),
+        style: context.isMornye
+            ? IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface
+                    .withValues(alpha: 0.6),
+              )
+            : null,
+        onPressed: onPressed,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +110,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                     imageUrl: url,
                     fit: BoxFit.contain,
                     placeholder: (_, _) =>
-                        const Center(child: M3ELoadingIndicator()),
+                        const Center(child: AppLoadingIndicator()),
                     errorWidget: (_, _, _) => Center(
                       child: AdaptiveIcon(
                         Icons.image_not_supported_outlined,
@@ -129,18 +150,18 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
               if (urls.length > 1) ...[
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    tooltip: t.info.galleryPrevious,
-                    icon: const AdaptiveIcon(Icons.chevron_left),
-                    onPressed: () => _step(-1),
+                  child: _arrow(
+                    Icons.chevron_left,
+                    t.info.galleryPrevious,
+                    () => _step(-1),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: IconButton(
-                    tooltip: t.info.galleryNext,
-                    icon: const AdaptiveIcon(Icons.chevron_right),
-                    onPressed: () => _step(1),
+                  child: _arrow(
+                    Icons.chevron_right,
+                    t.info.galleryNext,
+                    () => _step(1),
                   ),
                 ),
                 Positioned(
@@ -272,7 +293,7 @@ class _ImageViewerState extends State<_ImageViewer> {
                 imageUrl: widget.url,
                 fit: BoxFit.contain,
                 placeholder: (_, _) =>
-                    const Center(child: M3ELoadingIndicator()),
+                    const Center(child: AppLoadingIndicator()),
                 errorWidget: (_, _, _) => Center(
                   child: Text(
                     t.info.imageLoadFailed,

@@ -175,6 +175,7 @@ class MonsterTile extends StatelessWidget {
     required this.monster,
     this.statsOpen = false,
     this.onToggleStats,
+    this.onTap,
   });
 
   final ChallengeMonster monster;
@@ -182,6 +183,9 @@ class MonsterTile extends StatelessWidget {
 
   /// Taps of the +/- button; the button only shows for monsters with stats.
   final VoidCallback? onToggleStats;
+
+  /// Taps of the tile itself.
+  final VoidCallback? onTap;
 
   static const _width = 80.0;
 
@@ -196,79 +200,82 @@ class MonsterTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Container(
+            child: Material(
               color: scheme.surfaceContainerHighest,
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: monster.iconUrl == null
-                            ? const SizedBox.shrink()
-                            : CachedNetworkImage(
-                                imageUrl: monster.iconUrl!,
-                                memCacheWidth: 200,
-                                fit: BoxFit.contain,
-                                fadeInDuration: Duration.zero,
-                                errorWidget: (_, _, _) =>
-                                    const SizedBox.shrink(),
-                              ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        left: 4,
-                        child: Column(
-                          children: [
-                            for (final e in monster.elements)
-                              if (e.iconUrl != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 4),
-                                  child: Tooltip(
-                                    message: e.name,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.black54,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: e.iconUrl!,
-                                        memCacheWidth: 48,
-                                        fadeInDuration: Duration.zero,
-                                        errorWidget: (_, _, _) =>
-                                            const SizedBox.shrink(),
+              child: InkWell(
+                onTap: onTap,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 1,
+                          child: monster.iconUrl == null
+                              ? const SizedBox.shrink()
+                              : CachedNetworkImage(
+                                  imageUrl: monster.iconUrl!,
+                                  memCacheWidth: 200,
+                                  fit: BoxFit.contain,
+                                  fadeInDuration: Duration.zero,
+                                  errorWidget: (_, _, _) =>
+                                      const SizedBox.shrink(),
+                                ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          left: 4,
+                          child: Column(
+                            children: [
+                              for (final e in monster.elements)
+                                if (e.iconUrl != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Tooltip(
+                                      message: e.name,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: e.iconUrl!,
+                                          memCacheWidth: 48,
+                                          fadeInDuration: Duration.zero,
+                                          errorWidget: (_, _, _) =>
+                                              const SizedBox.shrink(),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                          ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(height: 4, color: rarityColor(monster.rarityId)),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.black.withValues(alpha: 0.7),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 5,
+                      ),
+                      child: Text(
+                        monster.name,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontSize: 11,
                         ),
                       ),
-                    ],
-                  ),
-                  Container(height: 4, color: rarityColor(monster.rarityId)),
-                  Container(
-                    width: double.infinity,
-                    color: Colors.black.withValues(alpha: 0.7),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 5,
                     ),
-                    child: Text(
-                      monster.name,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

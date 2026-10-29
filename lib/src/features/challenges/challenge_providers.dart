@@ -5,6 +5,7 @@ import 'data/challenge_service.dart';
 import 'domain/challenge_models.dart';
 import 'domain/challenge_season.dart';
 import 'domain/matrix_models.dart';
+import 'domain/monster_info.dart';
 
 part 'challenge_providers.g.dart';
 
@@ -67,4 +68,10 @@ Future<List<ChallengeSeason>> matrixSeasons(Ref ref, String lang) => _logged(
 Future<MatrixSeason> matrixSeason(Ref ref, int season, String lang) => _logged(
   'Endstate Matrix season=$season lang=$lang',
   () => ref.watch(challengeServiceProvider).matrix(season, lang),
+);
+
+@Riverpod(keepAlive: true, retry: _noRetry)
+Future<MonsterInfo?> monsterInfo(Ref ref, int id, String lang) => _logged(
+  'Monster id=$id lang=$lang',
+  () => ref.watch(challengeServiceProvider).monster(id, lang),
 );

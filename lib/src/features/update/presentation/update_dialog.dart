@@ -10,6 +10,8 @@ import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../settings/data/storage_usage.dart';
 import '../data/update_service.dart';
@@ -146,7 +148,6 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
     final t = context.t;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final tokens = context.tokens;
     final notes = formatReleaseNotes(_info.notes);
     final progress = _total > 0 ? (_received / _total).clamp(0.0, 1.0) : 0.0;
 
@@ -210,15 +211,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest.withValues(
-                      alpha: 0.5,
-                    ),
-                    borderRadius: BorderRadius.circular(tokens.radiusControl),
-                    border: Border.all(
-                      color: scheme.outlineVariant.withValues(alpha: 0.5),
-                    ),
-                  ),
+                  decoration: _wellDecoration(context, outlined: true),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -269,12 +262,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                   const SizedBox(height: 4),
                   Container(
                     constraints: const BoxConstraints(maxHeight: 220),
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest.withValues(
-                        alpha: 0.35,
-                      ),
-                      borderRadius: BorderRadius.circular(tokens.radiusControl),
-                    ),
+                    decoration: _wellDecoration(context),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
                       child: Text(
@@ -299,18 +287,16 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                     width: double.infinity,
                     // A label without an icon is not rendered by M3EButton, so
                     // icon-less buttons pass their text as the child.
-                    child: M3EButton(
-                      style: M3EButtonStyle.outlined,
-                      size: M3EButtonSize.md,
+                    child: AppButton(
+                      style: AppButtonStyle.outlined,
                       onPressed: () => _cancel?.cancel(),
-                      child: Text(t.update.cancel),
+                      label: Text(t.update.cancel),
                     ),
                   )
                 else ...[
                   SizedBox(
                     width: double.infinity,
-                    child: M3EButton(
-                      size: M3EButtonSize.md,
+                    child: AppButton(
                       icon: AdaptiveIcon(
                         _installInApp ? Icons.download : Icons.open_in_new,
                       ),
@@ -322,20 +308,18 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
                   Row(
                     children: [
                       Expanded(
-                        child: M3EButton(
-                          style: M3EButtonStyle.text,
-                          size: M3EButtonSize.md,
+                        child: AppButton(
+                          style: AppButtonStyle.text,
                           onPressed: _skip,
-                          child: Text(t.update.skip),
+                          label: Text(t.update.skip),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: M3EButton(
-                          style: M3EButtonStyle.outlined,
-                          size: M3EButtonSize.md,
+                        child: AppButton(
+                          style: AppButtonStyle.outlined,
                           onPressed: () => Navigator.pop(context),
-                          child: Text(t.update.later),
+                          label: Text(t.update.later),
                         ),
                       ),
                     ],
@@ -415,10 +399,7 @@ class _DownloadProgress extends StatelessWidget {
     final scheme = theme.colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(context.tokens.radiusControl),
-      ),
+      decoration: _wellDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -469,4 +450,22 @@ class _DownloadProgress extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Inset well inside the dialog. Material tints it and can outline it; Mornye
+/// uses its flat control fill without an outline.
+BoxDecoration _wellDecoration(BuildContext context, {bool outlined = false}) {
+  final scheme = Theme.of(context).colorScheme;
+  final mornye = context.isMornye;
+  return BoxDecoration(
+    color: mornye
+        ? MornyeTheme.controlFill(context)
+        : scheme.surfaceContainerHighest.withValues(
+            alpha: outlined ? 0.5 : 0.35,
+          ),
+    borderRadius: BorderRadius.circular(context.tokens.radiusControl),
+    border: outlined && !mornye
+        ? Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5))
+        : null,
+  );
 }

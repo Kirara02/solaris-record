@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -14,6 +14,7 @@ import '../../../shared/widgets/settings_group.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/presentation/account_widgets.dart';
 import '../../import/presentation/import_dialog.dart';
+import '../../settings/presentation/repair_warning.dart';
 import '../../share/presentation/share_dialog.dart';
 import '../domain/pool_type.dart';
 import '../pool_selection.dart';
@@ -41,8 +42,7 @@ class StatsScreen extends ConsumerWidget {
           leading: const AppLogo(size: 104),
           title: t.stats.noAccountTitle,
           body: t.stats.noAccountBody,
-          action: M3EButton(
-            size: M3EButtonSize.md,
+          action: AppButton(
             icon: const AdaptiveIcon(Icons.download),
             label: Text(t.stats.goToImport),
             onPressed: () => showImportDialog(context),
@@ -61,6 +61,7 @@ class StatsScreen extends ConsumerWidget {
             actions: wide
                 ? [
                     // Wide top bar: "Update" button and the account pill.
+                    const RepairWarningButton(),
                     IconButton(
                       tooltip: t.share.tooltip,
                       icon: const AdaptiveIcon(Icons.ios_share),
@@ -71,8 +72,8 @@ class StatsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    M3EButton(
-                      size: M3EButtonSize.sm,
+                    AppButton(
+                      compact: true,
                       icon: const AdaptiveIcon(Icons.sync),
                       label: Text(t.stats.updateShort),
                       onPressed: () => showImportDialog(context),
@@ -81,6 +82,7 @@ class StatsScreen extends ConsumerWidget {
                     AccountPill(account: account),
                   ]
                 : [
+                    const RepairWarningButton(),
                     IconButton(
                       tooltip: t.share.tooltip,
                       icon: const AdaptiveIcon(Icons.ios_share),

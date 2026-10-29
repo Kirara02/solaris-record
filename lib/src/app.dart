@@ -9,6 +9,7 @@ import 'features/shell/rail_metrics.dart';
 import 'shared/i18n/gen/strings.g.dart';
 import 'shared/routing/app_router.dart';
 import 'shared/theme/app_theme.dart';
+import 'shared/theme/app_tokens.dart';
 import 'shared/theme/mornye_theme.dart';
 
 /// Rail items span the whole rail like the hand-drawn Settings item (pill =
@@ -90,10 +91,16 @@ class SolarisApp extends ConsumerWidget {
           debugShowCheckedModeBanner: false,
           theme: mornye
               ? MornyeTheme.build(Brightness.light, mornyeExtra)
-              : applyAppTheme(dataFor(Brightness.light).toThemeData()),
+              : applyAppTheme(
+                  dataFor(Brightness.light).toThemeData(),
+                  tokens: AppTokens.forPlatform,
+                ),
           darkTheme: mornye
               ? MornyeTheme.build(Brightness.dark, mornyeExtra)
-              : applyAppTheme(dataFor(Brightness.dark).toThemeData()),
+              : applyAppTheme(
+                  dataFor(Brightness.dark).toThemeData(),
+                  tokens: AppTokens.forPlatform,
+                ),
           themeMode: settings.mode,
           // M3ETheme reads the parent Theme once per rebuild. With the default
           // animated transition it can capture a half-interpolated (or stale)

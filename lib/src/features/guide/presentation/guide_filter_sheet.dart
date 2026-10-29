@@ -6,6 +6,7 @@ import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../domain/guide_entry.dart';
 import 'echo_labels.dart';
 
@@ -199,13 +200,24 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final radius = BorderRadius.circular(context.tokens.radiusControl);
-    final fg = selected ? scheme.onSecondaryContainer : scheme.onSurface;
+    // Mornye keeps its chips flat: a primary wash when selected, a neutral
+    // fill otherwise, never an outline.
+    final mornye = context.isMornye;
+    final fg = mornye
+        ? (selected ? scheme.primary : scheme.onSurface)
+        : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
     return Material(
-      color: selected ? scheme.secondaryContainer : Colors.transparent,
+      color: mornye
+          ? (selected
+                ? scheme.primary.withValues(alpha: 0.14)
+                : MornyeTheme.controlFill(context))
+          : (selected ? scheme.secondaryContainer : Colors.transparent),
       shape: RoundedRectangleBorder(
         borderRadius: radius,
         side: BorderSide(
-          color: selected ? Colors.transparent : scheme.outlineVariant,
+          color: selected || mornye
+              ? Colors.transparent
+              : scheme.outlineVariant,
         ),
       ),
       clipBehavior: Clip.antiAlias,

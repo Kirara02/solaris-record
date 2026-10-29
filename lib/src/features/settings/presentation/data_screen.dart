@@ -16,6 +16,7 @@ import '../../import/saved_import_urls.dart';
 import '../data/storage_usage.dart';
 import '../settings_providers.dart';
 import 'log_actions.dart';
+import 'record_repair_actions.dart';
 
 class DataScreen extends ConsumerWidget {
   const DataScreen({super.key});
@@ -184,6 +185,12 @@ class DataScreen extends ConsumerWidget {
                 SettingsSectionHeader(title: t.data.sectionRecords),
                 SettingsGroup(
                   children: [
+                    SettingsItem(
+                      icon: Icons.auto_fix_high,
+                      title: t.data.repairRecords,
+                      subtitle: t.data.repairRecordsSubtitle,
+                      onTap: () => repairRecords(context, ref),
+                    ),
                     SettingsItem(
                       icon: Icons.delete_outline,
                       iconColor: scheme.error,

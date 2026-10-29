@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
-import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/item_info.dart';
 
@@ -75,63 +74,66 @@ class _DetailRowState extends State<_DetailRow> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        InkWell(
-          onTap: long ? () => setState(() => _open = !_open) : null,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: tokens.rowPaddingH,
-              vertical: tokens.rowPaddingV,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GameIcon(widget.iconUrl),
-                SizedBox(width: tokens.rowIconGap),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (widget.overline != null)
-                        Text(
-                          widget.overline!,
-                          style: text.labelSmall?.copyWith(
-                            color: scheme.primary,
-                          ),
-                        ),
-                      Text(widget.title, style: text.bodyLarge),
-                      if (description != null) ...[
-                        const SizedBox(height: 2),
-                        AnimatedSize(
-                          duration: const Duration(milliseconds: 180),
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            description,
-                            maxLines: long && !_open ? _foldedLines : null,
-                            overflow: long && !_open
-                                ? TextOverflow.ellipsis
-                                : null,
-                            style: text.bodyMedium?.copyWith(
-                              color: scheme.onSurfaceVariant,
+        Semantics(
+          expanded: long ? _open : null,
+          child: InkWell(
+            onTap: long ? () => setState(() => _open = !_open) : null,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.rowPaddingH,
+                vertical: tokens.rowPaddingV,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GameIcon(widget.iconUrl),
+                  SizedBox(width: tokens.rowIconGap),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.overline != null)
+                          Text(
+                            widget.overline!,
+                            style: text.labelSmall?.copyWith(
+                              color: scheme.primary,
                             ),
                           ),
-                        ),
+                        Text(widget.title, style: text.bodyLarge),
+                        if (description != null) ...[
+                          const SizedBox(height: 2),
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 180),
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              description,
+                              maxLines: long && !_open ? _foldedLines : null,
+                              overflow: long && !_open
+                                  ? TextOverflow.ellipsis
+                                  : null,
+                              style: text.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-                if (long) ...[
-                  const SizedBox(width: 8),
-                  AdaptiveIcon(
-                    _open ? Icons.expand_less : Icons.expand_more,
-                    size: context.isMornye ? 20 : 24,
-                    color: scheme.onSurfaceVariant,
-                  ),
+                  if (long) ...[
+                    const SizedBox(width: 8),
+                    AdaptiveIcon(
+                      _open ? Icons.expand_less : Icons.expand_more,
+                      size: tokens.rowChevronSize,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
-        if (widget.showDivider)
+        if (widget.showDivider && !settingsRowsConnected(context))
           Divider(
             height: 1,
             indent: tokens.rowIconDividerIndent,
@@ -151,6 +153,7 @@ class ItemSkillsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SettingsGroup(
+    connected: true,
     children: [
       for (final (i, s) in skills.indexed)
         _DetailRow(
@@ -172,6 +175,7 @@ class ItemChainGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SettingsGroup(
+    connected: true,
     children: [
       for (final (i, n) in chain.indexed)
         _DetailRow(

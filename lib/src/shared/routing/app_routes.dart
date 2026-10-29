@@ -19,6 +19,11 @@ abstract final class AppRoutes {
   static String itemDetail(String kind, int id) => '/item/$kind/$id';
 
   static String guideDetail(String kind, int id) => '/explore/guide/$kind/$id';
+
+  /// An enemy opened from the Tower of Adversity or Whimpering Wastes; it stays
+  /// under that tool so the sidebar keeps it highlighted.
+  static String towerMonster(int id) => '/explore/tower/monster/$id';
+  static String whiwaMonster(int id) => '/explore/whiwa/monster/$id';
 }
 
 /// Paths of the bottom-bar tabs; every other route is a detail screen.

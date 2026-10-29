@@ -5,6 +5,7 @@ import '../../../shared/i18n/number_format.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/donut_chart.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -26,13 +27,24 @@ const shareTimelineRows = 10;
 
 const _repoUrl = 'github.com/Kirara02/solaris-record';
 
-/// Theme the card renders with, independent of the app's current theme.
-ThemeData shareThemeFor(Color seed, Brightness brightness) => ThemeData(
-  useMaterial3: true,
-  fontFamily: 'Inter',
-  colorScheme: ColorScheme.fromSeed(seedColor: seed, brightness: brightness),
-  extensions: const [AppTokens.standard],
-);
+/// Theme the card renders with, independent of the app's current theme except
+/// for the style: with [mornye] set the card uses the Mornye palette and flat
+/// surfaces instead of the seeded Material scheme.
+ThemeData shareThemeFor(
+  Color seed,
+  Brightness brightness, {
+  MornyeTheme? mornye,
+}) => mornye != null
+    ? MornyeTheme.build(brightness, mornye)
+    : ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Inter',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: seed,
+          brightness: brightness,
+        ),
+        extensions: const [AppTokens.standard],
+      );
 
 /// What a card shows: a pool's numbers, or the all-pools overview.
 sealed class ShareContent {
@@ -195,15 +207,10 @@ class _Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: groupDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

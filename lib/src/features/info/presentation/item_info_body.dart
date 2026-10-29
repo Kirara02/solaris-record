@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
+import '../../../shared/widgets/app_slider.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/item_info.dart';
 import '../domain/item_kind.dart';
@@ -30,8 +31,8 @@ class _Stars extends StatelessWidget {
   }
 }
 
-/// The details of an item: gallery, badges, effect, stats and skills. Shared by
-/// the dialog and the guide's detail screen.
+/// The details of an item: gallery, badges, effect, stats and skills, shown
+/// on the guide's detail screen.
 class ItemInfoBody extends StatelessWidget {
   const ItemInfoBody({
     super.key,
@@ -86,7 +87,7 @@ class ItemInfoBody extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: info.imageUrl!,
               fit: BoxFit.contain,
-              placeholder: (_, _) => const Center(child: M3ELoadingIndicator()),
+              placeholder: (_, _) => const Center(child: AppLoadingIndicator()),
               errorWidget: (_, _, _) => AdaptiveIcon(
                 Icons.image_not_supported_outlined,
                 color: color,
@@ -115,14 +116,14 @@ class ItemInfoBody extends StatelessWidget {
             if (info.elementName != null && info.elementName!.isNotEmpty)
               StatusBadge(
                 label: '${t.info.element}: ${info.elementName}',
-                background: scheme.tertiaryContainer,
-                foreground: scheme.onTertiaryContainer,
+                background: attributeBadgeColors(context, primary: false).$1,
+                foreground: attributeBadgeColors(context, primary: false).$2,
               ),
             if (info.typeName != null && info.typeName!.isNotEmpty)
               StatusBadge(
                 label: '${t.info.weaponType}: ${info.typeName}',
-                background: scheme.primaryContainer,
-                foreground: scheme.onPrimaryContainer,
+                background: attributeBadgeColors(context, primary: true).$1,
+                foreground: attributeBadgeColors(context, primary: true).$2,
               ),
           ],
         ),
@@ -262,7 +263,7 @@ class _LevelStatsState extends State<_LevelStats> {
                 ),
               ),
               Expanded(
-                child: Slider(
+                child: AppSlider(
                   min: weaponMinLevel.toDouble(),
                   max: weaponMaxLevel.toDouble(),
                   divisions: weaponMaxLevel - weaponMinLevel,

@@ -57,6 +57,11 @@ ItemNameService itemNameService(Ref ref) => ItemNameService();
 Future<String?> itemImageUrl(Ref ref, int resourceId, String resourceType) =>
     ref.watch(itemImageServiceProvider).urlFor(resourceId, resourceType);
 
+/// How many records have no item id. Follows the database.
+@Riverpod(keepAlive: true)
+Stream<int> incompleteRecordCount(Ref ref) =>
+    ref.watch(conveneRepositoryProvider).watchCountWithoutResourceId();
+
 /// Disk usage for the Data & storage screen. Invalidate after clearing data.
 @riverpod
 Future<StorageUsage> storageUsage(Ref ref) async {

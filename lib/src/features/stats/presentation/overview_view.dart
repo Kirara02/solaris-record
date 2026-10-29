@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
@@ -7,9 +6,9 @@ import '../../../shared/i18n/number_format.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_colors.dart';
-import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/donut_chart.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -31,18 +30,12 @@ class OverviewSlivers extends ConsumerWidget {
     return ref
         .watch(overviewStatsProvider(uid))
         .when(
-          loading: () => const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: M3ELoadingIndicator()),
-          ),
-          error: (e, _) => SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: Text('$e')),
-          ),
+          loading: () =>
+              const SliverFillBody(child: Center(child: AppLoadingIndicator())),
+          error: (e, _) => SliverFillBody(child: Center(child: Text('$e'))),
           data: (stats) {
             if (stats.total == 0) {
-              return SliverFillRemaining(
-                hasScrollBody: false,
+              return SliverFillBody(
                 child: EmptyState(
                   icon: Icons.inbox_outlined,
                   title: t.stats.noPullsAnywhere,
@@ -216,11 +209,7 @@ class _ChartCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: context.tokens.borderRadiusCard,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: groupDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

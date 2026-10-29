@@ -1,8 +1,8 @@
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_tokens.dart';
 import '../theme/mornye_icons.dart';
+import 'app_button.dart';
 
 class ErrorCard extends StatelessWidget {
   const ErrorCard({
@@ -55,8 +55,8 @@ class ErrorCard extends StatelessWidget {
                 ),
                 if (onRetry != null) ...[
                   SizedBox(height: tokens.gapMd),
-                  M3EButton(
-                    style: M3EButtonStyle.tonal,
+                  AppButton(
+                    style: AppButtonStyle.tonal,
                     icon: const AdaptiveIcon(Icons.refresh),
                     label: Text(retryLabel ?? ''),
                     onPressed: onRetry,

@@ -73,11 +73,20 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
     rowPaddingV: 12,
     rowIconGap: 12,
     rowIconDividerIndent: 48,
+    rowChevronSize: 20,
     headerExpandedHeight: 96,
     headerCollapsedTitleSize: 17,
     headerExpandedTitleSize: 34,
     motionMedium: const Duration(milliseconds: 300),
   );
+
+  /// Fill of an inset control or well drawn on a grouped surface or dialog.
+  static Color controlFill(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.colorScheme.onSurface.withValues(
+      alpha: theme.brightness == Brightness.dark ? 0.10 : 0.07,
+    );
+  }
 
   /// The accent as drawn on the grouped surfaces. The light red is darker than
   /// iOS's own so small red text stays readable on white.

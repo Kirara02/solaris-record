@@ -37,3 +37,9 @@ String encoreEchoUrl(int id, String lang) {
   final language = encoreLanguages.contains(lang) ? lang : 'en';
   return 'https://encore.moe/echo/$id?lang=$language';
 }
+
+/// The encore.moe web page of an enemy, in [lang].
+String encoreMonsterUrl(int id, String lang) {
+  final language = encoreLanguages.contains(lang) ? lang : 'en';
+  return 'https://encore.moe/monster/$id?lang=$language';
+}
