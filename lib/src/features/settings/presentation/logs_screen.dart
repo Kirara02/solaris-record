@@ -183,8 +183,7 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
             ),
           ),
           if (shown.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
+            SliverFillBody(
               child: Center(
                 child: Text(
                   all.isEmpty ? t.logs.empty : t.logs.noMatch,

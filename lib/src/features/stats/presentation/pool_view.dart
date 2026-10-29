@@ -11,6 +11,7 @@ import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/item_icon.dart';
@@ -46,18 +47,12 @@ class PoolSlivers extends ConsumerWidget {
     final records = ref.watch(recordsProvider(uid, pool)).value ?? const [];
 
     return stats.when(
-      loading: () => const SliverFillRemaining(
-        hasScrollBody: false,
-        child: Center(child: M3ELoadingIndicator()),
-      ),
-      error: (e, _) => SliverFillRemaining(
-        hasScrollBody: false,
-        child: Center(child: Text('$e')),
-      ),
+      loading: () =>
+          const SliverFillBody(child: Center(child: AppLoadingIndicator())),
+      error: (e, _) => SliverFillBody(child: Center(child: Text('$e'))),
       data: (s) {
         if (s.total == 0) {
-          return SliverFillRemaining(
-            hasScrollBody: false,
+          return SliverFillBody(
             child: EmptyState(
               icon: Icons.inbox_outlined,
               title: t.stats.noPulls,
@@ -482,14 +477,8 @@ class _HistorySliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final tokens = context.tokens;
     return DecoratedSliver(
-      decoration: BoxDecoration(
-        color: groupColor(context),
-        borderRadius: tokens.borderRadiusCard,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
+      decoration: groupDecoration(context),
       sliver: SliverPadding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         sliver: SliverLayoutBuilder(

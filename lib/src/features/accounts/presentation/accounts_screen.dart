@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
@@ -7,6 +6,7 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -33,14 +33,12 @@ class AccountsScreen extends ConsumerWidget {
         body: CustomScrollView(
           slivers: [
             AppSliverHeader(title: t.accounts.title, showBack: true),
-            SliverFillRemaining(
-              hasScrollBody: false,
+            SliverFillBody(
               child: EmptyState(
                 icon: Icons.people_outline,
                 title: t.accounts.emptyTitle,
                 body: t.accounts.empty,
-                action: M3EButton(
-                  size: M3EButtonSize.md,
+                action: AppButton(
                   icon: const AdaptiveIcon(Icons.download),
                   label: Text(t.accounts.addAccount),
                   onPressed: () => showImportDialog(context),

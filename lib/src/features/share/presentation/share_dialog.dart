@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -9,7 +8,9 @@ import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/logging/log_sanitize.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_segmented_control.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/domain/account.dart';
@@ -180,7 +181,7 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
                 child: content == null
                     ? const Padding(
                         padding: EdgeInsets.all(32),
-                        child: Center(child: M3ELoadingIndicator()),
+                        child: Center(child: AppLoadingIndicator()),
                       )
                     : ClipRRect(
                         borderRadius: context.tokens.borderRadiusControl,
@@ -194,6 +195,7 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
                                 theme: shareThemeFor(
                                   seed,
                                   dark ? Brightness.dark : Brightness.light,
+                                  mornye: theme.extension<MornyeTheme>(),
                                 ),
                                 accountName: accountName(t, widget.account),
                                 uid: fullUid ? uid : maskUid(uid),

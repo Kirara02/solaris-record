@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -41,8 +41,7 @@ class StatsScreen extends ConsumerWidget {
           leading: const AppLogo(size: 104),
           title: t.stats.noAccountTitle,
           body: t.stats.noAccountBody,
-          action: M3EButton(
-            size: M3EButtonSize.md,
+          action: AppButton(
             icon: const AdaptiveIcon(Icons.download),
             label: Text(t.stats.goToImport),
             onPressed: () => showImportDialog(context),
@@ -71,8 +70,8 @@ class StatsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    M3EButton(
-                      size: M3EButtonSize.sm,
+                    AppButton(
+                      compact: true,
                       icon: const AdaptiveIcon(Icons.sync),
                       label: Text(t.stats.updateShort),
                       onPressed: () => showImportDialog(context),

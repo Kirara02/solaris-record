@@ -4,27 +4,32 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/number_format.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
+import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/pity_calculator.dart';
 import '../domain/pool_type.dart';
 
-/// Card surface washed with a soft [accent] tint and a matching hairline.
+/// Card surface washed with a soft [accent] tint. Material adds a matching
+/// hairline and a faint shadow; Mornye stays flat.
 BoxDecoration accentCardDecoration(BuildContext context, Color accent) {
   final scheme = Theme.of(context).colorScheme;
+  final flat = context.isMornye;
   return BoxDecoration(
     color: Color.alphaBlend(
       accent.withValues(alpha: 0.10),
       groupColor(context),
     ),
     borderRadius: context.tokens.borderRadiusCard,
-    border: Border.all(color: accent.withValues(alpha: 0.28)),
-    boxShadow: [
-      BoxShadow(
-        color: scheme.shadow.withValues(alpha: 0.05),
-        blurRadius: 8,
-        offset: const Offset(0, 2),
-      ),
-    ],
+    border: flat ? null : Border.all(color: accent.withValues(alpha: 0.28)),
+    boxShadow: flat
+        ? null
+        : [
+            BoxShadow(
+              color: scheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
   );
 }
 

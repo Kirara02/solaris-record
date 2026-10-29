@@ -11,6 +11,7 @@ import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/artwork_palette.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/item_icon.dart';
 import '../../../shared/widgets/item_name.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -319,9 +320,8 @@ class _FiveStarDetailBody extends StatelessWidget {
             ),
             if (e.resourceId > 0) ...[
               const SizedBox(height: 12),
-              M3EButton(
-                style: M3EButtonStyle.tonal,
-                size: M3EButtonSize.md,
+              AppButton(
+                style: AppButtonStyle.tonal,
                 icon: const AdaptiveIcon(Icons.info_outline),
                 label: Text(t.info.button),
                 onPressed: onItemInfo,

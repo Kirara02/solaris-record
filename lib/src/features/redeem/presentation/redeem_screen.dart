@@ -1,12 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_card.dart';
@@ -52,9 +52,8 @@ class RedeemScreen extends ConsumerWidget {
             ),
             ...feed.when(
               loading: () => [
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(child: M3ELoadingIndicator()),
+                const SliverFillBody(
+                  child: Center(child: AppLoadingIndicator()),
                 ),
               ],
               error: (_, _) => [
@@ -94,8 +93,7 @@ class RedeemScreen extends ConsumerWidget {
     ];
     if (data.codes.isEmpty) {
       return [
-        SliverFillRemaining(
-          hasScrollBody: false,
+        SliverFillBody(
           child: EmptyState(
             icon: Icons.card_giftcard_outlined,
             title: t.redeem.empty,

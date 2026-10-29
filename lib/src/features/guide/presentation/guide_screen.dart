@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/assets/assets.gen.dart';
@@ -8,6 +7,7 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../settings/settings_providers.dart';
@@ -180,9 +180,8 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
             builder: (context, query, _) => SliverMainAxisGroup(
               slivers: entries.when(
                 loading: () => [
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(child: M3ELoadingIndicator()),
+                  const SliverFillBody(
+                    child: Center(child: AppLoadingIndicator()),
                   ),
                 ],
                 error: (_, _) => [
@@ -200,8 +199,7 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
                   final shown = _visible(all, query);
                   if (shown.isEmpty) {
                     return [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
+                      SliverFillBody(
                         child: Center(child: Text(t.guide.noResults)),
                       ),
                     ];

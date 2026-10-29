@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_segmented_control.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -56,10 +57,8 @@ class _TowerBodyState extends ConsumerState<_TowerBody> {
     return ref
         .watch(provider)
         .when(
-          loading: () => const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: M3ELoadingIndicator()),
-          ),
+          loading: () =>
+              const SliverFillBody(child: Center(child: AppLoadingIndicator())),
           error: (_, _) => SliverToBoxAdapter(
             child: ErrorCard(
               message: t.challenges.error,
@@ -69,8 +68,7 @@ class _TowerBodyState extends ConsumerState<_TowerBody> {
           ),
           data: (data) {
             if (data.areas.isEmpty) {
-              return SliverFillRemaining(
-                hasScrollBody: false,
+              return SliverFillBody(
                 child: Center(child: Text(t.challenges.empty)),
               );
             }

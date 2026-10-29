@@ -19,6 +19,20 @@ Color groupColor(BuildContext context) {
   );
 }
 
+/// Decoration of a content card on the page: the grouped fill with the card
+/// radius. Material adds a hairline outline; Mornye stays flat like an iOS
+/// inset group.
+BoxDecoration groupDecoration(BuildContext context) {
+  final scheme = Theme.of(context).colorScheme;
+  return BoxDecoration(
+    color: groupColor(context),
+    borderRadius: context.tokens.borderRadiusCard,
+    border: context.isMornye
+        ? null
+        : Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+  );
+}
+
 /// Whether the rows below are drawn as separate connected tiles, which have
 /// gaps instead of dividers.
 bool settingsRowsConnected(BuildContext context) =>
@@ -484,6 +498,27 @@ class SettingsChoiceChip extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Background and text colours for a [StatusBadge] that tells two kinds of
+/// attribute apart (element vs. weapon type). Mornye's container roles are
+/// neutral greys, so there the badge is a wash of the primary or tertiary
+/// colour instead.
+(Color background, Color foreground) attributeBadgeColors(
+  BuildContext context, {
+  required bool primary,
+}) {
+  final scheme = Theme.of(context).colorScheme;
+  if (context.isMornye) {
+    final base = primary ? scheme.primary : scheme.tertiary;
+    return (
+      Color.alphaBlend(base.withValues(alpha: 0.16), scheme.surfaceContainer),
+      base,
+    );
+  }
+  return primary
+      ? (scheme.primaryContainer, scheme.onPrimaryContainer)
+      : (scheme.tertiaryContainer, scheme.onTertiaryContainer);
 }
 
 /// Compact tinted label for statuses (Won 50/50, Active, ...).

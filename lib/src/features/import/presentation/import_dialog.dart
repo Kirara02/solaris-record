@@ -11,6 +11,7 @@ import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_segmented_control.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -160,9 +161,8 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
         _saved != null && _controller.text.trim() == _saved && !state.hasError;
 
     final fileImport = <Widget>[
-      M3EButton(
-        style: M3EButtonStyle.outlined,
-        size: M3EButtonSize.md,
+      AppButton(
+        style: AppButtonStyle.outlined,
         icon: const AdaptiveIcon(Icons.file_open_outlined),
         label: Text(t.import.fromFile),
         onPressed: loading || _fileBusy ? null : _importFile,
@@ -341,15 +341,13 @@ class _ImportDialogState extends ConsumerState<ImportDialog> {
                         const SizedBox(height: 12),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final paste = M3EButton(
-                              style: M3EButtonStyle.tonal,
-                              size: M3EButtonSize.md,
+                            final paste = AppButton(
+                              style: AppButtonStyle.tonal,
                               icon: const AdaptiveIcon(Icons.content_paste),
                               label: Text(t.import.paste),
                               onPressed: loading ? null : _paste,
                             );
-                            final update = M3EButton(
-                              size: M3EButtonSize.md,
+                            final update = AppButton(
                               icon: const AdaptiveIcon(Icons.sync),
                               label: Text(t.import.update),
                               onPressed: loading || !hasText ? null : _run,
@@ -631,8 +629,7 @@ class _ResultCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          M3EButton(
-            size: M3EButtonSize.md,
+          AppButton(
             icon: const AdaptiveIcon(Icons.insights),
             label: Text(viewLabel),
             onPressed: () {
