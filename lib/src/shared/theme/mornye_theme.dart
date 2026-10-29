@@ -73,6 +73,7 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
     rowPaddingV: 12,
     rowIconGap: 12,
     rowIconDividerIndent: 48,
+    rowChevronSize: 20,
     headerExpandedHeight: 96,
     headerCollapsedTitleSize: 17,
     headerExpandedTitleSize: 34,

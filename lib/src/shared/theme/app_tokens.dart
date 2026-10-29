@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:material_ui/material_ui.dart';
 
 /// Single source of truth for the app's visual scale (radii, gaps, row metrics,
@@ -19,8 +21,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
     this.gapXl = 24,
     this.rowPaddingH = 20,
     this.rowPaddingV = 16,
+    this.rowPaddingVCompact = 12,
     this.rowIconGap = 16,
     this.rowIconDividerIndent = 56,
+    this.rowChevronSize = 24,
+    this.rowMinHeight = 0,
     this.headerExpandedHeight = 88,
     this.headerCollapsedTitleSize = 20,
     this.headerExpandedTitleSize = 28,
@@ -29,6 +34,26 @@ class AppTokens extends ThemeExtension<AppTokens> {
   });
 
   static const standard = AppTokens();
+
+  /// Material on desktop. Pointer input needs less row height than touch, so
+  /// rows tighten while radii and motion stay the same.
+  static final desktop = standard.copyWith(
+    rowPaddingH: 16,
+    rowPaddingV: 10,
+    rowPaddingVCompact: 6,
+    rowIconGap: 12,
+    rowIconDividerIndent: 52,
+    rowChevronSize: 20,
+  );
+
+  /// [desktop] on macOS, Windows and Linux builds, [standard] elsewhere.
+  static AppTokens get forPlatform =>
+      !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.macOS ||
+              defaultTargetPlatform == TargetPlatform.windows ||
+              defaultTargetPlatform == TargetPlatform.linux)
+      ? desktop
+      : standard;
 
   final double radiusBadge;
   final double radiusThumb;
@@ -45,8 +70,14 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
   final double rowPaddingH;
   final double rowPaddingV;
+
+  /// Vertical inset of rows that already carry a tall trailing control (a
+  /// switch).
+  final double rowPaddingVCompact;
   final double rowIconGap;
   final double rowIconDividerIndent;
+  final double rowChevronSize;
+  final double rowMinHeight;
 
   final double headerExpandedHeight;
   final double headerCollapsedTitleSize;
@@ -73,8 +104,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
     double? gapXl,
     double? rowPaddingH,
     double? rowPaddingV,
+    double? rowPaddingVCompact,
     double? rowIconGap,
     double? rowIconDividerIndent,
+    double? rowChevronSize,
+    double? rowMinHeight,
     double? headerExpandedHeight,
     double? headerCollapsedTitleSize,
     double? headerExpandedTitleSize,
@@ -94,8 +128,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
     gapXl: gapXl ?? this.gapXl,
     rowPaddingH: rowPaddingH ?? this.rowPaddingH,
     rowPaddingV: rowPaddingV ?? this.rowPaddingV,
+    rowPaddingVCompact: rowPaddingVCompact ?? this.rowPaddingVCompact,
     rowIconGap: rowIconGap ?? this.rowIconGap,
     rowIconDividerIndent: rowIconDividerIndent ?? this.rowIconDividerIndent,
+    rowChevronSize: rowChevronSize ?? this.rowChevronSize,
+    rowMinHeight: rowMinHeight ?? this.rowMinHeight,
     headerExpandedHeight: headerExpandedHeight ?? this.headerExpandedHeight,
     headerCollapsedTitleSize:
         headerCollapsedTitleSize ?? this.headerCollapsedTitleSize,
@@ -129,8 +166,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
       gapXl: d(gapXl, other.gapXl),
       rowPaddingH: d(rowPaddingH, other.rowPaddingH),
       rowPaddingV: d(rowPaddingV, other.rowPaddingV),
+      rowPaddingVCompact: d(rowPaddingVCompact, other.rowPaddingVCompact),
       rowIconGap: d(rowIconGap, other.rowIconGap),
       rowIconDividerIndent: d(rowIconDividerIndent, other.rowIconDividerIndent),
+      rowChevronSize: d(rowChevronSize, other.rowChevronSize),
+      rowMinHeight: d(rowMinHeight, other.rowMinHeight),
       headerExpandedHeight: d(headerExpandedHeight, other.headerExpandedHeight),
       headerCollapsedTitleSize: d(
         headerCollapsedTitleSize,
