@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoColors, CupertinoDynamicColor;
+    show CupertinoColors, CupertinoThemeData, CupertinoDynamicColor;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -166,26 +166,69 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
           onInverseSurface: dark ? Colors.black : Colors.white,
         );
 
-    final typography = Typography.material2021(
-      platform: defaultTargetPlatform == TargetPlatform.macOS
-          ? TargetPlatform.macOS
-          : TargetPlatform.iOS,
+    // The text scale of iOS: the Cupertino styles (17 body, 15 secondary, 13
+    // small) with their tracking, one complete style per Material role. A bare
+    // Material scale (16/14/12) reads tighter than iOS next to the same rows.
+    // The SF fonts only exist on Apple platforms; Inter stands in elsewhere.
+    final apple =
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+    final type = CupertinoThemeData(brightness: brightness).textTheme;
+    final body = type.textStyle.copyWith(
+      inherit: true,
+      color: label,
+      fontFamily: apple ? type.textStyle.fontFamily : 'Inter',
     );
-    var text = (dark ? typography.white : typography.black).apply(
-      bodyColor: label,
-      displayColor: label,
+    final display = type.navLargeTitleTextStyle.copyWith(
+      inherit: true,
+      color: label,
+      fontFamily: apple ? type.navLargeTitleTextStyle.fontFamily : 'Inter',
     );
-    // The SF fonts only exist on Apple platforms.
-    if (defaultTargetPlatform != TargetPlatform.iOS &&
-        defaultTargetPlatform != TargetPlatform.macOS) {
-      text = text.apply(fontFamily: 'Inter');
-    }
+    final text = TextTheme(
+      displayLarge: display.copyWith(fontSize: 57),
+      displayMedium: display.copyWith(fontSize: 45),
+      displaySmall: display.copyWith(fontSize: 36),
+      headlineLarge: display,
+      headlineMedium: display.copyWith(fontSize: 28, letterSpacing: 0.36),
+      headlineSmall: display.copyWith(fontSize: 22, letterSpacing: 0.35),
+      titleLarge: display.copyWith(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.38,
+      ),
+      titleMedium: body.copyWith(fontWeight: FontWeight.w500),
+      titleSmall: body.copyWith(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.23,
+      ),
+      bodyLarge: body,
+      bodyMedium: body.copyWith(fontSize: 15, letterSpacing: -0.23),
+      bodySmall: body.copyWith(
+        fontSize: 13,
+        letterSpacing: -0.08,
+        color: secondary,
+      ),
+      labelLarge: body.copyWith(fontWeight: FontWeight.w600),
+      labelMedium: body.copyWith(
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.08,
+      ),
+      labelSmall: body.copyWith(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.24,
+        color: secondary,
+      ),
+    );
 
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
       textTheme: text,
+      fontFamily: body.fontFamily,
       scaffoldBackgroundColor: page,
       splashFactory: NoSplash.splashFactory,
       splashColor: Colors.transparent,
