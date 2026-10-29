@@ -138,7 +138,7 @@ class _DetailRowState extends State<_DetailRow> {
             height: 1,
             indent: tokens.rowIconDividerIndent,
             endIndent: tokens.rowPaddingH,
-            color: scheme.outlineVariant.withValues(alpha: 0.3),
+            color: rowDividerColor(context),
           ),
       ],
     );

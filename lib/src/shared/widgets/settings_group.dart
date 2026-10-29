@@ -19,6 +19,13 @@ Color groupColor(BuildContext context) {
   );
 }
 
+/// Colour of the line between two rows. Mornye draws its separator at full
+/// strength, as iOS does; Material softens it so the group reads as one card.
+Color rowDividerColor(BuildContext context) {
+  final line = Theme.of(context).colorScheme.outlineVariant;
+  return context.isMornye ? line : line.withValues(alpha: 0.3);
+}
+
 /// Decoration of a content card on the page: the grouped fill with the card
 /// radius. Material adds a hairline outline; Mornye stays flat like an iOS
 /// inset group.
@@ -322,7 +329,7 @@ class SettingsItem extends StatelessWidget {
                 dividerIndent ??
                 (hasLeading ? tokens.rowIconDividerIndent : tokens.rowPaddingH),
             endIndent: tokens.rowPaddingH,
-            color: scheme.outlineVariant.withValues(alpha: 0.3),
+            color: rowDividerColor(context),
           ),
       ],
     );
