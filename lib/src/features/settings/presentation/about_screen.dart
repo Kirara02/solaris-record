@@ -9,6 +9,7 @@ import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../announcements/announcements_providers.dart';
 import '../../update/domain/update_platform.dart';
@@ -41,9 +42,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       case UpdateAvailable():
         await showUpdateDialog(context, result);
       case UpdateUpToDate():
-        messenger.showSnackBar(SnackBar(content: Text(t.update.upToDate)));
+        messenger.showMessage(t.update.upToDate);
       case UpdateCheckFailed():
-        messenger.showSnackBar(SnackBar(content: Text(t.update.checkFailed)));
+        messenger.showMessage(t.update.checkFailed);
     }
   }
 
@@ -52,7 +53,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final failed = context.t.info.openFailed;
     final opened = await ref.read(urlOpenerProvider).open(Uri.parse(url));
-    if (!opened) messenger.showSnackBar(SnackBar(content: Text(failed)));
+    if (!opened) messenger.showMessage(failed);
   }
 
   @override

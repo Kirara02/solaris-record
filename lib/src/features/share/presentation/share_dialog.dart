@@ -12,6 +12,7 @@ import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_segmented_control.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/domain/account.dart';
 import '../../accounts/presentation/account_widgets.dart';
@@ -119,15 +120,13 @@ class _ShareDialogState extends ConsumerState<_ShareDialog> {
       );
       if (outcome == ShareOutcome.done) {
         if (!hasShareSheet) {
-          messenger.showSnackBar(
-            SnackBar(content: Text(t.share.saved(name: result.name ?? name))),
-          );
+          messenger.showMessage(t.share.saved(name: result.name ?? name));
         }
         if (mounted) Navigator.pop(context);
       }
     } on Object catch (e, st) {
       _log.warning('Share failed uid=${sanitizeUid(uid)}', e, st);
-      messenger.showSnackBar(SnackBar(content: Text(t.share.failed)));
+      messenger.showMessage(t.share.failed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

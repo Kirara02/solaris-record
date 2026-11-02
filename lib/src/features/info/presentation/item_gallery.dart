@@ -10,6 +10,7 @@ import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/item_info.dart';
 
@@ -261,10 +262,10 @@ class _ImageViewerState extends State<_ImageViewer> {
       );
       if (saved == null) return;
       _log.info('Image saved name=$name bytes=${bytes.length}');
-      messenger.showSnackBar(SnackBar(content: Text(t.info.imageSaved)));
+      messenger.showMessage(t.info.imageSaved);
     } on Object catch (e, st) {
       _log.warning('Image save failed', e, st);
-      messenger.showSnackBar(SnackBar(content: Text(t.info.imageSaveFailed)));
+      messenger.showMessage(t.info.imageSaveFailed);
     }
   }
 

@@ -11,6 +11,7 @@ import '../../../shared/logging/app_log.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/settings_group.dart';
 import 'log_actions.dart';
@@ -83,9 +84,7 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
     await Clipboard.setData(
       ClipboardData(text: entries.reversed.map((e) => e.text).join('\n')),
     );
-    messenger.showSnackBar(
-      SnackBar(content: Text(t.logs.copied(n: entries.length))),
-    );
+    messenger.showMessage(t.logs.copied(n: entries.length));
   }
 
   @override

@@ -8,6 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../domain/backup_bundle.dart';
 import '../domain/backup_parser.dart';
 
@@ -29,7 +30,7 @@ Future<void> exportBackup(BuildContext context, WidgetRef ref) async {
         .read(conveneRepositoryProvider)
         .exportBundle(now: now, appVersion: version);
     if (bundle.accounts.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(t.data.exportEmpty)));
+      messenger.showMessage(t.data.exportEmpty);
       return;
     }
     final saved = await FilePicker.saveFile(
@@ -42,12 +43,10 @@ Future<void> exportBackup(BuildContext context, WidgetRef ref) async {
       'Exported accounts=${bundle.accounts.length} '
       'records=${bundle.recordCount}',
     );
-    messenger.showSnackBar(
-      SnackBar(content: Text(t.data.exportDone(records: bundle.recordCount))),
-    );
+    messenger.showMessage(t.data.exportDone(records: bundle.recordCount));
   } on Object catch (e, st) {
     _log.warning('Export failed', e, st);
-    messenger.showSnackBar(SnackBar(content: Text(t.data.exportFailed)));
+    messenger.showMessage(t.data.exportFailed);
   }
 }
 
@@ -65,8 +64,7 @@ Future<BackupImportOutcome?> pickAndImportBackup(
 
   final PlatformFile? file;
   try {
-    file = await FilePicker.pickFile(
-    );
+    file = await FilePicker.pickFile();
   } on Object catch (e, st) {
     _log.warning('File picker failed', e, st);
     return fail(t.data.importFailed);
@@ -112,5 +110,5 @@ Future<void> importBackup(BuildContext context, WidgetRef ref) async {
   final messenger = ScaffoldMessenger.of(context);
   final outcome = await pickAndImportBackup(ref, context.t);
   if (outcome == null) return;
-  messenger.showSnackBar(SnackBar(content: Text(outcome.message)));
+  messenger.showMessage(outcome.message);
 }

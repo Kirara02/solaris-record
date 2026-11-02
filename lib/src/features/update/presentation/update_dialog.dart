@@ -13,6 +13,7 @@ import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../settings/data/storage_usage.dart';
 import '../data/update_service.dart';
 import '../domain/update_info.dart';
@@ -65,7 +66,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final opened = await ref.read(urlOpenerProvider).open(Uri.parse(url));
     if (!opened) {
-      messenger?.showSnackBar(SnackBar(content: Text(t.info.openFailed)));
+      messenger?.showMessage(t.info.openFailed);
     }
   }
 
