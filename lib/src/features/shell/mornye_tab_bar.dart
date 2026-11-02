@@ -37,8 +37,9 @@ class MornyeTabBarState extends State<MornyeTabBar>
   static const _height = 64.0;
   static const _radius = 32.0;
   static const _pillRadius = _radius - 4;
-  static const _widthGrowth = 0.22;
-  static const _heightGrowth = 0.1;
+  // Mornye's capsule projects only slightly when held.
+  static const _widthGrowth = 0.025;
+  static const _heightGrowth = 0.06;
   static const _spring = SpringDescription(
     mass: 1,
     stiffness: 380,
@@ -212,17 +213,33 @@ class MornyeTabBarState extends State<MornyeTabBar>
                             clipBehavior: Clip.none,
                             children: [
                               capsule(
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: scheme.onSurface.withValues(
-                                      alpha:
-                                          (1 - heldAlpha) *
-                                          (dark ? 0.16 : 0.08),
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                      _pillRadius,
-                                    ),
-                                  ),
+                                // Mornye draws the resting capsule as glass
+                                // too, with the lighter navigation tint.
+                                Opacity(
+                                  opacity: 1 - heldAlpha,
+                                  child: lens
+                                      ? MornyeGlass(
+                                          level: MornyeGlassLevel.liquid,
+                                          borderRadius: BorderRadius.circular(
+                                            _pillRadius,
+                                          ),
+                                          fill: scheme.surfaceContainerHigh,
+                                          tintOpacity: dark ? 0.36 : 0.49,
+                                          child: const SizedBox.expand(),
+                                        )
+                                      // Without blur (or on high contrast) a
+                                      // plain wash keeps the selection visible
+                                      // on the solid bar.
+                                      : DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: scheme.onSurface.withValues(
+                                              alpha: dark ? 0.16 : 0.08,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              _pillRadius,
+                                            ),
+                                          ),
+                                        ),
                                 ),
                               ),
                               Row(

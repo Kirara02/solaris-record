@@ -30,7 +30,7 @@ class AppDialog extends StatelessWidget {
       insetPadding:
           insetPadding ??
           const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
-      child: MornyeGlass(
+      child: MornyeGlass.overlay(
         level: blur ? MornyeGlassLevel.liquid : MornyeGlassLevel.flat,
         borderRadius: BorderRadius.circular(context.tokens.radiusSheet),
         // Ink in the content needs a Material above it.

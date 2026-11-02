@@ -17,7 +17,7 @@ const mornyeGreen = Color(0xFF34C759);
 @immutable
 class MornyeTheme extends ThemeExtension<MornyeTheme> {
   const MornyeTheme({
-    this.glassClarity = 0.5,
+    this.glassClarity = defaultMornyeGlassClarity,
     this.glassOutlines = true,
     this.accent = MornyeAccent.red,
   });
