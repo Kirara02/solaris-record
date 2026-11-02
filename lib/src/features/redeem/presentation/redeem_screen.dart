@@ -8,6 +8,7 @@ import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -247,6 +248,6 @@ class _CodeCard extends StatelessWidget {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final copied = context.t.redeem.copied(code: code.code);
     await Clipboard.setData(ClipboardData(text: code.code));
-    messenger?.showSnackBar(SnackBar(content: Text(copied)));
+    messenger?.showMessage(copied);
   }
 }

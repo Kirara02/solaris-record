@@ -8,6 +8,7 @@ import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../accounts/accounts_providers.dart';
@@ -38,7 +39,7 @@ class DataScreen extends ConsumerWidget {
     await DefaultCacheManager().emptyCache();
     await ref.read(itemImageServiceProvider).clearCachedUrls();
     ref.invalidate(storageUsageProvider);
-    messenger.showSnackBar(SnackBar(content: Text(t.data.imagesCleared)));
+    messenger.showMessage(t.data.imagesCleared);
   }
 
   Future<void> _deleteAll(BuildContext context, WidgetRef ref) async {
@@ -56,7 +57,7 @@ class DataScreen extends ConsumerWidget {
     await ref.read(savedImportUrlsProvider).clear();
     await ref.read(activeUidProvider.notifier).select(null);
     ref.invalidate(storageUsageProvider);
-    messenger.showSnackBar(SnackBar(content: Text(t.data.deleted)));
+    messenger.showMessage(t.data.deleted);
   }
 
   @override

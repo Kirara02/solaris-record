@@ -10,6 +10,7 @@ import '../../../data/preferences.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../announcements_providers.dart';
 import '../domain/announcement.dart';
 
@@ -80,7 +81,7 @@ class _AnnouncementDialog extends ConsumerWidget {
                   .read(urlOpenerProvider)
                   .open(Uri.parse(ctaUrl));
               if (!opened) {
-                messenger.showSnackBar(SnackBar(content: Text(failed)));
+                messenger.showMessage(failed);
               }
             },
             child: Text(ctaLabel),

@@ -27,6 +27,13 @@ Future<void> main() async {
     'Started version=$version platform=${defaultTargetPlatform.name} '
     'locale=${LocaleSettings.currentLocale.languageCode}',
   );
+  // liquid_glass_easy 5.1.0 bakes each lens's shape into a texture. On an
+  // Android phone that left white speckles along the rim of the Mornye tab bar
+  // (gone with the cache off, and not seen on the iOS simulator), so Android
+  // goes back to evaluating the shape per pixel.
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    LiquidGlassConfiguration.shapeCache = false;
+  }
   // Compile the glass shaders up front so the Mornye tab bar is glass on its
   // first frame. Glass falls back to a frosted look when they can't load.
   try {

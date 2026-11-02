@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:liquid_glass_easy/liquid_glass_easy.dart';
@@ -7,21 +8,22 @@ import '../theme/mornye_theme.dart';
 
 /// How a [MornyeGlass] surface is drawn.
 enum MornyeGlassLevel {
-  /// Translucent fill only, no backdrop blur (cheap; also the "no blur"
+  /// Solid fill only, no backdrop sampling (cheap; also the "no blur"
   /// setting).
   flat,
 
   /// Backdrop blur under a translucent fill.
   frosted,
 
-  /// Refractive glass from `liquid_glass_easy`. On Skia without a
-  /// `LiquidGlassView` the package itself falls back to a frosted look.
+  /// Refractive glass from `liquid_glass_easy`. Without shader filters
+  /// (Skia, web) it falls back to the frosted look.
   liquid,
 }
 
-/// A glass surface: clipped backdrop blur, a translucent fill and a hairline
-/// rim. Use it for bars, sheets and dialogs, not for list items (a blur per
-/// row is expensive).
+/// A glass surface, drawn the way the Mornye app draws it: a tinted fill over
+/// a blurred (or, for [MornyeGlassLevel.liquid], refracted) backdrop, a soft
+/// contact shadow and a lit hairline rim. Use it for bars, sheets and dialogs,
+/// not for list items. Glass inside glass never samples the backdrop again.
 class MornyeGlass extends StatelessWidget {
   const MornyeGlass({
     super.key,
@@ -29,83 +31,268 @@ class MornyeGlass extends StatelessWidget {
     this.borderRadius = BorderRadius.zero,
     this.level = MornyeGlassLevel.frosted,
     this.fill,
-    this.border,
-    this.sigma = 24,
+    this.tintOpacity = 0.6,
   });
+
+  /// Dialogs, sheets and menus: the stronger tint of Mornye's overlay glass.
+  const MornyeGlass.overlay({
+    super.key,
+    required this.child,
+    this.borderRadius = BorderRadius.zero,
+    this.level = MornyeGlassLevel.frosted,
+    this.fill,
+    this.tintOpacity = 0.78,
+  });
+
+  // Quantized and shared across surfaces, so a clarity change never builds a
+  // new Gaussian filter per frame.
+  static const _blurSigmas = [2.0, 3.0, 6.0, 16.0];
+  static final _blurs = [
+    for (final sigma in _blurSigmas)
+      ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+  ];
 
   final Widget child;
   final BorderRadius borderRadius;
   final MornyeGlassLevel level;
 
-  /// Overrides the surface colour that is made translucent.
+  /// Overrides the surface colour the tint is built on.
   final Color? fill;
 
-  /// Overrides the rim (default: a hairline all around). Ignored when the
-  /// style has outlines turned off.
-  final BoxBorder? border;
-  final double sigma;
+  /// How opaque the tint is before the clarity setting thins it.
+  final double tintOpacity;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
+    final scheme = theme.colorScheme;
+    final dark = scheme.brightness == Brightness.dark;
     final style = context.mornye;
-    final base = fill ?? theme.colorScheme.surfaceContainerHigh;
-    // Clearer glass lets more of the page through.
-    final alpha = 0.92 - 0.42 * style.glassClarity;
-    final rimColor = (dark ? Colors.white : Colors.white).withValues(
-      alpha: dark ? 0.14 : 0.6,
-    );
-    final rim =
-        border ??
-        Border.fromBorderSide(BorderSide(width: 0.5, color: rimColor));
+    final clarity = style.glassClarity;
+    final outlines = style.glassOutlines;
+    final base = fill ?? scheme.surfaceContainerHigh;
 
     // Like the system, drop the see-through effects when the user asks for
-    // more contrast: a plain translucent fill stays readable.
-    final level = MediaQuery.highContrastOf(context)
-        ? MornyeGlassLevel.flat
-        : this.level;
-    if (level == MornyeGlassLevel.liquid) {
-      return LiquidGlassLens(
-        style: LiquidGlassStyle(
-          shape: LiquidGlassShape.roundedRectangle(
-            cornerRadius: borderRadius.topLeft.x,
-          ),
-          // Clarity spans the whole range: milky and well blurred at 0, almost
-          // see-through and sharply refracting at 1.
-          color: base.withValues(alpha: 0.8 - 0.7 * style.glassClarity),
-          blur: 16 - 13 * style.glassClarity,
-          // The lens draws its own rim; outlines off removes the highlight.
-          specular: style.glassOutlines
-              ? null
-              : const LiquidGlassLight.specular(
-                  intensity: 0,
-                  oppositeIntensity: 0,
-                ),
-          refractionIndex: 1.01 + 0.03 * style.glassClarity,
-          refractionWidth: 16,
-        ),
-        child: child,
+    // more contrast: a plain fill stays readable.
+    final translucent =
+        level != MornyeGlassLevel.flat &&
+        clarity > 0 &&
+        !MediaQuery.highContrastOf(context);
+
+    var tint = base;
+    if (translucent) {
+      var baseTint = (dark ? base : Colors.white).withValues(
+        alpha: dark ? tintOpacity * 0.82 : (tintOpacity * 0.88).clamp(0.5, 1.0),
       );
+      if (dark) {
+        // Bound bright content with paint instead of filtering its luma.
+        baseTint = Color.alphaBlend(
+          baseTint,
+          Colors.black.withValues(alpha: 0.35),
+        );
+      }
+      // The upper end of the clarity slider reveals more of the page.
+      final tintStrength = (1 - clarity) * (1 - clarity);
+      tint = Color.alphaBlend(base.withValues(alpha: tintStrength), baseTint);
     }
 
-    Widget surface = DecoratedBox(
-      position: DecorationPosition.foreground,
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        border: style.glassOutlines ? rim : null,
-      ),
-      child: ColoredBox(
-        color: base.withValues(alpha: alpha),
-        child: child,
-      ),
+    final insideGlass =
+        context.dependOnInheritedWidgetOfExactType<_GlassBackdropScope>() !=
+        null;
+    // At low clarity the tint hides almost all detail, so sampling the
+    // backdrop would only cost.
+    final blurThreshold = level == MornyeGlassLevel.frosted ? 0.5 : 0.2;
+    final sampleBackdrop =
+        translucent && !insideGlass && clarity > blurThreshold;
+    final useLens =
+        sampleBackdrop &&
+        level == MornyeGlassLevel.liquid &&
+        ImageFilter.isShaderFilterSupported;
+    final filterIndex = level == MornyeGlassLevel.frosted
+        ? 1
+        : clarity >= 0.9
+        ? 0
+        : clarity >= 0.6
+        ? 2
+        : 3;
+    final clearFill = (dark ? const Color(0xff999999) : Colors.white)
+        .withValues(alpha: dark ? 0.17 : 0.46);
+    final fillColor = useLens
+        ? Color.lerp(tint, clearFill, ((clarity - 0.2) / 0.8).clamp(0, 1))
+        : tint;
+
+    final surface = DecoratedBox(
+      decoration: BoxDecoration(color: fillColor, borderRadius: borderRadius),
+      // Controls paint on this surface; never re-blur their parent.
+      child: _GlassBackdropScope(child: child),
     );
-    if (level != MornyeGlassLevel.flat) {
-      surface = BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+    final Widget backdrop;
+    if (useLens) {
+      final lens = _LiquidBackdrop(
+        borderRadius: borderRadius,
+        clarity: clarity,
+        blurSigma: _blurSigmas[filterIndex],
+        outlines: outlines,
+        dark: dark,
         child: surface,
       );
+      // Outside a batch the lens takes a backdrop key of its own: sharing one
+      // with the page or an overlapping menu would lose their glass.
+      backdrop = LiquidGlassBatch.backdropIdOf(context) == null
+          ? LiquidGlassBatch(child: lens)
+          : lens;
+    } else if (sampleBackdrop) {
+      backdrop = BackdropFilter.grouped(
+        filter: _blurs[filterIndex],
+        child: surface,
+      );
+    } else {
+      backdrop = surface;
     }
-    return ClipRRect(borderRadius: borderRadius, child: surface);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: borderRadius,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: dark ? 0.14 : 0.08),
+            blurRadius: 8,
+            blurStyle: BlurStyle.outer,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        // The lens already draws its own rim; a second contact stroke on top
+        // would show against light pages.
+        foregroundPainter: outlines && !useLens
+            ? _GlassRimPainter(
+                shape: borderRadius,
+                illuminated: translucent,
+                dark: dark,
+              )
+            : null,
+        child: ClipRRect(borderRadius: borderRadius, child: backdrop),
+      ),
+    );
   }
+}
+
+class _GlassBackdropScope extends InheritedWidget {
+  const _GlassBackdropScope({required super.child});
+
+  @override
+  bool updateShouldNotify(_GlassBackdropScope oldWidget) => false;
+}
+
+/// A bounded package lens that refracts the blurred backdrop.
+class _LiquidBackdrop extends StatelessWidget {
+  const _LiquidBackdrop({
+    required this.borderRadius,
+    required this.clarity,
+    required this.blurSigma,
+    required this.outlines,
+    required this.dark,
+    required this.child,
+  });
+
+  static const _refractionDepth = 0.30;
+  static const _refractionWidth = 20.0;
+
+  final BorderRadius borderRadius;
+  final double clarity;
+  final double blurSigma;
+  final bool outlines;
+  final bool dark;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    // The package fixes the bend's travel at 70 logical pixels and controls
+    // it through the refraction index alone.
+    final edgeBend =
+        math.sqrt(1 - 1 / (1.7 * 1.7)) *
+        _refractionWidth *
+        _refractionDepth *
+        5 /
+        70;
+    final index = 1 / math.sqrt(1 - math.pow(edgeBend.clamp(0, 0.95), 2));
+    return LiquidGlassLens(
+      style: LiquidGlassStyle(
+        shape: LiquidGlassShape.roundedRectangle(
+          cornerRadius: borderRadius.topLeft.x,
+        ),
+        specular: LiquidGlassLight.specular(
+          thickness: outlines ? 0.75 * 5.4 : 0,
+          angle: 0,
+          spread: 0.2,
+          intensity: outlines ? (dark ? 0.25 : 0.12) : 0,
+          color: dark ? Colors.white : const Color(0x88ffffff),
+        ),
+        glow: LiquidGlassLight.glow(
+          thickness: outlines ? 0.75 * 29.4 : 0,
+          intensity: outlines ? 0.05 : 0,
+        ),
+        blur: blurSigma,
+        refractionIndex: index,
+        refractionWidth: _refractionWidth,
+        dispersion: 1.32 * clarity,
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Edge definition without another offscreen layer or backdrop read: a thin
+/// contact line plus a rim light that fades from the top to the bottom.
+class _GlassRimPainter extends CustomPainter {
+  const _GlassRimPainter({
+    required this.shape,
+    required this.illuminated,
+    required this.dark,
+  });
+
+  final BorderRadius shape;
+  final bool illuminated;
+  final bool dark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final bounds = Offset.zero & size;
+    final outline = shape.toRRect(bounds);
+    canvas.drawRRect(
+      outline.deflate(0.25),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.5
+        ..color = Colors.black.withValues(alpha: dark ? 0.5 : 0.16),
+    );
+    if (illuminated) {
+      canvas.drawRRect(
+        outline.deflate(0.8),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.6
+          ..shader = const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0, 0.14, 0.5, 0.86, 1],
+            colors: [
+              Color(0x40ffffff),
+              Color(0x0dffffff),
+              Color(0x0a000000),
+              Color(0x0dffffff),
+              Color(0x26ffffff),
+            ],
+          ).createShader(bounds),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GlassRimPainter oldDelegate) =>
+      shape != oldDelegate.shape ||
+      illuminated != oldDelegate.illuminated ||
+      dark != oldDelegate.dark;
 }

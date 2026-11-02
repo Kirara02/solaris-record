@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/logging/app_log.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../settings_providers.dart';
 
@@ -24,8 +25,7 @@ String _stamp(DateTime d) {
 Future<void> exportLogs(BuildContext context, WidgetRef ref) async {
   final t = context.t;
   final messenger = ScaffoldMessenger.of(context);
-  void say(String message) =>
-      messenger.showSnackBar(SnackBar(content: Text(message)));
+  void say(String message) => messenger.showMessage(message);
 
   if (!AppLog.hasLogs) {
     say(t.data.logsEmpty);
@@ -68,5 +68,5 @@ Future<void> clearLogs(BuildContext context, WidgetRef ref) async {
   if (!confirmed) return;
   await AppLog.clear();
   ref.invalidate(logSizeProvider);
-  messenger.showSnackBar(SnackBar(content: Text(t.data.logsCleared)));
+  messenger.showMessage(t.data.logsCleared);
 }

@@ -4,6 +4,23 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.7.1
+
+The Mornye style now draws its glass the way the Mornye app does, with glass messages, an iOS text scale and a fix for the tab bar on Android.
+
+### What's new
+- **Mornye glass.** Bars, sheets and dialogs use the Mornye tint, blur, refraction and rim light. Sheets and dialogs are a little more opaque than bars, and the clarity setting thins the tint the same way.
+- **Glass messages.** In the Mornye style, messages such as "Copied" or "Image saved" appear as a floating glass panel instead of a plain bar.
+- **Tab bar.** The selected tab's capsule is glass and only swells slightly when you hold it.
+- **iOS text scale.** Text in the Mornye style follows iOS sizes (17 body, 15 secondary, 13 small).
+- **Settings.** The top-level settings rows show only their title in Mornye, and row dividers use the full separator colour.
+
+### Fixes
+- White speckles along the rim of the tab bar on some Android phones.
+
+### Notes
+- Glass needs shader support. Without it, or with *Blur* turned off in Appearance, surfaces fall back to a frosted or plain look.
+
 ## 1.7.0
 
 Enemy details, echoes grouped by sonata with their skill numbers, a repair for old records and the Mornye look carried through the whole app.

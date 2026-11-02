@@ -84,7 +84,7 @@ class _MornyeAlert extends StatelessWidget {
       insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 320),
-        child: MornyeGlass(
+        child: MornyeGlass.overlay(
           level: ProviderScope.containerOf(context).read(navBarBlurProvider)
               ? MornyeGlassLevel.liquid
               : MornyeGlassLevel.flat,

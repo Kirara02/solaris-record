@@ -45,7 +45,7 @@ Future<void> showAdaptiveSheet(BuildContext context, WidgetBuilder builder) {
           child: SingleChildScrollView(child: builder(sheetContext)),
         );
         if (!sheetContext.isMornye) return content;
-        return MornyeGlass(
+        return MornyeGlass.overlay(
           level: _glassLevel(sheetContext),
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(sheetContext.tokens.radiusSheet),
@@ -92,7 +92,7 @@ Future<void> showAdaptiveSheet(BuildContext context, WidgetBuilder builder) {
 }
 
 Widget _maybeGlass(BuildContext context, Widget child) => context.isMornye
-    ? MornyeGlass(
+    ? MornyeGlass.overlay(
         level: _glassLevel(context),
         borderRadius: BorderRadius.circular(context.tokens.radiusSheet),
         child: child,

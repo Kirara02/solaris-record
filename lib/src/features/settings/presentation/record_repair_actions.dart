@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../guide/guide_providers.dart';
 import '../data/record_repair.dart';
@@ -28,10 +29,10 @@ Future<void> repairRecords(BuildContext context, WidgetRef ref) async {
         : report.remaining == 0
         ? t.data.repairDone(n: report.fixed)
         : t.data.repairDoneLeft(fixed: report.fixed, left: report.remaining);
-    messenger.showSnackBar(SnackBar(content: Text(message)));
+    messenger.showMessage(message);
   } on Object catch (e, st) {
     _log.warning('Repair failed', e, st);
-    messenger.showSnackBar(SnackBar(content: Text(t.data.repairFailed)));
+    messenger.showMessage(t.data.repairFailed);
   }
 }
 

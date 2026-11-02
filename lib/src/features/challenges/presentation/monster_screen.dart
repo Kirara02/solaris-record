@@ -12,6 +12,7 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_slider.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_card.dart';
 import '../../../shared/widgets/settings_group.dart';
@@ -120,7 +121,7 @@ class MonsterScreen extends ConsumerWidget {
     final failed = context.t.info.openFailed;
     final opened = await ref.read(urlOpenerProvider).open(Uri.parse(url));
     if (!opened) {
-      messenger?.showSnackBar(SnackBar(content: Text(failed)));
+      messenger?.showMessage(failed);
     }
   }
 }
