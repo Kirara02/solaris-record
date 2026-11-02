@@ -256,29 +256,52 @@ class MornyeTabBarState extends State<MornyeTabBar>
                               ),
                               if (lens && heldAlpha > 0.01)
                                 capsule(
-                                  Opacity(
-                                    opacity: heldAlpha,
-                                    child: LiquidGlassLens(
-                                      style: LiquidGlassStyle(
-                                        shape:
-                                            LiquidGlassShape.roundedRectangle(
-                                              cornerRadius: _pillRadius,
-                                            ),
-                                        color: Colors.white.withValues(
-                                          alpha: dark ? 0.08 : 0.22,
+                                  // Excluded from the bar's batch: the
+                                  // lens must read the bar and its labels,
+                                  // not the page behind the bar, or the
+                                  // page shows through it sharp and
+                                  // untinted.
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      _pillRadius,
+                                    ),
+                                    child: LiquidGlassBatch.exclude(
+                                      child: MornyeLiquidBackdrop(
+                                        borderRadius: BorderRadius.circular(
+                                          _pillRadius,
                                         ),
-                                        // Outlines off drops the lens rim too.
-                                        specular: context.mornye.glassOutlines
-                                            ? null
-                                            : const LiquidGlassLight.specular(
-                                                intensity: 0,
-                                                oppositeIntensity: 0,
-                                              ),
-                                        // Clearer glass bends more.
-                                        refractionIndex:
-                                            1.02 +
-                                            0.04 * context.mornye.glassClarity,
+                                        clarity: 1,
+                                        blurSigma: 0,
+                                        interaction: true,
+                                        progress: heldAlpha,
+                                        // A broad bevel shows the lens as it
+                                        // crosses the icons and leaves its
+                                        // centre undistorted.
+                                        refractionDepth: 0.18,
                                         refractionWidth: 18,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              _pillRadius,
+                                            ),
+                                            color: Colors.white.withValues(
+                                              alpha:
+                                                  heldAlpha *
+                                                  (dark ? 0.08 : 0.24),
+                                            ),
+                                            border: context.mornye.glassOutlines
+                                                ? Border.all(
+                                                    color: Colors.white
+                                                        .withValues(
+                                                          alpha:
+                                                              0.6 * heldAlpha,
+                                                        ),
+                                                    width: 0.75,
+                                                  )
+                                                : null,
+                                          ),
+                                          child: const SizedBox.expand(),
+                                        ),
                                       ),
                                     ),
                                   ),

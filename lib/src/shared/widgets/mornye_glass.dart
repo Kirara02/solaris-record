@@ -128,12 +128,10 @@ class MornyeGlass extends StatelessWidget {
     );
     final Widget backdrop;
     if (useLens) {
-      final lens = _LiquidBackdrop(
+      final lens = MornyeLiquidBackdrop(
         borderRadius: borderRadius,
         clarity: clarity,
         blurSigma: _blurSigmas[filterIndex],
-        outlines: outlines,
-        dark: dark,
         child: surface,
       );
       // Outside a batch the lens takes a backdrop key of its own: sharing one
@@ -185,35 +183,45 @@ class _GlassBackdropScope extends InheritedWidget {
   bool updateShouldNotify(_GlassBackdropScope oldWidget) => false;
 }
 
-/// A bounded package lens that refracts the blurred backdrop.
-class _LiquidBackdrop extends StatelessWidget {
-  const _LiquidBackdrop({
+/// A bounded package lens that refracts the (blurred) backdrop behind it.
+///
+/// With [interaction] it is the lens held over a selection: [progress] scales
+/// the bend, the rim and the colour split from 0 (nothing drawn) to 1.
+class MornyeLiquidBackdrop extends StatelessWidget {
+  const MornyeLiquidBackdrop({
+    super.key,
     required this.borderRadius,
     required this.clarity,
     required this.blurSigma,
-    required this.outlines,
-    required this.dark,
     required this.child,
+    this.interaction = false,
+    this.progress = 1,
+    this.refractionDepth = 0.30,
+    this.refractionWidth = 20,
   });
-
-  static const _refractionDepth = 0.30;
-  static const _refractionWidth = 20.0;
 
   final BorderRadius borderRadius;
   final double clarity;
   final double blurSigma;
-  final bool outlines;
-  final bool dark;
   final Widget child;
+  final bool interaction;
+  final double progress;
+  final double refractionDepth;
+  final double refractionWidth;
 
   @override
   Widget build(BuildContext context) {
+    if (interaction && progress <= 0) return child;
+    final effect = interaction ? progress : 1.0;
+    final outlines = context.mornye.glassOutlines;
+    final dark = Theme.of(context).brightness == Brightness.dark;
     // The package fixes the bend's travel at 70 logical pixels and controls
     // it through the refraction index alone.
     final edgeBend =
         math.sqrt(1 - 1 / (1.7 * 1.7)) *
-        _refractionWidth *
-        _refractionDepth *
+        refractionWidth *
+        refractionDepth *
+        effect *
         5 /
         70;
     final index = 1 / math.sqrt(1 - math.pow(edgeBend.clamp(0, 0.95), 2));
@@ -226,7 +234,7 @@ class _LiquidBackdrop extends StatelessWidget {
           thickness: outlines ? 0.75 * 5.4 : 0,
           angle: 0,
           spread: 0.2,
-          intensity: outlines ? (dark ? 0.25 : 0.12) : 0,
+          intensity: outlines ? (dark ? 0.25 : 0.12) * effect : 0,
           color: dark ? Colors.white : const Color(0x88ffffff),
         ),
         glow: LiquidGlassLight.glow(
@@ -235,8 +243,8 @@ class _LiquidBackdrop extends StatelessWidget {
         ),
         blur: blurSigma,
         refractionIndex: index,
-        refractionWidth: _refractionWidth,
-        dispersion: 1.32 * clarity,
+        refractionWidth: refractionWidth,
+        dispersion: 1.32 * clarity * effect,
       ),
       child: child,
     );
