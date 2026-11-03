@@ -6,14 +6,15 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 
 ## Screenshots
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/images/desktop/material/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b> on desktop.</sub></td>
-    <td width="50%"><img src="docs/images/desktop/material/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b> on desktop.</sub></td>
-  </tr>
-</table>
+### Desktop
 
-More desktop and mobile screens: [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md).
+<img src="docs/images/desktop.png" alt="Solaris Record on desktop: overview, pull types, share image, guide, Tower of Adversity and Whimpering Wastes">
+
+### Mobile
+
+<img src="docs/images/mobile.png" alt="Solaris Record on mobile: overview, convene, guide, Tower of Adversity, Whimpering Wastes and share image">
+
+More screens, in the Material and Mornye styles: [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md).
 
 ## Features
 
