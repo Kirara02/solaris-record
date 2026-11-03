@@ -5,8 +5,11 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/routing/app_routes.dart';
+import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/glass_menu.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../accounts_providers.dart';
 import '../domain/account.dart';
@@ -126,6 +129,7 @@ class AccountPill extends ConsumerWidget {
 
     return PopupMenuButton<String>(
       tooltip: t.stats.switchAccount,
+      popUpAnimationStyle: AppMotion.surfaceEntrance(context),
       offset: const Offset(0, 46),
       shape: RoundedRectangleBorder(
         borderRadius: context.tokens.borderRadiusControl,
@@ -137,54 +141,65 @@ class AccountPill extends ConsumerWidget {
           ref.read(activeUidProvider.notifier).select(value);
         }
       },
-      itemBuilder: (context) => [
-        for (final a in accounts)
-          PopupMenuItem<String>(
-            value: a.uid,
-            child: Row(
-              children: [
-                AccountAvatar(account: a, radius: 14),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        accountName(t, a),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        t.accounts.uid(uid: shown(a.uid)),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+      itemBuilder: (context) {
+        Widget accountRow(Account a) => Row(
+          children: [
+            AccountAvatar(account: a, radius: 14),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    accountName(t, a),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                if (a.uid == account.uid)
-                  AdaptiveIcon(Icons.check, size: 18, color: scheme.primary),
+                  Text(
+                    t.accounts.uid(uid: shown(a.uid)),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (a.uid == account.uid)
+              AdaptiveIcon(Icons.check, size: 18, color: scheme.primary),
+          ],
+        );
+        final manageRow = Row(
+          children: [
+            AdaptiveIcon(
+              Icons.manage_accounts_outlined,
+              size: 20,
+              color: scheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 12),
+            Text(t.stats.manageAccounts),
+          ],
+        );
+        // Mornye draws the whole menu as one glass panel.
+        if (context.isMornye) {
+          return [
+            GlassMenu(
+              children: [
+                for (final a in accounts)
+                  GlassMenuItem(value: a.uid, child: accountRow(a)),
+                const Divider(),
+                GlassMenuItem(value: manageValue, child: manageRow),
               ],
             ),
-          ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: manageValue,
-          child: Row(
-            children: [
-              AdaptiveIcon(
-                Icons.manage_accounts_outlined,
-                size: 20,
-                color: scheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 12),
-              Text(t.stats.manageAccounts),
-            ],
-          ),
-        ),
-      ],
+          ];
+        }
+        return [
+          for (final a in accounts)
+            PopupMenuItem<String>(value: a.uid, child: accountRow(a)),
+          const PopupMenuDivider(),
+          PopupMenuItem<String>(value: manageValue, child: manageRow),
+        ];
+      },
       child: Container(
         key: pillKey,
         height: 40,

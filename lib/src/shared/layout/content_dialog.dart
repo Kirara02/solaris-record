@@ -1,10 +1,13 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart'
+    show CupertinoDynamicColor, kCupertinoModalBarrierColor;
 import 'package:material_ui/material_ui.dart';
 
 import '../../features/settings/settings_providers.dart';
+import '../theme/app_motion.dart';
 import '../theme/app_tokens.dart';
 import '../theme/mornye_theme.dart';
 import '../widgets/mornye_glass.dart';
+import './app_dialog_route.dart';
 import 'window_size.dart';
 
 /// Like [showDialog], but centered over the content pane. On wide layouts the
@@ -13,7 +16,7 @@ import 'window_size.dart';
 /// centered on the whole window.
 Future<T?> showContentDialog<T>(BuildContext context, WidgetBuilder builder) {
   final inset = MediaQuery.paddingOf(context).left;
-  return showDialog<T>(
+  return showAppDialog<T>(
     context: context,
     builder: (dialogContext) => Padding(
       padding: EdgeInsets.only(left: inset),
@@ -32,6 +35,10 @@ Future<void> showAdaptiveSheet(BuildContext context, WidgetBuilder builder) {
   if (context.windowSize == WindowSize.compact) {
     return showModalBottomSheet<void>(
       context: context,
+      sheetAnimationStyle: AppMotion.surfaceEntrance(context),
+      barrierColor: context.isMornye
+          ? CupertinoDynamicColor.resolve(kCupertinoModalBarrierColor, context)
+          : null,
       // Under Mornye the handle is drawn inside the glass panel.
       showDragHandle: !context.isMornye,
       isScrollControlled: true,
@@ -99,9 +106,6 @@ Widget _maybeGlass(BuildContext context, Widget child) => context.isMornye
       )
     : child;
 
-/// Sheets and dialogs are the one big glass surface on screen, so they get the
-/// refractive glass unless blur is turned off in Appearance.
-MornyeGlassLevel _glassLevel(BuildContext context) =>
-    ProviderScope.containerOf(context).read(navBarBlurProvider)
-    ? MornyeGlassLevel.liquid
-    : MornyeGlassLevel.flat;
+/// Sheets and dialogs are the one big glass surface on screen, so they get
+/// whatever glass the device and the Appearance settings allow.
+MornyeGlassLevel _glassLevel(BuildContext context) => glassLevelOf(context);

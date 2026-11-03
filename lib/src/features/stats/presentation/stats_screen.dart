@@ -6,11 +6,11 @@ import '../../../shared/i18n/pool_labels.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
 import '../../../shared/widgets/app_logo.dart';
 import '../../../shared/widgets/app_sliver_header.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/horizontal_scroll_area.dart';
-import '../../../shared/widgets/settings_group.dart';
 import '../../accounts/accounts_providers.dart';
 import '../../accounts/presentation/account_widgets.dart';
 import '../../import/presentation/import_dialog.dart';
@@ -160,10 +160,11 @@ class _PoolSelector extends StatelessWidget {
               itemBuilder: (context, i) {
                 final p = options[i];
                 return Center(
-                  child: SettingsChoiceChip(
+                  child: AppChoiceChip(
+                    glass: true,
                     label: p.label(t),
-                    isSelected: p == selected,
-                    onTap: () => onSelected(p),
+                    selected: p == selected,
+                    onSelected: () => onSelected(p),
                   ),
                 );
               },

@@ -80,8 +80,23 @@ class AppearanceScreen extends ConsumerWidget {
                         subtitle: t.appearance.glassOutlinesSubtitle,
                         value: settings.mornyeGlassOutlines,
                         onChanged: controller.setMornyeGlassOutlines,
-                        showDivider: false,
                       ),
+                      SettingsSwitchItem(
+                        icon: Icons.contrast,
+                        title: t.appearance.glassForced,
+                        subtitle: t.appearance.glassForcedSubtitle,
+                        value: settings.mornyeGlassForced,
+                        onChanged: controller.setMornyeGlassForced,
+                      ),
+                      // San Francisco is always used on Apple platforms.
+                      if (!isApplePlatform)
+                        SettingsSwitchItem(
+                          icon: Icons.font_download_outlined,
+                          title: t.appearance.systemFont,
+                          subtitle: t.appearance.systemFontSubtitle,
+                          value: settings.mornyeSystemFont,
+                          onChanged: controller.setMornyeSystemFont,
+                        ),
                     ],
                   )
                 else ...[

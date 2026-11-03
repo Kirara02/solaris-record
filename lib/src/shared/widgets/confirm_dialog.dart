@@ -1,8 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../features/settings/settings_providers.dart';
 
+import '../layout/app_dialog_route.dart';
 import '../theme/app_tokens.dart';
 import '../theme/mornye_theme.dart';
 import 'mornye_glass.dart';
@@ -16,7 +16,7 @@ Future<bool> showConfirmDialog(
   required String confirmLabel,
   required String cancelLabel,
 }) async {
-  final confirmed = await showDialog<bool>(
+  final confirmed = await showAppDialog<bool>(
     context: context,
     builder: (context) => context.isMornye
         ? _MornyeAlert(
@@ -85,9 +85,7 @@ class _MornyeAlert extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 320),
         child: MornyeGlass.overlay(
-          level: ProviderScope.containerOf(context).read(navBarBlurProvider)
-              ? MornyeGlassLevel.liquid
-              : MornyeGlassLevel.flat,
+          level: glassLevelOf(context),
           borderRadius: BorderRadius.circular(context.tokens.radiusCard + 6),
           child: Material(
             type: MaterialType.transparency,

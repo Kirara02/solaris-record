@@ -12,7 +12,6 @@ import '../../shared/routing/app_routes.dart';
 import '../../shared/theme/app_tokens.dart';
 import '../../shared/theme/mornye_icons.dart';
 import '../../shared/theme/mornye_theme.dart';
-import '../../shared/widgets/mornye_glass.dart';
 import '../../shared/widgets/settings_group.dart';
 import '../settings/settings_providers.dart';
 import '../stats/domain/pool_type.dart';
@@ -277,12 +276,7 @@ class WideShell extends ConsumerWidget {
     if (context.isMornye) {
       railView = SizedBox(
         width: WideShell.mornyePanelWidth,
-        child: MornyeGlass(
-          level: blur ? MornyeGlassLevel.liquid : MornyeGlassLevel.flat,
-          borderRadius: BorderRadius.circular(28),
-          fill: Theme.of(context).colorScheme.surfaceContainer,
-          child: rail,
-        ),
+        child: _MornyeSidebarPanel(child: rail),
       );
     } else if (blur) {
       railView = ClipRect(
@@ -552,6 +546,44 @@ class RailBottomItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(RailMetrics.indicatorRadius),
           child: content,
         ),
+      ),
+    );
+  }
+}
+
+/// The Mornye sidebar panel. Like the Mornye desktop app's, it is a solid
+/// rounded panel with a hairline and a soft shadow, not glass: glass is kept
+/// for what floats over content (menus, sheets, dialogs, the tab bar).
+class _MornyeSidebarPanel extends StatelessWidget {
+  const _MornyeSidebarPanel({required this.child});
+
+  final Widget child;
+
+  static const _radius = 28.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final dark = scheme.brightness == Brightness.dark;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xff1e1e20) : const Color(0xffefeff3),
+        borderRadius: BorderRadius.circular(_radius),
+        border: Border.all(
+          color: scheme.onSurface.withValues(alpha: 0.08),
+          width: 0.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(_radius),
+        child: Material(type: MaterialType.transparency, child: child),
       ),
     );
   }

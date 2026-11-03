@@ -34,6 +34,8 @@ class ThemeSettings {
     this.mornyeAccent = MornyeAccent.red,
     this.mornyeGlassClarity = defaultMornyeGlassClarity,
     this.mornyeGlassOutlines = true,
+    this.mornyeGlassForced = false,
+    this.mornyeSystemFont = false,
   });
 
   final ThemeMode mode;
@@ -51,6 +53,13 @@ class ThemeSettings {
   final double mornyeGlassClarity;
   final bool mornyeGlassOutlines;
 
+  /// Keep the glass on when the system asks for more contrast.
+  final bool mornyeGlassForced;
+
+  /// Use the platform's own font instead of Inter (Apple platforms always
+  /// use San Francisco).
+  final bool mornyeSystemFont;
+
   ThemeSettings copyWith({
     ThemeMode? mode,
     bool? useDynamicColor,
@@ -60,6 +69,8 @@ class ThemeSettings {
     MornyeAccent? mornyeAccent,
     double? mornyeGlassClarity,
     bool? mornyeGlassOutlines,
+    bool? mornyeGlassForced,
+    bool? mornyeSystemFont,
   }) => ThemeSettings(
     mode: mode ?? this.mode,
     useDynamicColor: useDynamicColor ?? this.useDynamicColor,
@@ -72,5 +83,7 @@ class ThemeSettings {
       1.0,
     ),
     mornyeGlassOutlines: mornyeGlassOutlines ?? this.mornyeGlassOutlines,
+    mornyeGlassForced: mornyeGlassForced ?? this.mornyeGlassForced,
+    mornyeSystemFont: mornyeSystemFont ?? this.mornyeSystemFont,
   );
 }

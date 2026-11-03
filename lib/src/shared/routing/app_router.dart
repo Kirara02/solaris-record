@@ -23,6 +23,7 @@ import '../../features/shell/app_shell.dart';
 import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/update/presentation/update_startup_check.dart';
 import '../theme/mornye_icons.dart';
+import '../theme/mornye_theme.dart';
 import 'app_routes.dart';
 
 export 'app_routes.dart';
@@ -166,30 +167,47 @@ GoRouter appRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.settings,
-                pageBuilder: (c, s) => _page(s, const SettingsScreen()),
+                pageBuilder: (c, s) => _page(
+                  s,
+                  const MornyeSettingsTheme(child: SettingsScreen()),
+                ),
                 routes: [
                   GoRoute(
                     path: 'appearance',
-                    pageBuilder: (c, s) =>
-                        _subPage(s, const AppearanceScreen()),
+                    pageBuilder: (c, s) => _subPage(
+                      s,
+                      const MornyeSettingsTheme(child: AppearanceScreen()),
+                    ),
                   ),
                   GoRoute(
                     path: 'accounts',
-                    pageBuilder: (c, s) => _subPage(s, const AccountsScreen()),
+                    pageBuilder: (c, s) => _subPage(
+                      s,
+                      const MornyeSettingsTheme(child: AccountsScreen()),
+                    ),
                   ),
                   GoRoute(
                     path: 'data',
-                    pageBuilder: (c, s) => _subPage(s, const DataScreen()),
+                    pageBuilder: (c, s) => _subPage(
+                      s,
+                      const MornyeSettingsTheme(child: DataScreen()),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'logs',
-                        pageBuilder: (c, s) => _subPage(s, const LogsScreen()),
+                        pageBuilder: (c, s) => _subPage(
+                          s,
+                          const MornyeSettingsTheme(child: LogsScreen()),
+                        ),
                       ),
                     ],
                   ),
                   GoRoute(
                     path: 'about',
-                    pageBuilder: (c, s) => _subPage(s, const AboutScreen()),
+                    pageBuilder: (c, s) => _subPage(
+                      s,
+                      const MornyeSettingsTheme(child: AboutScreen()),
+                    ),
                   ),
                 ],
               ),

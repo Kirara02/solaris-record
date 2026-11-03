@@ -171,6 +171,7 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
                   children: [
                     for (final f in _LevelFilter.values)
                       SettingsChoiceChip(
+                        glass: true,
                         label: f.label(t),
                         isSelected: f == _filter,
                         onTap: () => setState(() => _filter = f),

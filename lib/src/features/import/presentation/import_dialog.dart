@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/i18n/pool_labels.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
@@ -29,7 +30,7 @@ import '../saved_import_urls.dart';
 /// Opens the import dialog. Reachable from the Convene screen and Settings, so
 /// importing doesn't need a tab of its own.
 Future<void> showImportDialog(BuildContext context, {String? initialUrl}) =>
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
       builder: (context) => ImportDialog(initialUrl: initialUrl),
     );
