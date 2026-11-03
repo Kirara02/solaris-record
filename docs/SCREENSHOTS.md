@@ -6,24 +6,22 @@ Back to the [README](../README.md).
 
 <table>
   <tr>
-    <td width="50%"><img src="images/desktop/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b>: totals, rarity and type charts, 5★ per pull type.</sub></td>
-    <td width="50%"><img src="images/desktop/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b>: pity, 50/50 record, 5★ timeline and history.</sub></td>
+    <td width="33%"><img src="images/desktop/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b>: totals, rarity and type charts, 5★ per pull type.</sub></td>
+    <td width="33%"><img src="images/desktop/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b>: pity, 50/50 record, 5★ timeline and history.</sub></td>
+    <td width="33%"><img src="images/desktop/3.png" alt="Featured Weapon pity and stats"><br><sub><b>Featured Weapon</b>: pity, stats, timeline colored by luck and history.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="images/desktop/3.png" alt="Featured Weapon pity and stats"><br><sub><b>Featured Weapon</b>: pity, stats, timeline colored by luck and history.</sub></td>
-    <td width="50%"><img src="images/desktop/4.png" alt="Share as an image"><br><sub><b>Share image</b>: a picture of the overview or one pull type, dark or light.</sub></td>
+    <td width="33%"><img src="images/desktop/4.png" alt="Share as an image"><br><sub><b>Share image</b>: a picture of the overview or one pull type, dark or light.</sub></td>
+    <td width="33%"><img src="images/desktop/5.png" alt="Guide with every Resonator, Weapon and Echo"><br><sub><b>Guide</b>: Resonators, Weapons and Echoes with search and filters.</sub></td>
+    <td width="33%"><img src="images/desktop/6.png" alt="Guide detail with skills and image gallery"><br><sub><b>Guide detail</b>: skills, stats and an icon, outfit and convene art gallery.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="images/desktop/5.png" alt="Guide with every Resonator, Weapon and Echo"><br><sub><b>Guide</b>: Resonators, Weapons and Echoes with search and filters.</sub></td>
-    <td width="50%"><img src="images/desktop/6.png" alt="Guide detail with skills and image gallery"><br><sub><b>Guide detail</b>: skills, stats and an icon, outfit and convene art gallery.</sub></td>
+    <td width="33%"><img src="images/desktop/7.png" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b>: enemies and buffs per season.</sub></td>
+    <td width="33%"><img src="images/desktop/8.png" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b>: enemies and buffs per season.</sub></td>
+    <td width="33%"><img src="images/desktop/9.png" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b>: enemies and buffs per season.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="images/desktop/7.png" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b>: enemies and buffs per season.</sub></td>
-    <td width="50%"><img src="images/desktop/8.png" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b>: enemies and buffs per season.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="images/desktop/9.png" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b>: enemies and buffs per season.</sub></td>
-    <td width="50%"><img src="images/desktop/10.png" alt="Redeem codes"><br><sub><b>Redeem Code</b>: current codes with a copy button.</sub></td>
+    <td width="33%"><img src="images/desktop/10.png" alt="Redeem codes"><br><sub><b>Redeem Code</b>: current codes with a copy button.</sub></td>
   </tr>
 </table>
 
