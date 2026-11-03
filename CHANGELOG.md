@@ -4,6 +4,33 @@ Release notes, newest first. Each release needs a section headed `## <version>`
 (for example `## 1.0.1`) before its tag is pushed: the release workflow shows
 that section on the GitHub release and fails if it is missing.
 
+## 1.8.0
+
+The Mornye style follows the Mornye app more closely (glass, chips, scrolling), and the Guide, Whimpering Wastes and item icons work again after changes at encore.moe.
+
+### What's new
+- **Mornye glass, like the Mornye app.** Menus are glass panels with squircle corners, the desktop sidebar is a solid panel, dialogs open with the iOS scrim and a scale-in that keeps the blur, and glass on a plain page only tints. The glass is prepared at launch, so the first sheet or dialog does not stall.
+- **The tab bar folds on scroll.** Drag down a page and the bar folds into one capsule showing the selected tab; tap it, return to the top or change tab to bring the bar back. The icons change colour as the selection capsule slides under them.
+- **Scrolling.** In the Mornye style lists bounce like on iOS, also on Android (not on a low-end phone), and desktop scrollbars only show on vertical lists.
+- **Chips and the segmented control** are drawn like Mornye's: a glass capsule on a page, a flat tonal one in a sheet or dialog, a Material filter chip in the Material style.
+- **Glass follows the device.** A low-end Android phone starts without the glass effects and a mid-range one with a plain blur. *Always use glass effects* in Appearance turns the full glass on everywhere, high contrast included, and the clarity slider explains why it is disabled.
+- **System font.** On Android, Windows and Linux the Mornye style can use the device's font instead of Inter.
+- **Settings pages** use larger corners, and Material sheets and menus open with a spring.
+
+### Fixes
+- The echo list in the Guide was empty: encore.moe renamed its list. Japanese and Korean echoes, Japanese, French and Portuguese weapons, and the translated item names came back as a bare list and fell back to English.
+- Whimpering Wastes showed no data for any season: encore.moe changed the keys of its answer. Season 0 is listed again, and the enemies of a stage are centered.
+- About 40% of the weapon icons and every image of Whimpering Wastes were blank: one of encore.moe's two image servers answers with a web page for them. The app now asks the other one when that happens.
+- The glass lens of the held tab no longer shows the page through the bar sharp and untinted.
+- Tapping a row in a sheet (for example the season picker) shows its ink again, and no longer logs a warning.
+
+### Notes
+- Endstate Matrix cannot load a season at the moment: encore.moe's server answers every season with an error. It works again when they fix it.
+- Season lists of Tower of Adversity and Whimpering Wastes no longer carry dates, so the app opens the latest season instead of the one running now.
+- Characters and weapons have no Indonesian, Russian or Vietnamese names at encore.moe, so the Guide shows the English ones.
+- The glass effects use liquid_glass_easy 5.2.0.
+- The new translations were machine-made and have not been reviewed by native speakers.
+
 ## 1.7.1
 
 The Mornye style now draws its glass the way the Mornye app does, with glass messages, an iOS text scale and a fix for the tab bar on Android.
