@@ -8,8 +8,8 @@ Open-source, cross-platform convene (gacha) tracker for Wuthering Waves. Track p
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/images/desktop/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b> on desktop.</sub></td>
-    <td width="50%"><img src="docs/images/desktop/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b> on desktop.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/material/1.png" alt="Overview of every pull type"><br><sub><b>Overview</b> on desktop.</sub></td>
+    <td width="50%"><img src="docs/images/desktop/material/2.png" alt="Featured Resonator pity and 50/50"><br><sub><b>Featured Resonator</b> on desktop.</sub></td>
   </tr>
 </table>
 
