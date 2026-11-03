@@ -11,6 +11,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../data/providers.dart';
 import '../presentation/share_card.dart';
 
@@ -32,7 +33,13 @@ Future<void> preloadIcons(
             itemImageUrlProvider(icon.resourceId, icon.resourceType).future,
           );
           if (url == null || !context.mounted) return;
-          await precacheImage(CachedNetworkImageProvider(url), context);
+          await precacheImage(
+            CachedNetworkImageProvider(
+              url,
+              cacheManager: AppImageCache.instance,
+            ),
+            context,
+          );
         } on Object catch (e) {
           _log.fine('Icon ${icon.resourceId} not preloaded: $e');
         }

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
@@ -12,6 +14,7 @@ import '../../shared/theme/mornye_theme.dart';
 import '../../shared/widgets/settings_group.dart';
 import '../settings/settings_providers.dart';
 import '../stats/pool_selection.dart';
+import 'chrome_controller.dart';
 import 'mornye_tab_bar.dart';
 import 'nav_destination.dart';
 
@@ -21,7 +24,7 @@ import 'nav_destination.dart';
 /// Four tabs: Overview and Convene share the stats branch (the selected pull
 /// type decides which one is showing), Explore and Settings are the next
 /// branches.
-class CompactShell extends ConsumerWidget {
+class CompactShell extends ConsumerStatefulWidget {
   const CompactShell({
     super.key,
     required this.navigationShell,
@@ -37,7 +40,48 @@ class CompactShell extends ConsumerWidget {
   static const tabBarSlotKey = ValueKey('tab-bar-slot');
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CompactShell> createState() => _CompactShellState();
+}
+
+class _CompactShellState extends ConsumerState<CompactShell> {
+  static const tabBarSlotKey = CompactShell.tabBarSlotKey;
+
+  final _chrome = ChromeController();
+
+  StatefulNavigationShell get navigationShell => widget.navigationShell;
+  String get location => widget.location;
+  List<NavDestination> get destinations => widget.destinations;
+
+  @override
+  void didUpdateWidget(CompactShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A new tab or page starts with the full bar.
+    if (oldWidget.location != widget.location ||
+        oldWidget.navigationShell.currentIndex !=
+            widget.navigationShell.currentIndex) {
+      _chrome.expand();
+    }
+  }
+
+  @override
+  void dispose() {
+    _chrome.dispose();
+    super.dispose();
+  }
+
+  /// The Mornye bar folds on a phone, not on desktop, and not when large text
+  /// leaves no room for the single capsule.
+  bool _canMinimize(BuildContext context) =>
+      context.isMornye &&
+      !const {
+        TargetPlatform.macOS,
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+      }.contains(defaultTargetPlatform) &&
+      MediaQuery.textScalerOf(context).scale(15) <= 20;
+
+  @override
+  Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final blur = ref.watch(navBarBlurProvider);
     final pool = ref.watch(selectedPoolProvider);
@@ -45,6 +89,7 @@ class CompactShell extends ConsumerWidget {
     final index = branch == 0 ? (pool == null ? 0 : 1) : branch + 1;
 
     void onSelected(int i) {
+      _chrome.expand();
       final selection = ref.read(selectedPoolProvider.notifier);
       if (i >= 2) {
         navigationShell.goBranch(i - 1, initialLocation: branch == i - 1);
@@ -66,11 +111,16 @@ class CompactShell extends ConsumerWidget {
     // padding); without, it is the same colour opaque.
     final tint = groupColor(context);
     Widget bar = context.isMornye
-        ? MornyeTabBar(
-            destinations: destinations,
-            selectedIndex: index,
-            onSelected: onSelected,
-            blur: blur,
+        ? ValueListenableBuilder<bool>(
+            valueListenable: _chrome,
+            builder: (context, minimized, _) => MornyeTabBar(
+              destinations: destinations,
+              selectedIndex: index,
+              onSelected: onSelected,
+              minimized: minimized && _canMinimize(context),
+              onExpand: _chrome.expand,
+              level: ref.watch(glassLevelProvider),
+            ),
           )
         : DecoratedBox(
             position: DecorationPosition.foreground,
@@ -117,7 +167,12 @@ class CompactShell extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      body: navigationShell,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) => _canMinimize(context) && showTabBar
+            ? _chrome.handleScroll(notification)
+            : false,
+        child: navigationShell,
+      ),
       bottomNavigationBar: ClipRect(
         child: AnimatedAlign(
           key: tabBarSlotKey,

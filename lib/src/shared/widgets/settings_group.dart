@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/app_tokens.dart';
 import '../theme/mornye_icons.dart';
 import '../theme/mornye_theme.dart';
+import './app_choice_chip.dart';
 
 /// Surface tint shared by grouped containers: the page surface nudged toward
 /// black (light) or white (dark), so groups read as raised without shadows.
@@ -432,17 +433,32 @@ class SettingsChoiceChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.icon,
+    this.glass = false,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
+  /// A single-line chip on a page rather than in a sheet or dialog: Mornye
+  /// draws it as a glass capsule (see [AppChoiceChip.glass]).
+  final bool glass;
+
   /// When set, the icon is stacked above the label (used for mode pickers).
   final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
+    // A plain label is the app's choice chip; the stacked icon variant stays a
+    // tile for mode pickers.
+    if (icon == null) {
+      return AppChoiceChip(
+        label: label,
+        selected: isSelected,
+        onSelected: onTap,
+        glass: glass,
+      );
+    }
     final scheme = Theme.of(context).colorScheme;
     final radius = BorderRadius.circular(context.tokens.radiusControl);
     return AnimatedContainer(

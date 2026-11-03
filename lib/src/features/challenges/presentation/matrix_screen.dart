@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/assets/assets.gen.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
@@ -218,6 +219,7 @@ class _ScoreGrid extends StatelessWidget {
                                 children: [
                                   if (scores[i + c].iconUrl != null)
                                     CachedNetworkImage(
+                                      cacheManager: AppImageCache.instance,
                                       imageUrl: scores[i + c].iconUrl!,
                                       height: 40,
                                       fadeInDuration: Duration.zero,
@@ -262,6 +264,7 @@ class _Icon extends StatelessWidget {
       child: url == null
           ? null
           : CachedNetworkImage(
+              cacheManager: AppImageCache.instance,
               imageUrl: url!,
               memCacheWidth: 160,
               fit: BoxFit.contain,
@@ -485,6 +488,7 @@ class _WaveCard extends StatelessWidget {
     final image = wave.imageUrl == null
         ? null
         : CachedNetworkImage(
+            cacheManager: AppImageCache.instance,
             imageUrl: wave.imageUrl!,
             fit: BoxFit.cover,
             alignment: Alignment.center,
@@ -651,6 +655,7 @@ class _Avatar extends StatelessWidget {
       child: url == null
           ? null
           : CachedNetworkImage(
+              cacheManager: AppImageCache.instance,
               imageUrl: url!,
               memCacheWidth: 160,
               fit: BoxFit.cover,

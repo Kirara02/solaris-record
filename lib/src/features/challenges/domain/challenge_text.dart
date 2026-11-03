@@ -36,3 +36,20 @@ String? rawOf(Object? v) {
   final t = v.trim();
   return t.isEmpty ? null : t;
 }
+
+/// [json] with the first letter of every map key lower-cased, so
+/// `StageGroups` reads as `stageGroups`. Whimpering Wastes moved from
+/// camelCase to PascalCase keys; the parsers keep reading camelCase and take
+/// either.
+Object? lowerFirstKeys(Object? json) => switch (json) {
+  Map() => {
+    for (final e in json.entries)
+      if (e.key is String && (e.key as String).isNotEmpty)
+        '${(e.key as String)[0].toLowerCase()}${(e.key as String).substring(1)}':
+            lowerFirstKeys(e.value)
+      else
+        e.key: lowerFirstKeys(e.value),
+  },
+  List() => [for (final e in json) lowerFirstKeys(e)],
+  _ => json,
+};

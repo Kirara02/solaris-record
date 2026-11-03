@@ -8,6 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app.dart';
+import 'src/data/device_tier.dart';
 import 'src/data/preferences.dart';
 import 'src/features/settings/settings_providers.dart';
 import 'src/shared/i18n/gen/strings.g.dart';
@@ -27,13 +28,6 @@ Future<void> main() async {
     'Started version=$version platform=${defaultTargetPlatform.name} '
     'locale=${LocaleSettings.currentLocale.languageCode}',
   );
-  // liquid_glass_easy 5.1.0 bakes each lens's shape into a texture. On an
-  // Android phone that left white speckles along the rim of the Mornye tab bar
-  // (gone with the cache off, and not seen on the iOS simulator), so Android
-  // goes back to evaluating the shape per pixel.
-  if (defaultTargetPlatform == TargetPlatform.android) {
-    LiquidGlassConfiguration.shapeCache = false;
-  }
   // Compile the glass shaders up front so the Mornye tab bar is glass on its
   // first frame. Glass falls back to a frosted look when they can't load.
   try {
@@ -41,10 +35,14 @@ Future<void> main() async {
   } catch (e) {
     Logger('app').warning('Liquid glass shaders unavailable: $e');
   }
+  final tier = await resolveDeviceTier(prefs);
   runApp(
     TranslationProvider(
       child: ProviderScope(
-        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          deviceTierProvider.overrideWithValue(tier),
+        ],
         child: const SolarisApp(),
       ),
     ),

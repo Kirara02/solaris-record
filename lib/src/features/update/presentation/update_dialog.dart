@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
@@ -27,7 +28,7 @@ final _log = Logger('update');
 /// the update can be downloaded and installed from here; on desktop the
 /// download opens in the browser.
 Future<void> showUpdateDialog(BuildContext context, UpdateAvailable update) =>
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
       builder: (context) => UpdateDialog(update: update),
     );

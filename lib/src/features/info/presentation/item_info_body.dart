@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_tokens.dart';
@@ -85,6 +86,7 @@ class ItemInfoBody extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             child: CachedNetworkImage(
+              cacheManager: AppImageCache.instance,
               imageUrl: info.imageUrl!,
               fit: BoxFit.contain,
               placeholder: (_, _) => const Center(child: AppLoadingIndicator()),

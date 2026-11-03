@@ -1,11 +1,17 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../theme/app_tokens.dart';
+import '../../features/settings/settings_providers.dart';
 import 'marquee_text.dart';
+import 'mornye_glass.dart';
 
-/// iOS-style segmented control: a rounded track with a thumb that slides
-/// under the selected label.
-class MornyeSegmentedControl extends StatelessWidget {
+/// Segmented control of the Mornye style: a glass capsule with a pill that
+/// slides under the selected label. Tap a segment, or drag across the control
+/// and let go on the one to pick.
+///
+/// It sits on a plain page or card as often as over content, so the glass only
+/// tints; there is nothing behind it to blur.
+class MornyeSegmentedControl extends ConsumerStatefulWidget {
   const MornyeSegmentedControl({
     super.key,
     required this.labels,
@@ -17,80 +23,153 @@ class MornyeSegmentedControl extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onChanged;
 
-  static const _height = 36.0;
+  @override
+  ConsumerState<MornyeSegmentedControl> createState() =>
+      _MornyeSegmentedControlState();
+}
+
+class _MornyeSegmentedControlState
+    extends ConsumerState<MornyeSegmentedControl> {
+  /// Pill position while dragging, in alignment units (-1 first .. 1 last).
+  double? _dragAlignment;
+  int? _dragIndex;
+
+  int get _count => widget.labels.length;
+
+  int _indexAt(double x, double width) =>
+      (x / width * _count).floor().clamp(0, _count - 1);
+
+  void _drag(double x, double width) {
+    if (width <= 0 || _count < 2) return;
+    final half = width / _count / 2;
+    final clamped = x.clamp(half, width - half);
+    setState(() {
+      _dragAlignment = (clamped - half) / (width - 2 * half) * 2 - 1;
+      _dragIndex = _indexAt(x, width);
+    });
+  }
+
+  void _endDrag() {
+    final index = _dragIndex;
+    setState(() {
+      _dragAlignment = null;
+      _dragIndex = null;
+    });
+    if (index != null && index != widget.selectedIndex) {
+      widget.onChanged(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final dark = theme.brightness == Brightness.dark;
-    final count = labels.length;
-    final radius = BorderRadius.circular(context.tokens.radiusControl - 4);
+    final level = ref.watch(glassLevelProvider);
+    // At least 56, so each segment keeps a 48 target inside the capsule.
+    final height = (MediaQuery.textScalerOf(context).scale(15) + 36).clamp(
+      56.0,
+      double.infinity,
+    );
+    final radius = height / 2;
+    final pillRadius = radius - 4;
+    final shown = _dragIndex ?? widget.selectedIndex;
+    final alignment =
+        _dragAlignment ??
+        (_count > 1 ? -1 + 2 * widget.selectedIndex / (_count - 1) : 0.0);
+    final still =
+        _dragAlignment != null || MediaQuery.disableAnimationsOf(context);
     return Semantics(
       container: true,
-      child: Container(
-        height: _height,
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: scheme.onSurface.withValues(alpha: dark ? 0.16 : 0.07),
-          borderRadius: radius,
-        ),
-        child: Stack(
-          children: [
-            AnimatedAlign(
-              duration: MediaQuery.disableAnimationsOf(context)
-                  ? Duration.zero
-                  : context.tokens.motionMedium,
-              curve: Curves.easeOutCubic,
-              alignment: Alignment(
-                count > 1 ? -1 + 2 * selectedIndex / (count - 1) : 0,
-                0,
-              ),
-              child: FractionallySizedBox(
-                widthFactor: 1 / count,
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: dark ? const Color(0xFF636366) : Colors.white,
-                    borderRadius: radius,
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x1F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                for (final (i, label) in labels.indexed)
-                  Expanded(
-                    child: Semantics(
-                      button: true,
-                      selected: i == selectedIndex,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => onChanged(i),
-                        child: Center(
-                          child: MarqueeText(
-                            label,
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              fontWeight: i == selectedIndex
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                              color: scheme.onSurface,
+      child: SizedBox(
+        height: height,
+        child: MornyeGlass(
+          level: level,
+          samplesBackdrop: false,
+          borderRadius: BorderRadius.circular(radius),
+          fill: scheme.surfaceContainerHigh,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth;
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (e) =>
+                      widget.onChanged(_indexAt(e.localPosition.dx, width)),
+                  onHorizontalDragStart: (e) =>
+                      _drag(e.localPosition.dx, width),
+                  onHorizontalDragUpdate: (e) =>
+                      _drag(e.localPosition.dx, width),
+                  onHorizontalDragEnd: (_) => _endDrag(),
+                  onHorizontalDragCancel: () => setState(() {
+                    _dragAlignment = null;
+                    _dragIndex = null;
+                  }),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: AnimatedAlign(
+                          duration: still
+                              ? Duration.zero
+                              : const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                          alignment: Alignment(alignment, 0),
+                          child: FractionallySizedBox(
+                            widthFactor: 1 / _count,
+                            heightFactor: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: scheme.onSurface.withValues(
+                                  alpha: dark ? 0.12 : 0.08,
+                                ),
+                                borderRadius: BorderRadius.circular(pillRadius),
+                                border: Border.all(
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.05,
+                                  ),
+                                  width: 0.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 1,
+                                    offset: const Offset(0, 0.5),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                      Row(
+                        children: [
+                          for (final (i, label) in widget.labels.indexed)
+                            Expanded(
+                              child: Semantics(
+                                button: true,
+                                selected: i == widget.selectedIndex,
+                                child: Center(
+                                  child: MarqueeText(
+                                    label,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: scheme.onSurface,
+                                      fontWeight: i == shown
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
-              ],
+                );
+              },
             ),
-          ],
+          ),
         ),
       ),
     );

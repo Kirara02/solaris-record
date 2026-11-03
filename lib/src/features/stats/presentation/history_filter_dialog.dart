@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../domain/history_view.dart';
@@ -23,7 +24,7 @@ Future<HistoryFilter?> showHistoryFilterDialog(
   BuildContext context, {
   required HistoryFilter current,
   required List<HistoryEntry> entries,
-}) => showDialog<HistoryFilter>(
+}) => showAppDialog<HistoryFilter>(
   context: context,
   builder: (context) =>
       _HistoryFilterDialog(current: current, entries: entries),

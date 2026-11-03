@@ -19,14 +19,22 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
   const MornyeTheme({
     this.glassClarity = defaultMornyeGlassClarity,
     this.glassOutlines = true,
+    this.glassForced = false,
     this.accent = MornyeAccent.red,
+    this.useSystemFont = false,
   });
 
   /// 0 (milky) to 1 (almost see-through).
   final double glassClarity;
   final bool glassOutlines;
 
+  /// Keeps the glass on when the system asks for more contrast.
+  final bool glassForced;
+
   final MornyeAccent accent;
+
+  /// The platform's font instead of Inter (Apple platforms always use SF).
+  final bool useSystemFont;
 
   static const standard = MornyeTheme();
 
@@ -34,11 +42,15 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
   MornyeTheme copyWith({
     double? glassClarity,
     bool? glassOutlines,
+    bool? glassForced,
     MornyeAccent? accent,
+    bool? useSystemFont,
   }) => MornyeTheme(
     glassClarity: glassClarity ?? this.glassClarity,
     glassOutlines: glassOutlines ?? this.glassOutlines,
+    glassForced: glassForced ?? this.glassForced,
     accent: accent ?? this.accent,
+    useSystemFont: useSystemFont ?? this.useSystemFont,
   );
 
   @override
@@ -47,7 +59,9 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
     return MornyeTheme(
       glassClarity: glassClarity + (other.glassClarity - glassClarity) * t,
       glassOutlines: t < 0.5 ? glassOutlines : other.glassOutlines,
+      glassForced: t < 0.5 ? glassForced : other.glassForced,
       accent: t < 0.5 ? accent : other.accent,
+      useSystemFont: t < 0.5 ? useSystemFont : other.useSystemFont,
     );
   }
 
@@ -56,10 +70,18 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
       other is MornyeTheme &&
       other.glassClarity == glassClarity &&
       other.glassOutlines == glassOutlines &&
-      other.accent == accent;
+      other.glassForced == glassForced &&
+      other.accent == accent &&
+      other.useSystemFont == useSystemFont;
 
   @override
-  int get hashCode => Object.hash(glassClarity, glassOutlines, accent);
+  int get hashCode => Object.hash(
+    glassClarity,
+    glassOutlines,
+    glassForced,
+    accent,
+    useSystemFont,
+  );
 
   /// Radius, row and header scale of the style, on top of the Material one.
   static final tokens = AppTokens.standard.copyWith(
@@ -109,14 +131,44 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
     return dark ? color.darkColor : color.highContrastColor;
   }
 
-  static final _cache = <(Brightness, MornyeTheme), ThemeData>{};
+  // Building a theme seeds a colour scheme and the whole text theme. Only the
+  // accent and the font change those, so the base is cached on them alone; the
+  // glass settings (the clarity slider moves them on every step) are swapped
+  // into a copy, and the last copy is reused while the settings stay equal.
+  static final _baseCache =
+      <(TargetPlatform, Brightness, MornyeAccent, bool), ThemeData>{};
+  static final _glassVariants = Expando<ThemeData>();
 
   /// Material [ThemeData] with the iOS palette mapped onto the M3 roles, so
   /// widgets that read `colorScheme` need no changes.
   static ThemeData build(
     Brightness brightness, [
     MornyeTheme extra = MornyeTheme.standard,
-  ]) => _cache[(brightness, extra)] ??= _build(brightness, extra);
+  ]) {
+    final base =
+        _baseCache[(
+          defaultTargetPlatform,
+          brightness,
+          extra.accent,
+          extra.useSystemFont,
+        )] ??= _build(
+          brightness,
+          MornyeTheme(accent: extra.accent, useSystemFont: extra.useSystemFont),
+        );
+    return _withGlass(base, extra);
+  }
+
+  static ThemeData _withGlass(ThemeData theme, MornyeTheme extra) {
+    if (theme.extension<MornyeTheme>() == extra) return theme;
+    final variant = _glassVariants[theme];
+    if (variant?.extension<MornyeTheme>() == extra) return variant!;
+    return _glassVariants[theme] = theme.copyWith(
+      extensions: [
+        for (final extension in theme.extensions.values)
+          if (extension is MornyeTheme) extra else extension,
+      ],
+    );
+  }
 
   static ThemeData _build(Brightness brightness, MornyeTheme extra) {
     final dark = brightness == Brightness.dark;
@@ -174,15 +226,16 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
         defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS;
     final type = CupertinoThemeData(brightness: brightness).textTheme;
+    final system = apple || extra.useSystemFont;
     final body = type.textStyle.copyWith(
       inherit: true,
       color: label,
-      fontFamily: apple ? type.textStyle.fontFamily : 'Inter',
+      fontFamily: system ? type.textStyle.fontFamily : 'Inter',
     );
     final display = type.navLargeTitleTextStyle.copyWith(
       inherit: true,
       color: label,
-      fontFamily: apple ? type.navLargeTitleTextStyle.fontFamily : 'Inter',
+      fontFamily: system ? type.navLargeTitleTextStyle.fontFamily : 'Inter',
     );
     final text = TextTheme(
       displayLarge: display.copyWith(fontSize: 57),
@@ -259,17 +312,13 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
           ),
         ),
       ),
-      // Popup menus can't host a blur through the theme, so they get a nearly
-      // opaque card colour, no tint and a soft rounded shape.
-      popupMenuTheme: PopupMenuThemeData(
-        color: card.withValues(alpha: 0.96),
+      // The popup route's surface is transparent: a popup menu draws its own
+      // glass panel (see GlassMenu), as the Mornye app's menus do.
+      popupMenuTheme: const PopupMenuThemeData(
+        color: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        elevation: 6,
-        shadowColor: Colors.black.withValues(alpha: 0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(tokens.radiusControl + 2),
-          side: BorderSide(color: separator, width: 0.5),
-        ),
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -287,10 +336,44 @@ class MornyeTheme extends ThemeExtension<MornyeTheme> {
 }
 
 extension MornyeContext on BuildContext {
+  /// Whether the system's contrast request switches the glass off: it does
+  /// unless the user chose to keep the glass.
+  bool get glassContrastBlocked =>
+      MediaQuery.highContrastOf(this) && !mornye.glassForced;
+
   /// Whether the "Mornye" (iOS glass) style is active.
   bool get isMornye => Theme.of(this).extension<MornyeTheme>() != null;
 
   /// The style's glass settings, or the defaults under Material.
   MornyeTheme get mornye =>
       Theme.of(this).extension<MornyeTheme>() ?? MornyeTheme.standard;
+}
+
+/// Settings pages use iOS's large inset-grouped corners. Only the card radius
+/// changes: the page already uses the grouped palette everywhere.
+class MornyeSettingsTheme extends StatelessWidget {
+  const MornyeSettingsTheme({super.key, required this.child});
+
+  final Widget child;
+
+  // Reusing the derived theme keeps a rebuild from notifying the whole page.
+  static final _themes = Expando<ThemeData>();
+
+  @override
+  Widget build(BuildContext context) {
+    if (!context.isMornye) return child;
+    final theme = Theme.of(context);
+    return Theme(
+      data: _themes[theme] ??= theme.copyWith(
+        extensions: [
+          for (final extension in theme.extensions.values)
+            if (extension is AppTokens)
+              extension.copyWith(radiusCard: 24)
+            else
+              extension,
+        ],
+      ),
+      child: child,
+    );
+  }
 }

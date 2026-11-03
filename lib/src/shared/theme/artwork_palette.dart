@@ -9,6 +9,7 @@ import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/app_image_cache.dart';
 import '../../data/providers.dart';
 
 part 'artwork_palette.g.dart';
@@ -59,7 +60,7 @@ Future<ColorScheme?> artworkPalette(
 Future<ui.Image> _decode(String url) {
   final completer = Completer<ui.Image>();
   final stream = ResizeImage(
-    CachedNetworkImageProvider(url),
+    CachedNetworkImageProvider(url, cacheManager: AppImageCache.instance),
     width: _sampleSize,
   ).resolve(ImageConfiguration.empty);
   late final ImageStreamListener listener;

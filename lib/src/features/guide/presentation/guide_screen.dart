@@ -5,8 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../shared/assets/assets.gen.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
-import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
 import '../../../shared/widgets/app_loading_indicator.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_card.dart';
@@ -151,25 +151,25 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _KindChip(
-                        art: Assets.images.guideResonator,
-                        label: t.guide.resonators,
-                        selected: kind == GuideKind.resonator,
-                        onTap: () => _setKind(GuideKind.resonator),
+                      _kindChip(
+                        Assets.images.guideResonator,
+                        t.guide.resonators,
+                        kind == GuideKind.resonator,
+                        () => _setKind(GuideKind.resonator),
                       ),
                       const SizedBox(width: 8),
-                      _KindChip(
-                        art: Assets.images.guideWeapon,
-                        label: t.guide.weapons,
-                        selected: kind == GuideKind.weapon,
-                        onTap: () => _setKind(GuideKind.weapon),
+                      _kindChip(
+                        Assets.images.guideWeapon,
+                        t.guide.weapons,
+                        kind == GuideKind.weapon,
+                        () => _setKind(GuideKind.weapon),
                       ),
                       const SizedBox(width: 8),
-                      _KindChip(
-                        art: Assets.images.guideEcho,
-                        label: t.guide.echoes,
-                        selected: kind == GuideKind.echo,
-                        onTap: () => _setKind(GuideKind.echo),
+                      _kindChip(
+                        Assets.images.guideEcho,
+                        t.guide.echoes,
+                        kind == GuideKind.echo,
+                        () => _setKind(GuideKind.echo),
                       ),
                     ],
                   ),
@@ -310,55 +310,6 @@ class _SonataSection extends StatelessWidget {
 }
 
 /// Pill tab for a guide kind: filled with the primary colour when selected.
-class _KindChip extends StatelessWidget {
-  const _KindChip({
-    required this.art,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final AssetGenImage art;
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final fg = selected ? scheme.onPrimary : scheme.onSurfaceVariant;
-    return Material(
-      color: selected ? scheme.primary : scheme.surfaceContainerHigh,
-      borderRadius: BorderRadius.circular(context.tokens.radiusSheet),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // The art is drawn white; tint it to the chip's text colour.
-              art.image(
-                width: 20,
-                height: 20,
-                color: fg,
-                colorBlendMode: BlendMode.srcIn,
-                filterQuality: FilterQuality.medium,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: fg, fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 /// The search box. It owns its controller and focus node so the screen can
 /// rebuild around it without disturbing typing.
@@ -394,3 +345,24 @@ class _SearchFieldState extends State<_SearchField> {
     onSubmitted: (_) => FocusScope.of(context).unfocus(),
   );
 }
+
+/// One kind of the guide as a page-level chip; the art is drawn white, so it
+/// is tinted to the chip's text colour.
+Widget _kindChip(
+  AssetGenImage art,
+  String label,
+  bool selected,
+  VoidCallback onTap,
+) => AppChoiceChip(
+  glass: true,
+  label: label,
+  selected: selected,
+  onSelected: onTap,
+  leadingBuilder: (color) => art.image(
+    width: 20,
+    height: 20,
+    color: color,
+    colorBlendMode: BlendMode.srcIn,
+    filterQuality: FilterQuality.medium,
+  ),
+);

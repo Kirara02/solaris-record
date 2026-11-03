@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
@@ -27,6 +28,7 @@ class GameIcon extends StatelessWidget {
     child: url == null
         ? null
         : CachedNetworkImage(
+            cacheManager: AppImageCache.instance,
             imageUrl: url!,
             memCacheWidth: 128,
             fadeInDuration: Duration.zero,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../data/providers.dart';
 import '../../../shared/routing/app_routes.dart';
 import '../../../shared/theme/app_colors.dart';
@@ -52,6 +53,7 @@ class GuideCard extends ConsumerWidget {
         return Center(child: AdaptiveIcon(Icons.star, color: color));
       }
       return CachedNetworkImage(
+        cacheManager: AppImageCache.instance,
         imageUrl: url,
         fit: portrait != null ? BoxFit.cover : BoxFit.contain,
         alignment: Alignment.topCenter,
@@ -177,6 +179,7 @@ class _Badge extends StatelessWidget {
         borderRadius: circle ? null : BorderRadius.circular(13),
       ),
       child: CachedNetworkImage(
+        cacheManager: AppImageCache.instance,
         imageUrl: url,
         memCacheWidth: 64,
         fadeInDuration: Duration.zero,

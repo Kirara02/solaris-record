@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
 import '../../../shared/theme/mornye_theme.dart';
@@ -107,6 +108,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
                 onTap: () => showImageViewer(context, url),
                 child: _shifted(
                   CachedNetworkImage(
+                    cacheManager: AppImageCache.instance,
                     key: ValueKey(url),
                     imageUrl: url,
                     fit: BoxFit.contain,
@@ -216,7 +218,7 @@ class _ItemGalleryCardState extends State<ItemGalleryCard> {
 /// Full-screen viewer for [url]: pinch or wheel to zoom, buttons to zoom,
 /// save the image to a file, or re-download it if the cached copy is broken.
 Future<void> showImageViewer(BuildContext context, String url) =>
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
       builder: (context) => _ImageViewer(url: url),
     );
@@ -252,7 +254,7 @@ class _ImageViewerState extends State<_ImageViewer> {
     final t = context.t;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final file = await DefaultCacheManager().getSingleFile(widget.url);
+      final file = await AppImageCache.instance.getSingleFile(widget.url);
       final bytes = await file.readAsBytes();
       final name = widget.url.split('?').first.split('/').last;
       final saved = await FilePicker.saveFile(
@@ -270,8 +272,11 @@ class _ImageViewerState extends State<_ImageViewer> {
   }
 
   Future<void> _refetch() async {
-    await DefaultCacheManager().removeFile(widget.url);
-    await CachedNetworkImage.evictFromCache(widget.url);
+    await AppImageCache.instance.removeFile(widget.url);
+    await CachedNetworkImage.evictFromCache(
+      widget.url,
+      cacheManager: AppImageCache.instance,
+    );
     _log.info('Image cache dropped for re-fetch');
     if (mounted) setState(() => _nonce++);
   }
@@ -290,6 +295,7 @@ class _ImageViewerState extends State<_ImageViewer> {
               minScale: 1,
               maxScale: 6,
               child: CachedNetworkImage(
+                cacheManager: AppImageCache.instance,
                 key: ValueKey('${widget.url}#$_nonce'),
                 imageUrl: widget.url,
                 fit: BoxFit.contain,

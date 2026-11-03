@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_colors.dart';
-import '../../../shared/theme/app_tokens.dart';
 import '../../../shared/theme/mornye_icons.dart';
-import '../../../shared/theme/mornye_theme.dart';
+import '../../../shared/widgets/app_choice_chip.dart';
 import '../domain/guide_entry.dart';
 import 'echo_labels.dart';
 
@@ -112,11 +112,11 @@ class _FilterBodyState extends State<_FilterBody> {
       ),
     );
 
-    Widget facetChip(Set<GuideFacet> set, GuideFacet f) => _FilterChip(
+    Widget facetChip(Set<GuideFacet> set, GuideFacet f) => AppChoiceChip(
       label: f.name,
-      iconUrl: f.iconUrl,
+      leadingBuilder: f.iconUrl == null ? null : (_) => _FacetIcon(f.iconUrl!),
       selected: set.contains(f),
-      onTap: () => _toggle(set, f),
+      onSelected: () => _toggle(set, f),
     );
 
     final elements = _facets(entries, (e) => [?e.element]);
@@ -161,12 +161,17 @@ class _FilterBodyState extends State<_FilterBody> {
             ]),
           section(kind == GuideKind.echo ? t.guide.kClass : t.guide.rarity, [
             for (final r in rarities)
-              _FilterChip(
+              AppChoiceChip(
                 label: kind == GuideKind.echo ? echoClassLabel(t, r) : '$r',
-                star: kind == GuideKind.echo ? null : theme.colorScheme,
-                starRarity: r,
+                trailing: kind == GuideKind.echo
+                    ? null
+                    : AdaptiveIcon(
+                        Icons.star,
+                        size: 18,
+                        color: rarityColor(theme.colorScheme, r),
+                      ),
                 selected: filter.rarities.contains(r),
-                onTap: () => _toggle(filter.rarities, r),
+                onSelected: () => _toggle(filter.rarities, r),
               ),
           ]),
         ],
@@ -175,92 +180,28 @@ class _FilterBodyState extends State<_FilterBody> {
   }
 }
 
-/// Outlined pill with an optional game icon (or a rarity star); filled with
-/// the primary container when selected.
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.iconUrl,
-    this.star,
-    this.starRarity = 0,
-  });
+/// A game icon (an element, a weapon class or a sonata effect). Game icons are
+/// drawn light, so a dark disc keeps them readable on any theme.
+class _FacetIcon extends StatelessWidget {
+  const _FacetIcon(this.url);
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final String? iconUrl;
-
-  /// Set to draw a rarity star in front of the label.
-  final ColorScheme? star;
-  final int starRarity;
+  final String url;
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final radius = BorderRadius.circular(context.tokens.radiusControl);
-    // Mornye keeps its chips flat: a primary wash when selected, a neutral
-    // fill otherwise, never an outline.
-    final mornye = context.isMornye;
-    final fg = mornye
-        ? (selected ? scheme.primary : scheme.onSurface)
-        : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
-    return Material(
-      color: mornye
-          ? (selected
-                ? scheme.primary.withValues(alpha: 0.14)
-                : MornyeTheme.controlFill(context))
-          : (selected ? scheme.secondaryContainer : Colors.transparent),
-      shape: RoundedRectangleBorder(
-        borderRadius: radius,
-        side: BorderSide(
-          color: selected || mornye
-              ? Colors.transparent
-              : scheme.outlineVariant,
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (iconUrl != null) ...[
-                // Game icons are drawn light; a dark disc keeps them readable
-                // on any theme.
-                Container(
-                  width: 24,
-                  height: 24,
-                  padding: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(
-                    color: Colors.black54,
-                    shape: BoxShape.circle,
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: iconUrl!,
-                    memCacheWidth: 64,
-                    fadeInDuration: Duration.zero,
-                    errorWidget: (_, _, _) => const SizedBox.shrink(),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-              Text(label, style: TextStyle(color: fg)),
-              if (star != null) ...[
-                const SizedBox(width: 4),
-                AdaptiveIcon(
-                  Icons.star,
-                  size: 18,
-                  color: rarityColor(star!, starRarity),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+    width: 24,
+    height: 24,
+    padding: const EdgeInsets.all(3),
+    decoration: const BoxDecoration(
+      color: Colors.black54,
+      shape: BoxShape.circle,
+    ),
+    child: CachedNetworkImage(
+      cacheManager: AppImageCache.instance,
+      imageUrl: url,
+      memCacheWidth: 64,
+      fadeInDuration: Duration.zero,
+      errorWidget: (_, _, _) => const SizedBox.shrink(),
+    ),
+  );
 }

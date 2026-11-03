@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -84,7 +85,10 @@ class MornyeGlassClaritySlider extends ConsumerWidget {
     );
     final controller = ref.read(themeSettingsControllerProvider.notifier);
     final theme = Theme.of(context);
-    final adjustable = ref.watch(navBarBlurProvider);
+    final contrastBlocked = context.glassContrastBlocked;
+    final navBlur = ref.watch(navBarBlurProvider);
+    final level = ref.watch(glassLevelProvider);
+    final adjustable = level != MornyeGlassLevel.flat && !contrastBlocked;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Column(
@@ -96,7 +100,11 @@ class MornyeGlassClaritySlider extends ConsumerWidget {
           if (!adjustable) ...[
             const SizedBox(height: 8),
             Text(
-              a.glassClarityBlurOff(name: a.navBlur),
+              contrastBlocked
+                  ? a.glassClarityHighContrast(name: a.glassForced)
+                  : a.glassClarityBlurOff(
+                      name: navBlur ? a.glassForced : a.navBlur,
+                    ),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -127,9 +135,9 @@ class MornyeGlassClaritySlider extends ConsumerWidget {
                   padding: const EdgeInsets.all(18),
                   child: MornyeGlass(
                     borderRadius: BorderRadius.circular(22),
-                    level: adjustable
-                        ? MornyeGlassLevel.frosted
-                        : MornyeGlassLevel.flat,
+                    // The same glass as the app draws, so the preview shows
+                    // what the slider changes.
+                    level: adjustable ? level : MornyeGlassLevel.flat,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 18,
@@ -170,8 +178,22 @@ class MornyeGlassClaritySlider extends ConsumerWidget {
               Text(a.glassClear, style: theme.textTheme.bodySmall),
             ],
           ),
+          if (adjustable && clarity >= 0.9) ...[
+            const SizedBox(height: 8),
+            Text(
+              a.glassClearPerformance,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
+
+/// Whether this platform draws the iOS system font (San Francisco) itself.
+bool get isApplePlatform =>
+    defaultTargetPlatform == TargetPlatform.iOS ||
+    defaultTargetPlatform == TargetPlatform.macOS;

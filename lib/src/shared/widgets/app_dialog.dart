@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../features/settings/settings_providers.dart';
@@ -23,7 +22,6 @@ class AppDialog extends StatelessWidget {
         child: child,
       );
     }
-    final blur = ProviderScope.containerOf(context).read(navBarBlurProvider);
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -31,7 +29,7 @@ class AppDialog extends StatelessWidget {
           insetPadding ??
           const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       child: MornyeGlass.overlay(
-        level: blur ? MornyeGlassLevel.liquid : MornyeGlassLevel.flat,
+        level: glassLevelOf(context),
         borderRadius: BorderRadius.circular(context.tokens.radiusSheet),
         // Ink in the content needs a Material above it.
         child: Material(type: MaterialType.transparency, child: child),

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/theme/app_tokens.dart';
@@ -213,6 +214,7 @@ class MonsterTile extends StatelessWidget {
                           child: monster.iconUrl == null
                               ? const SizedBox.shrink()
                               : CachedNetworkImage(
+                                  cacheManager: AppImageCache.instance,
                                   imageUrl: monster.iconUrl!,
                                   memCacheWidth: 200,
                                   fit: BoxFit.contain,
@@ -241,6 +243,7 @@ class MonsterTile extends StatelessWidget {
                                           shape: BoxShape.circle,
                                         ),
                                         child: CachedNetworkImage(
+                                          cacheManager: AppImageCache.instance,
                                           imageUrl: e.iconUrl!,
                                           memCacheWidth: 48,
                                           fadeInDuration: Duration.zero,
@@ -376,6 +379,7 @@ class StatsTable extends StatelessWidget {
                 children: [
                   if (s.iconUrl != null) ...[
                     CachedNetworkImage(
+                      cacheManager: AppImageCache.instance,
                       imageUrl: s.iconUrl!,
                       width: 18,
                       height: 18,

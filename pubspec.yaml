@@ -2,7 +2,7 @@ name: solaris_record_app
 description: "Wuthering Waves convene tracker."
 publish_to: 'none'
 
-version: 1.7.1+13
+version: 1.8.0+14
 
 environment:
   sdk: ^3.13.5
@@ -11,6 +11,7 @@ dependencies:
   cached_network_image: ^4.0.4
   crypto: ^3.0.7
   cupertino_icons: ^1.0.9
+  device_info_plus: ^13.3.0
   dio: ^5.11.1
   drift: ^2.35.2
   drift_flutter: ^0.3.1

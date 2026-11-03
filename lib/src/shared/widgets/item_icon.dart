@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../data/app_image_cache.dart';
 import '../../data/providers.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_tokens.dart';
@@ -60,6 +61,7 @@ class ItemIcon extends ConsumerWidget {
       child: url == null
           ? placeholder()
           : CachedNetworkImage(
+              cacheManager: AppImageCache.instance,
               imageUrl: url,
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,

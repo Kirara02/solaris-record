@@ -1,9 +1,12 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/device_tier.dart';
 import '../../data/preferences.dart';
 import '../../shared/i18n/gen/strings.g.dart';
 import '../../shared/logging/app_log.dart';
+import '../../shared/widgets/mornye_glass.dart';
 import '../info/domain/encore_links.dart';
 import 'domain/theme_settings.dart';
 
@@ -17,6 +20,8 @@ const _styleKey = 'theme_style';
 const _mornyeAccentKey = 'mornye_accent';
 const _mornyeClarityKey = 'mornye_glass_clarity';
 const _mornyeOutlinesKey = 'mornye_glass_outlines';
+const _mornyeForcedKey = 'mornye_glass_forced';
+const _mornyeSystemFontKey = 'mornye_system_font';
 const languagePrefKey = 'language';
 const _dataLanguageKey = 'data_language';
 
@@ -42,6 +47,8 @@ class ThemeSettingsController extends _$ThemeSettingsController {
       mornyeGlassClarity:
           prefs.getDouble(_mornyeClarityKey) ?? defaultMornyeGlassClarity,
       mornyeGlassOutlines: prefs.getBool(_mornyeOutlinesKey) ?? true,
+      mornyeGlassForced: prefs.getBool(_mornyeForcedKey) ?? false,
+      mornyeSystemFont: prefs.getBool(_mornyeSystemFontKey) ?? false,
     );
   }
 
@@ -93,6 +100,18 @@ class ThemeSettingsController extends _$ThemeSettingsController {
     await ref
         .read(sharedPreferencesProvider)
         .setBool(_mornyeOutlinesKey, value);
+  }
+
+  Future<void> setMornyeGlassForced(bool value) async {
+    state = state.copyWith(mornyeGlassForced: value);
+    await ref.read(sharedPreferencesProvider).setBool(_mornyeForcedKey, value);
+  }
+
+  Future<void> setMornyeSystemFont(bool value) async {
+    state = state.copyWith(mornyeSystemFont: value);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setBool(_mornyeSystemFontKey, value);
   }
 
   Future<void> setUseAmoled(bool value) async {
@@ -268,3 +287,25 @@ class NavBarBlur extends _$NavBarBlur {
     await ref.read(sharedPreferencesProvider).setBool(_navBlurKey, value);
   }
 }
+
+/// How much glass the Mornye style draws. The "Blurred navigation" switch
+/// turns it off; otherwise the device decides (full refractive glass on a
+/// capable one, a plain blur on a mid-range Android, none on a low-end one),
+/// and "Always use glass effects" restores the full glass everywhere.
+final glassLevelProvider = Provider<MornyeGlassLevel>((ref) {
+  if (!ref.watch(navBarBlurProvider)) return MornyeGlassLevel.flat;
+  final forced = ref.watch(
+    themeSettingsControllerProvider.select((s) => s.mornyeGlassForced),
+  );
+  if (forced) return MornyeGlassLevel.liquid;
+  return switch (ref.watch(deviceTierProvider)) {
+    DeviceTier.low => MornyeGlassLevel.flat,
+    DeviceTier.standard => MornyeGlassLevel.frosted,
+    DeviceTier.high => MornyeGlassLevel.liquid,
+  };
+});
+
+/// [glassLevelProvider] for code that has no `ref`: dialogs, sheets and
+/// popup menus, which are built when opened.
+MornyeGlassLevel glassLevelOf(BuildContext context) =>
+    ProviderScope.containerOf(context).read(glassLevelProvider);

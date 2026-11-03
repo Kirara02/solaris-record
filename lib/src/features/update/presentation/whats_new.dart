@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../data/preferences.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../domain/update_info.dart';
 import '../domain/update_platform.dart';
@@ -42,7 +43,7 @@ Future<void> showWhatsNewIfNeeded(BuildContext context, WidgetRef ref) async {
   if (release == null || notes.isEmpty || !context.mounted) return;
 
   _log.info('Showing what\'s new for $current');
-  await showDialog<void>(
+  await showAppDialog<void>(
     context: context,
     builder: (context) => _WhatsNewDialog(
       version: current,

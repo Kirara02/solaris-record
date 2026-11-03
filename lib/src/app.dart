@@ -3,14 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'data/device_tier.dart';
 import 'features/settings/domain/theme_settings.dart';
 import 'features/settings/settings_providers.dart';
 import 'features/shell/rail_metrics.dart';
 import 'shared/i18n/gen/strings.g.dart';
+import 'shared/layout/app_scroll_behavior.dart';
 import 'shared/routing/app_router.dart';
 import 'shared/theme/app_theme.dart';
 import 'shared/theme/app_tokens.dart';
 import 'shared/theme/mornye_theme.dart';
+import 'shared/widgets/mornye_glass_warmup.dart';
 
 /// Rail items span the whole rail like the hand-drawn Settings item (pill =
 /// rail width minus a 16px inset on each side, the same inset the rail gives
@@ -75,7 +78,9 @@ class SolarisApp extends ConsumerWidget {
         final mornyeExtra = MornyeTheme(
           glassClarity: settings.mornyeGlassClarity,
           glassOutlines: settings.mornyeGlassOutlines,
+          glassForced: settings.mornyeGlassForced,
           accent: settings.mornyeAccent,
+          useSystemFont: settings.mornyeSystemFont,
         );
         // Mornye is a plain ThemeData (iOS palette, no dynamic colour, seed or
         // AMOLED); the M3E data is derived from it so the remaining M3E
@@ -102,6 +107,10 @@ class SolarisApp extends ConsumerWidget {
                   tokens: AppTokens.forPlatform,
                 ),
           themeMode: settings.mode,
+          scrollBehavior: appScrollBehavior(
+            mornye: mornye,
+            lowEnd: ref.watch(deviceTierProvider) == DeviceTier.low,
+          ),
           // M3ETheme reads the parent Theme once per rebuild. With the default
           // animated transition it can capture a half-interpolated (or stale)
           // theme, so switch instantly.
@@ -121,7 +130,9 @@ class SolarisApp extends ConsumerWidget {
             return M3ETheme(
               data: mornye ? mornyeData(brightness) : dataFor(brightness),
               child: _ResolvedThemeScope(
-                child: child ?? const SizedBox.shrink(),
+                child: MornyeGlassPreparation(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             );
           },

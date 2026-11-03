@@ -38,7 +38,8 @@ class ItemNameService {
   ) async {
     final url = '${EncoreInfoService.apiBase}/$lang/$segment';
     final json = jsonDecode(await _loadJson(url));
-    final list = json is Map<String, dynamic> ? json[listKey] : null;
+    // Some languages answer the bare array instead of `{listKey: [...]}`.
+    final list = json is Map<String, dynamic> ? json[listKey] : json;
     if (list is! List) return const {};
     return {
       for (final item in list)

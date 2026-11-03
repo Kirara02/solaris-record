@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
 import '../../../shared/theme/mornye_icons.dart';
@@ -275,7 +276,7 @@ class _AccountTile extends ConsumerWidget {
   }
 
   Future<String?> _askAlias(BuildContext context, String? current) =>
-      showDialog<String>(
+      showAppDialog<String>(
         context: context,
         builder: (context) => _AliasDialog(initial: current),
       );

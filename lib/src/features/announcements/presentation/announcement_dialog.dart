@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../data/preferences.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
+import '../../../shared/layout/app_dialog_route.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../announcements_providers.dart';
@@ -39,7 +40,7 @@ Future<void> showAnnouncementIfAny(BuildContext context, WidgetRef ref) async {
 
   final announcement = pending.first;
   _log.info('Showing announcement id=${announcement.id}');
-  await showDialog<void>(
+  await showAppDialog<void>(
     context: context,
     builder: (context) => _AnnouncementDialog(announcement: announcement),
   );
