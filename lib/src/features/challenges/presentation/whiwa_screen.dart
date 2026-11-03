@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
 import '../../../shared/layout/window_size.dart';
@@ -291,6 +292,7 @@ class _LevelCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CachedNetworkImage(
+                          cacheManager: AppImageCache.instance,
                           imageUrl: _scoreImage(s.$1),
                           height: 22,
                           fadeInDuration: Duration.zero,
@@ -339,6 +341,7 @@ class _LevelCard extends StatelessWidget {
               children: [
                 if (b.iconUrl != null) ...[
                   CachedNetworkImage(
+                    cacheManager: AppImageCache.instance,
                     imageUrl: b.iconUrl!,
                     width: 20,
                     height: 20,
@@ -372,20 +375,27 @@ class _LevelCard extends StatelessWidget {
               ],
             ),
           ),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          alignment: WrapAlignment.center,
-          children: [
-            for (final m in s.monsters)
-              MonsterTile(
-                monster: m,
-                onTap: m.id == null
-                    ? null
-                    : () =>
-                          context.push(AppRoutes.whiwaMonster(m.id!), extra: m),
-              ),
-          ],
+        // Full width: a Wrap in a start-aligned Column is as wide as its
+        // content and would sit at the left whatever its alignment says.
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: [
+              for (final m in s.monsters)
+                MonsterTile(
+                  monster: m,
+                  onTap: m.id == null
+                      ? null
+                      : () => context.push(
+                          AppRoutes.whiwaMonster(m.id!),
+                          extra: m,
+                        ),
+                ),
+            ],
+          ),
         ),
       ],
     );
@@ -446,6 +456,7 @@ class _TokenTile extends StatelessWidget {
                   child: token.iconUrl == null
                       ? const SizedBox.shrink()
                       : CachedNetworkImage(
+                          cacheManager: AppImageCache.instance,
                           imageUrl: token.iconUrl!,
                           memCacheWidth: 200,
                           fit: BoxFit.contain,
@@ -508,6 +519,7 @@ class _BuffSheet extends ConsumerWidget {
                 child: buff.iconUrl == null
                     ? null
                     : CachedNetworkImage(
+                        cacheManager: AppImageCache.instance,
                         imageUrl: buff.iconUrl!,
                         memCacheWidth: 128,
                         fadeInDuration: Duration.zero,

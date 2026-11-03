@@ -73,8 +73,10 @@ GuideFacet? _facet(Object? v, [String? name]) {
 }
 
 List<Map<String, dynamic>> _list(Object? json, String key) {
-  if (json is! Map) return const [];
-  final raw = json[key];
+  // Most languages answer `{key: [...]}`, but some (Japanese weapons and
+  // echoes, Korean echoes, French and Portuguese weapons) answer the bare
+  // array.
+  final raw = json is Map ? json[key] : json;
   if (raw is! List) return const [];
   return [
     for (final e in raw)
@@ -114,12 +116,21 @@ List<GuideEntry> parseWeaponList(Object? json) => [
       ),
 ];
 
-/// Parses `/api/{lang}/echo` (`Echo`). The API also lists 92 entries with a
-/// `PhantomType` other than 1 (ids such as 6020003): unfinished copies of real
-/// echoes carrying another echo's skill text. encore.moe leaves them out of
-/// its own list too, so they are skipped here.
+/// The rows of the echo list: `phantomsList`, or `Echo` as encore.moe named it
+/// before.
+List<Map<String, dynamic>> _echoRows(Object? json) {
+  final rows = _list(json, 'phantomsList');
+  return rows.isNotEmpty ? rows : _list(json, 'Echo');
+}
+
+/// Parses `/api/{lang}/echo` (`phantomsList`, `Echo` before encore.moe renamed
+/// it; both are read, so a cached copy of the old shape still parses). The API
+/// also lists 92 entries with a `PhantomType` other than 1 (ids such as
+/// 6020003): unfinished copies of real echoes carrying another echo's skill
+/// text. encore.moe leaves them out of its own list too, so they are skipped
+/// here.
 List<GuideEntry> parseEchoList(Object? json) => [
-  for (final e in _list(json, 'Echo'))
+  for (final e in _echoRows(json))
     if (_int(e['Id']) > 0 &&
         _str(e['Name']) != null &&
         (e['PhantomType'] == null || e['PhantomType'] == 1))

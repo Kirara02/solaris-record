@@ -6,6 +6,7 @@ import '../../info/data/encore_info_service.dart';
 import '../../info/domain/encore_links.dart';
 import '../domain/challenge_models.dart';
 import '../domain/challenge_season.dart';
+import '../domain/challenge_text.dart';
 import '../domain/matrix_models.dart';
 import '../domain/monster_info.dart';
 
@@ -42,14 +43,16 @@ class ChallengeService {
   Future<List<ChallengeSeason>> towerSeasons(String lang) async =>
       parseSeasons(jsonDecode(await _loadJson(_url('toa', lang))));
 
-  Future<TowerSeason> tower(int season, String lang) async =>
-      parseTower(jsonDecode(await _loadJson(_url('toa', lang, season))));
+  Future<TowerSeason> tower(int season, String lang) async => parseTower(
+    lowerFirstKeys(jsonDecode(await _loadJson(_url('toa', lang, season)))),
+  );
 
   Future<List<ChallengeSeason>> whiwaSeasons(String lang) async =>
       parseSeasons(jsonDecode(await _loadJson(_url('whiwa', lang))));
 
-  Future<WhiwaSeason> whiwa(int season, String lang) async =>
-      parseWhiwa(jsonDecode(await _loadJson(_url('whiwa', lang, season))));
+  Future<WhiwaSeason> whiwa(int season, String lang) async => parseWhiwa(
+    lowerFirstKeys(jsonDecode(await _loadJson(_url('whiwa', lang, season)))),
+  );
 
   Future<WhiwaBuffInfo?> buffInfo(int itemId, String lang) async =>
       parseBuffInfo(jsonDecode(await _loadJson(_url('item', lang, itemId))));

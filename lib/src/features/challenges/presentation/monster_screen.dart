@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/window_size.dart';
@@ -178,6 +179,7 @@ class _MonsterBodyState extends State<_MonsterBody> {
             ),
             clipBehavior: Clip.antiAlias,
             child: CachedNetworkImage(
+              cacheManager: AppImageCache.instance,
               imageUrl: info.iconUrl!,
               fit: BoxFit.contain,
               placeholder: (_, _) => const Center(child: AppLoadingIndicator()),

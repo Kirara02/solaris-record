@@ -428,13 +428,21 @@ WhiwaLevel? _level(Object? raw) {
 
 WhiwaSeason parseWhiwa(Object? json) {
   if (json is! Map) return const WhiwaSeason([], []);
+  final groups = [
+    for (final g in listOf(json['stageGroups']))
+      if (g is Map && textOf(g['name']) != null)
+        WhiwaGroup(textOf(g['name'])!, [
+          for (final l in listOf(g['levels'])) ?_level(l),
+        ]),
+  ];
+  // The permanent season (0) has no stage groups, only the flat `levels`.
+  final loose = [for (final l in listOf(json['levels'])) ?_level(l)];
   return WhiwaSeason(
     [
-      for (final g in listOf(json['stageGroups']))
-        if (g is Map && textOf(g['name']) != null)
-          WhiwaGroup(textOf(g['name'])!, [
-            for (final l in listOf(g['levels'])) ?_level(l),
-          ]),
+      if (groups.isNotEmpty)
+        ...groups
+      else if (loose.isNotEmpty)
+        WhiwaGroup(textOf(json['name']) ?? 'Whimpering Wastes', loose),
     ],
     [
       for (final b in listOf(json['buffItems']))

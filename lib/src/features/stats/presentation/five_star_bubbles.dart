@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../data/app_image_cache.dart';
 import '../../../data/providers.dart';
 import '../../../shared/i18n/gen/strings.g.dart';
 import '../../../shared/layout/content_dialog.dart';
@@ -492,6 +493,7 @@ class _FiveStarCard extends ConsumerWidget {
             if (background == null && figure == null) placeholder(),
             for (final url in [?background, ?figure])
               CachedNetworkImage(
+                cacheManager: AppImageCache.instance,
                 key: ValueKey(url),
                 imageUrl: url,
                 fit: BoxFit.cover,
