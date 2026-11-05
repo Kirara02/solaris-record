@@ -20,6 +20,7 @@ Back to the [README](../README.md).
   <tr>
     <td width="33%"><img src="images/desktop/material/7.png" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b>: enemies and buffs per season.</sub></td>
     <td width="33%"><img src="images/desktop/material/8.png" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b>: enemies and buffs per season.</sub></td>
+    <td width="33%"><img src="images/desktop/material/9.png" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b>: enemies and buffs per season.</sub></td>
   </tr>
 </table>
 
@@ -39,6 +40,7 @@ Back to the [README](../README.md).
   <tr>
     <td width="33%"><img src="images/desktop/mornye/7.png" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b>: enemies and buffs per season.</sub></td>
     <td width="33%"><img src="images/desktop/mornye/8.png" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b>: enemies and buffs per season.</sub></td>
+    <td width="33%"><img src="images/desktop/mornye/9.png" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b>: enemies and buffs per season.</sub></td>
   </tr>
 </table>
 
@@ -58,6 +60,7 @@ Back to the [README](../README.md).
     <td width="20%" align="center"><img src="images/mobile/material/6.jpg" alt="Guide detail with skills and image gallery"><br><sub><b>Guide detail</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/material/7.jpg" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/material/8.jpg" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b></sub></td>
+    <td width="20%" align="center"><img src="images/mobile/material/9.jpg" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/material/10.jpg" alt="Share as an image"><br><sub><b>Share image</b></sub></td>
   </tr>
 </table>
@@ -76,6 +79,7 @@ Back to the [README](../README.md).
     <td width="20%" align="center"><img src="images/mobile/mornye/6.jpg" alt="Guide detail with skills and image gallery"><br><sub><b>Guide detail</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/mornye/7.jpg" alt="Tower of Adversity"><br><sub><b>Tower of Adversity</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/mornye/8.jpg" alt="Whimpering Wastes"><br><sub><b>Whimpering Wastes</b></sub></td>
+    <td width="20%" align="center"><img src="images/mobile/mornye/9.jpg" alt="Endstate Matrix"><br><sub><b>Endstate Matrix</b></sub></td>
     <td width="20%" align="center"><img src="images/mobile/mornye/10.jpg" alt="Share as an image"><br><sub><b>Share image</b></sub></td>
   </tr>
 </table>
