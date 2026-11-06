@@ -10,6 +10,27 @@
       }
     },
     {
+      "code": "TRAINOFSOULS",
+      "rewards": {
+        "en": "Astrite x100, Premium Resonance Potion x3, Advanced Revival Inhaler x2"
+      },
+      "added": "2026-11-06"
+    },
+    {
+      "code": "BLOOMINGFLOWERS",
+      "rewards": {
+        "en": "Astrite x100, Shell Credit x40000, Premium Enclosure Tank II x3"
+      },
+      "added": "2026-11-06"
+    },
+    {
+      "code": "SCHOOLLIFE",
+      "rewards": {
+        "en": "Astrite x100, Advanced Sealed Tube x5, Premium Tuner x20"
+      },
+      "added": "2026-11-06"
+    },
+    {
       "code": "STARRYSTAGE2",
       "rewards": {
         "en": "Astrite x80"
